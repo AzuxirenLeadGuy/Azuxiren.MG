@@ -123,6 +123,15 @@ namespace Azuxiren.MG
         /// The total count of frames in the object
         /// </summary>
         public int TotalFrame => FrameImages.Length;
+		internal byte Num,Den,Cur;
+		/// <summary>
+		/// Sets the speed of unrolling the sprite as a fraction of the current game's FPS.
+		/// 
+		/// For example, if the game is 60 fps, and the function is invoked with num=1,den=2 (1/2), then the speed of unrolling this spritesheet will be (1/2) of 60fps, ie 30fps
+		/// </summary>
+		/// <param name="num">Numenator of the fraction</param>
+		/// <param name="den">Denominator of fraction</param>
+		public void SetSpeed(byte num,byte den)=>(Num,Den,Cur)=(num,den,0);
 		/// <summary>
 		///OBSOLETE: Works, but you are better off using the Draw() method (the one without arguments)
 	 	/// 	
@@ -136,8 +145,13 @@ namespace Azuxiren.MG
 		/// </summary>
         public void Update()
         {
-            CurrentFrame++;
-            CurrentFrame %= TotalFrame;
+			Cur+=Num;
+			if(Cur>=Den)
+			{
+				CurrentFrame++;
+				CurrentFrame %= TotalFrame;
+				Cur=(byte)(Cur%Den);
+			}
         }
 		/// <summary>
 		/// Draws the Sprite using the given spritebatch 

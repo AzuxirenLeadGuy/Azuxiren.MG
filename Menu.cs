@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Menu
 {
@@ -71,8 +72,6 @@ namespace Azuxiren.MG.Menu
 			EventHandler<ComponentArgs> x = StateChanged;
 			if (x != null) x.Invoke(this, new ComponentArgs(gt, ps, state));
 		}
-		/// <summary>Returns true if the button is inputted for pressing</summary>
-		public abstract bool InputPressed { get; set; }
 		/// <summary>The Draw function of this Component.</summary>
 		/// <param name="gt">The GameTime variable</param>
 		public abstract void Draw(GameTime gt);
@@ -105,6 +104,8 @@ namespace Azuxiren.MG.Menu
 		/// <param name="EnableAtStart">If this is true, state of component will be Enabled at start</param>
 		/// <returns></returns>
 		public AbstractButton(Rectangle bounds, string Message = "", bool EnableAtStart = true) : base(bounds, EnableAtStart) { Title = Message; }
+		/// <summary>Returns true if the button is inputted for pressing</summary>
+		public abstract bool InputPressed { get; set; }
 		/// <summary>The update mechanism for button. Not calling this will "freeze" the button</summary>
 		/// <param name="gt"></param>
 		public override void Update(GameTime gt)
@@ -199,7 +200,6 @@ namespace Azuxiren.MG.Menu
 						break;
 					case ComponentState.Release:
 						state = ComponentState.Selected;
-						InputPressed = false;
 						InputDecrement = false;
 						InputIncrement = false;
 						break;
@@ -216,5 +216,39 @@ namespace Azuxiren.MG.Menu
 				if(Timer>=coolDownTime)Enabled=true;
 			}
 		}
+	}
+	/// <summary>
+	/// Interface for a basic menu which is a collection of AbstractComponents
+	/// </summary>
+	public interface IMenu
+	{
+		/// <summary>
+		/// The collection of components
+		/// </summary>
+		IEnumerable<AbstractComponent> Components{get;}
+		/// <summary>
+		/// The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false
+		/// </summary>
+		AbstractComponent CurrentlySelected{get;set;}
+		/// <summary>
+		/// Changes the currently selected element to the other
+		/// </summary>
+		/// <param name="other">The element which is now to be selected</param>
+		void ChangeSelectionTo(AbstractComponent other)
+		{
+			CurrentlySelected.Selected=false;
+			other.Selected=true;
+			CurrentlySelected=other;
+		}
+		/// <summary>
+		/// Draws the menu
+		/// </summary>
+		/// <param name="gt">GameTime instance</param>
+		void Draw(GameTime gt){foreach(var comp in Components)comp.Draw(gt);}
+		/// <summary>
+		/// Updates the menu
+		/// </summary>
+		/// <param name="gt">GameTime instance</param>
+		void Update(GameTime gt){foreach(var comp in Components)comp.Update(gt);}
 	}
 }
