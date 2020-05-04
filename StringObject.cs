@@ -3,8 +3,25 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
 {
 	/// <summary>Maintains the drawing of text in the given Rectangle</summary>
-	public struct StringObject
+	public struct TextBox
 	{
+		/// <summary>
+		/// The Construtctor for Textbox
+		/// </summary>
+		/// <param name="bd">The rectangle where the text is displayed</param>
+		/// <param name="txt">The text to display</param>
+		/// <param name="fnt">The font used</param>
+		public TextBox(Rectangle bd, string txt, SpriteFont fnt)
+		{
+			bounds=bd;
+			text=txt;
+			font=fnt;
+			LayerDepth=0;
+			TextColor=default;
+			Pos=default;
+			Scale=default;
+			FitText();
+		}
 		/// <summary>
 		/// This is the Destination rectangle where the text is to be drawn 
 		/// </summary>

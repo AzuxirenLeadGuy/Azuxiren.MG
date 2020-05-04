@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
@@ -108,6 +110,22 @@ namespace Azuxiren.MG
     public struct LargeSprite
     {
 		/// <summary>
+		/// The constructor for LargeSprite
+		/// </summary>
+		/// <param name="Frames">The frames in this Sprite</param>
+		/// <param name="dest">The Rectangle where all the spirtes are being displayed</param>
+		/// <param name="speednum">The numenator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
+		/// <param name="speedden">The denominator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
+		public LargeSprite(IEnumerable<Texture2D> Frames, Rectangle dest,byte speednum=1,byte speedden=1)
+		{
+			FrameImages= Enumerable.ToArray(Frames);
+			Dest=dest;
+			Num=speednum;
+			Den=speedden;
+			Cur=0;
+			CurrentFrame=0;
+		}
+		/// <summary>
 		/// The sprite Image collection
 		/// </summary>
         public Texture2D[] FrameImages;
@@ -156,7 +174,13 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// Draws the Sprite using the given spritebatch 
 		/// </summary>
-		/// <param name="sb"></param>
+		/// <param name="sb">The given SpriteBatch</param>
         public void Draw(SpriteBatch sb) => sb.Draw(FrameImages[CurrentFrame], Dest, Color.White);
+		/// <summary>
+		/// Draws the spirte using the given spritebatch
+		/// </summary>
+		/// <param name="sb">The given SpriteBatch</param>
+		/// <param name="Tint">The tint color to add</param>
+        public void Draw(SpriteBatch sb,Color Tint) => sb.Draw(FrameImages[CurrentFrame], Dest, Tint);
     }
 }

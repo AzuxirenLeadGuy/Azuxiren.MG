@@ -34,6 +34,25 @@ namespace Azuxiren.MG.Menu
 		/// <param name="cs">Current State</param>
 		public ComponentArgs(GameTime g, ComponentState ps, ComponentState cs) { gt = g; Previous = ps; Current = cs; }
 	}
+	/// <summary>Represents the changed value in an AbstractSlider</summary>
+	/// <typeparam name="T">The data type of the value of AbstractSlider</typeparam>
+	public class SliderValueArgs<T> : EventArgs
+	{
+		/// <summary>The value before the change</summary>
+		public T Prev;
+		/// <summary>The value after the change</summary>
+		public T Curr;
+		/// <summary>
+		/// The constructor for SliderValueArgs class
+		/// </summary>
+		/// <param name="pre">The value before change</param>
+		/// <param name="cur">The value after change</param>
+		public SliderValueArgs(T pre, T cur)
+		{
+			Prev=pre;
+			Curr=cur;
+		}
+	}
 	/// <summary>A WPF-styled implementaion of a Component.It is advisable
 	/// for Action to be defined on Release State of Component</summary>
 	public abstract class AbstractComponent : IScreen
@@ -136,14 +155,16 @@ namespace Azuxiren.MG.Menu
 		}
 	}
 	/// <summary>
-	/// It is a Component offering a varying parameter. #endregion
+	/// It is a Component offering a varying parameter.
 	/// 
 	/// Can be implemented as multiple option (T=String, implemented by using multiple Options)
 	/// 
 	/// Can be implemented as a Parameter input for a variable taking values from Min to Max (T=int/float/etc)
 	/// </summary>
-	public abstract class AbstractSlider : AbstractComponent
+	public abstract class AbstractSlider<T> : AbstractComponent
 	{
+		/// <summary>This is the variable that is sliding</summary>
+		protected abstract T Value{get;set;}
 		/// <summary>The title of the Slider</summary>
 		public string Title;
 		/// <summary>
@@ -167,6 +188,10 @@ namespace Azuxiren.MG.Menu
 			Title = Message;
 			coolDownTime = cdms;
 		}
+		/// <summary>
+		/// The event invoked on any change in Value
+		/// </summary>
+		public EventHandler<SliderValueArgs<T>> OnValueChange;
 		/// <summary>The event invoked on Incrementing the slider</summary>
 		public event EventHandler<ComponentArgs> OnIncrement;
 		/// <summary>The event invoked on Decrementing the slider</summary>
@@ -220,35 +245,32 @@ namespace Azuxiren.MG.Menu
 	/// <summary>
 	/// Interface for a basic menu which is a collection of AbstractComponents
 	/// </summary>
-	public interface IMenu
+	public abstract class Menu
 	{
-		/// <summary>
-		/// The collection of components
-		/// </summary>
-		IEnumerable<AbstractComponent> Components{get;}
-		/// <summary>
-		/// The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false
-		/// </summary>
-		AbstractComponent CurrentlySelected{get;set;}
-		/// <summary>
-		/// Changes the currently selected element to the other
-		/// </summary>
-		/// <param name="other">The element which is now to be selected</param>
-		void ChangeSelectionTo(AbstractComponent other)
+		/// <summary>The collection of components</summary>
+		public abstract IEnumerable<AbstractComponent> Components{get;}
+		/// <summary>The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false</summary>
+		public virtual AbstractComponent CurrentlySelected
 		{
-			CurrentlySelected.Selected=false;
-			other.Selected=true;
-			CurrentlySelected=other;
+			get=>currentlySelected;
+			set
+			{
+				currentlySelected.Selected=false;
+				currentlySelected=value;
+				currentlySelected.Selected=true;
+			}
 		}
+		/// <summary>The component that is currently selected in the menu</summary>
+		protected AbstractComponent currentlySelected;
 		/// <summary>
 		/// Draws the menu
 		/// </summary>
 		/// <param name="gt">GameTime instance</param>
-		void Draw(GameTime gt){foreach(var comp in Components)comp.Draw(gt);}
+		public virtual void Draw(GameTime gt){foreach(var comp in Components)comp.Draw(gt);}
 		/// <summary>
 		/// Updates the menu
 		/// </summary>
 		/// <param name="gt">GameTime instance</param>
-		void Update(GameTime gt){foreach(var comp in Components)comp.Update(gt);}
+		public virtual void Update(GameTime gt){foreach(var comp in Components)comp.Update(gt);}
 	}
 }

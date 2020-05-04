@@ -263,7 +263,7 @@ namespace Azuxiren.MG
 		/// </summary>
 		/// <param name="batch">Spritebatch object</param>
 		/// <param name="stringobj">The instance of StringObject</param>
-		public static void Draw(this SpriteBatch batch, StringObject stringobj)=>stringobj.Draw(batch);
+		public static void Draw(this SpriteBatch batch, TextBox stringobj)=>stringobj.Draw(batch);
 		/// <summary>
 		/// Draws the StringObject Instance
 		/// </summary>
@@ -271,7 +271,7 @@ namespace Azuxiren.MG
 		/// <param name="stringObject">The instance of StringObject</param>
 		/// <param name="rotation">The angle of rotation</param>
 		/// <param name="origin">The origin about which rotation takes place</param>
-		public static void Draw(this SpriteBatch batch, StringObject stringObject, float rotation, Vector2 origin)=>stringObject.Draw(batch,rotation,origin);
+		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin)=>stringObject.Draw(batch,rotation,origin);
 		/// <summary>
 		/// 
 		/// </summary>
@@ -280,6 +280,6 @@ namespace Azuxiren.MG
 		/// <param name="rotation"></param>
 		/// <param name="origin"></param>
 		/// <param name="effects"></param>
-		public static void Draw(this SpriteBatch batch, StringObject stringObject, float rotation, Vector2 origin, SpriteEffects effects)=>stringObject.Draw(batch,rotation,origin, effects);
+		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin, SpriteEffects effects)=>stringObject.Draw(batch,rotation,origin, effects);
 	}
 }
