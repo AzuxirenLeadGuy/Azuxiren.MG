@@ -64,19 +64,29 @@ namespace Azuxiren.MG
 		/// <param name="f">The frame value to set</param>
         public void SetFrame(int f) => CurrentFrame = f;
 		/// <summary>
-		/// OBSOLETE: Works, but you are better off picking any other Draw() method
-		/// 
-		/// The draw method of the SpriteSheet
+		/// Draws the SpriteSheet
 		/// </summary>
-		/// <param name="gameTime"></param>
-		/// <param name="sb"></param>
-		[Obsolete]
-        public void Draw(GameTime gameTime,SpriteBatch sb) => Draw(sb);
-        ///<summary>The Draw function of the SpriteSheet, drawing wherever the Dest rectangle of this object is</summary>
+		/// <param name="sb">SpriteBatch object to use</param>
         public void Draw(SpriteBatch sb) { sb.Draw(Sheet ,Dest, Source, Color.White); }
-        ///<summary>The Draw function of the SpriteSheet, drawing at the rectangle in the argument</summary>
-        public void Draw(SpriteBatch sb, Rectangle dest)
-        { sb.Draw(Sheet, dest, Source, Color.White); }
+		/// <summary>
+		/// Draws the SpriteSheet
+		/// </summary>
+		/// <param name="sb">SpriteBatch object to use</param>
+		/// <param name="dest"></param>
+        public void Draw(SpriteBatch sb, Rectangle dest){ sb.Draw(Sheet, dest, Source, Color.White); }
+		/// <summary>
+		/// Draws the SpriteSheet
+		/// </summary>
+		/// <param name="sb">SpriteBatch object to use</param>
+		/// <param name="dest">The Rectangle to draw the sheet frame at. (You are better off using the Dest variable instide the Spritesheet class</param>
+		/// <param name="Tint">The Color to tint the drawing with</param>
+		public void Draw(SpriteBatch sb, Rectangle dest, Color Tint){sb.Draw(Sheet, dest, Source, Tint);}
+		/// <summary>
+		/// Draws the SpriteSheet
+		/// </summary>
+		/// <param name="sb">SpriteBatch object to use</param>
+		/// <param name="Tint">The Color to tint the drawing with</param>
+		public void Draw(SpriteBatch sb, Color Tint){sb.Draw(Sheet, Dest, Source, Tint);}
         ///<summary>The Update Function of SpriteSheet
         ///
         ///Not Calling Update "Pauses" the Animation.</summary>

@@ -281,5 +281,87 @@ namespace Azuxiren.MG
 		/// <param name="origin"></param>
 		/// <param name="effects"></param>
 		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin, SpriteEffects effects)=>stringObject.Draw(batch,rotation,origin, effects);
+		/// <summary>
+		/// Updates an object for the given acceleration and friction
+		/// </summary>
+		/// <param name="obj2D">The IPhyObj2D object</param>
+		/// <param name="acc">The acceleration acting on it</param>
+		/// <param name="friction">The friction on the body</param>
+		public static void Update(this IPhyObj2D obj2D, Vector2 acc, float friction=0)
+		{
+			var Current=obj2D.Current;
+			var v=new Vector2(Current.Item1.X, Current.Item1.Y);
+			var x=new Vector2(Current.Item2.X, Current.Item2.Y);
+			v+=acc-(Current.Item1*friction);
+			x+=Current.Item1;
+			obj2D.Current=(v,x);
+		}
+		/// <summary>
+		/// Updates an object for the given acceleration and friction
+		/// </summary>
+		/// <param name="Current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="acc">The acceleration acting on it</param>
+		/// <param name="friction">The friction on the body</param>
+		public static (Vector2,Vector2) Update(this (Vector2,Vector2) Current, Vector2 acc, float friction=0)
+		{
+			var v=new Vector2(Current.Item1.X, Current.Item1.Y);
+			var x=new Vector2(Current.Item2.X, Current.Item2.Y);
+			v+=acc-(Current.Item1*friction);
+			x+=Current.Item1;
+			return (v,x);
+		}
+		/// <summary>
+		/// Updates an object when no acceleration is acting upon it
+		/// </summary>
+		/// <param name="obj2D">The IPhyObj2D object</param>
+		/// <param name="friction">The friction acting upon it</param>
+		public static void Update(this IPhyObj2D obj2D, float friction=0)=>Update(obj2D,Vector2.Zero,friction);
+		/// <summary>
+		/// Updates an object when no acceleration is acting upon it
+		/// </summary>
+		/// <param name="Current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="friction">The friction acting upon it</param>
+		public static (Vector2,Vector2) Update(this (Vector2,Vector2) Current, float friction=0)=>Update(Current,Vector2.Zero,friction);
+		/// <summary>
+		/// Updates an object when acted upon with the given acceleration and friction
+		/// </summary>
+		/// <param name="obj3D">The IPhyObj3D</param>
+		/// <param name="acc">The acceleration acting upon it</param>
+		/// <param name="friction">The friction on the object</param>
+		public static void Update(this IPhyObj3D obj3D, Vector3 acc, float friction=0)
+		{
+			var Current=obj3D.Current;
+			var v=new Vector3(Current.Item1.X, Current.Item1.Y, Current.Item1.Z);
+			var x=new Vector3(Current.Item2.X, Current.Item2.Y, Current.Item2.Z);
+			v+=acc-(Current.Item1*friction);
+			x+=Current.Item1;
+			obj3D.Current=(v,x);
+		}
+		/// <summary>
+		/// Updates an object when acted upon with the given acceleration and friction
+		/// </summary>
+		/// <param name="Current">The (Vector3,Vector3) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="acc">The acceleration acting upon it</param>
+		/// <param name="friction">The friction on the object</param>
+		public static (Vector3,Vector3) Update(this (Vector3,Vector3)Current, Vector3 acc, float friction=0)
+		{
+			var v=new Vector3(Current.Item1.X, Current.Item1.Y, Current.Item1.Z);
+			var x=new Vector3(Current.Item2.X, Current.Item2.Y, Current.Item2.Z);
+			v+=acc-(Current.Item1*friction);
+			x+=Current.Item1;
+			return(v,x);
+		}
+		/// <summary>
+		/// Updates an object when no acceleration acts on it
+		/// </summary>
+		/// <param name="obj3D">The IPhyObj3D object</param>
+		/// <param name="friction">The friction on the body</param>
+		public static void Update(this IPhyObj3D obj3D, float friction=0)=>Update(obj3D,Vector3.Zero,friction);
+		/// <summary>
+		/// Updates an object when no acceleration acts on it
+		/// </summary>
+		/// <param name="Current">The (Vector3,Vector3) Tuple object with elements Velocity and Displacement respectivly </param>
+		/// <param name="friction">The friction on the body</param>
+		public static (Vector3,Vector3) Update(this (Vector3,Vector3) Current, float friction=0)=>Update(Current,Vector3.Zero,friction);
 	}
 }

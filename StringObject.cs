@@ -17,7 +17,25 @@ namespace Azuxiren.MG
 			text=txt;
 			font=fnt;
 			LayerDepth=0;
-			TextColor=default;
+			TextColor=Color.Black;
+			Pos=default;
+			Scale=default;
+			FitText();
+		}
+		/// <summary>
+		/// The Construtctor for Textbox
+		/// </summary>
+		/// <param name="bd">The rectangle where the text is displayed</param>
+		/// <param name="txt">The text to display</param>
+		/// <param name="fnt">The font used</param>
+		/// <param name="c">The color of the text</param>
+		public TextBox(Rectangle bd, string txt, SpriteFont fnt, Color c)
+		{
+			bounds=bd;
+			text=txt;
+			font=fnt;
+			LayerDepth=0;
+			TextColor=c;
 			Pos=default;
 			Scale=default;
 			FitText();

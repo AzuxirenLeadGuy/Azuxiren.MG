@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <PackageId>Azuxiren.MG</PackageId>
-    <Version>1.0.4</Version>
+    <Version>1.0.6</Version>
     <Authors>AzuxirenLeadGuy</Authors>
     <Company>Azuxiren</Company>
     <RepositoryUrl>https://github.com/AzuxirenLeadGuy/Azuxiren.MG</RepositoryUrl>

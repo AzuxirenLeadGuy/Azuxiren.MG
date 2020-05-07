@@ -12,7 +12,7 @@ namespace Azuxiren.MG
 		/// <param name="offset">The cleaerance(in px) between each rectangle</param>
 		/// <param name="Vertical">If true, the rectangles are fitted vertically. Otherwise they are fitted horizontally</param>
 		/// <returns></returns>
-		public static Rectangle[] FitRectangles(Rectangle LargeRectangle, byte ToFit, uint offset=0, bool Vertical=true)
+		public static Rectangle[] FitRectangles(this Rectangle LargeRectangle, byte ToFit, uint offset=0, bool Vertical=true)
 		{
 			if(ToFit==0)throw new ArgumentException("Invalid box count");
 			else if(ToFit==1)return new Rectangle[]{LargeRectangle};
@@ -47,7 +47,7 @@ namespace Azuxiren.MG
 		/// <param name="RectsInCollumn">The number of rectangles in a single collumn</param>
 		/// <param name="yOffset">THe offset distance between eacj rectangle in a single column</param>
 		/// <returns></returns>
-		public static Rectangle[,] FitRectangle(Rectangle LargeRectangle, byte RectsInRow, uint xOffset, byte RectsInCollumn, uint yOffset)
+		public static Rectangle[,] FitRectangle(this Rectangle LargeRectangle, byte RectsInRow, uint xOffset, byte RectsInCollumn, uint yOffset)
 		{
 			if(RectsInCollumn*RectsInRow==0)throw new ArgumentException("Invalid box count");
 			int width=(int)((LargeRectangle.Height-((RectsInRow-1)*xOffset))/(RectsInRow+1)),height=(int)((LargeRectangle.Width-((RectsInCollumn-1)*yOffset))/(RectsInCollumn+1));
@@ -64,6 +64,48 @@ namespace Azuxiren.MG
 				y+=height+(int)yOffset;
 			}
 			return Rects;
+		}
+		/// <summary>
+		/// Fits rectangles into a single Large rectangle according to given ratios and offset
+		/// </summary>
+		/// <param name="LargeRectangle">The large Rectangle to be divided</param>
+		/// <param name="Ratios">The ratio of width/height of each rectangle</param>
+		/// <param name="offset">The distance between each rectangle</param>
+		/// <param name="Vertical">If true, the large rectangle is divided vertically, otherwise horizontally</param>
+		/// <returns></returns>
+		public static Rectangle[] FitRectangle(this Rectangle LargeRectangle, byte[] Ratios, uint offset, bool Vertical=false)
+		{
+			var len=Ratios.Length;
+			if(len==0)throw new ArgumentException();
+			else if(len==1)return new Rectangle[]{LargeRectangle};
+			int sum=0,i,x=LargeRectangle.X,y=LargeRectangle.Y,width,height;
+			for(i=0;i<len;i++)sum+=Ratios[i];
+			if(Vertical)
+			{
+				width=LargeRectangle.Width;
+				height=(int)(LargeRectangle.Height-((len-1)*offset))/sum;
+			}
+			else
+			{
+				height=LargeRectangle.Height;
+				width=(int)(LargeRectangle.Width-((len-1)*offset))/sum;
+			}
+			if(width<=0||height<=0)throw new ArgumentException();
+			Rectangle[] rectangles=new Rectangle[len];
+			for(i=0;i<len;i++)
+			{
+				if(Vertical)
+				{
+					rectangles[i]=new Rectangle(x,y,width,height*Ratios[i]);
+					y+=(height*Ratios[i])+(int)offset;
+				}
+				else
+				{
+					rectangles[i]=new Rectangle(x,y,width*Ratios[i],height);
+					x+=(width*Ratios[i])+(int)offset;
+				}
+			}
+			return rectangles;
 		}
 	}
 }

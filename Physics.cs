@@ -6,34 +6,12 @@ namespace Azuxiren.MG
 	{
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
 		(Vector2,Vector2) Current{get;set;}
-		/// <summary>Updates the object for the given accerleration and friction</summary>
-		void Update(Vector2 acc, float friction=0)
-		{
-			var v=new Vector2(Current.Item1.X, Current.Item1.Y);
-			var x=new Vector2(Current.Item2.X, Current.Item2.Y);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
-			Current=(v,x);
-		}
-		/// <summary>Updates the freely moving object (at 0 accerleration) at the given friction</summary>
-		void Update(float friction=0)=>Update(Vector2.Zero,friction);
 	}
 	/// <summary>Interface for 3D Newtonian physics-based object</summary>
 	public interface IPhyObj3D
 	{
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
 		(Vector3,Vector3) Current{get;set;}
-		/// <summary>Updates the object for the given accerleration and friction</summary>
-		void Update(Vector3 acc, float friction=0)
-		{
-			var v=new Vector3(Current.Item1.X, Current.Item1.Y, Current.Item1.Z);
-			var x=new Vector3(Current.Item2.X, Current.Item2.Y, Current.Item2.Z);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
-			Current=(v,x);
-		}
-		/// <summary>Updates the freely moving object (at 0 accerleration) at the given friction</summary>
-		void Update(float friction=0)=>Update(Vector3.Zero,friction);
 	}
 	/// <summary>
 	/// Helper object defining a 2D physics object. Requires to input acceleration for every Update() called
