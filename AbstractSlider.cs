@@ -63,7 +63,11 @@ namespace Azuxiren.MG.Menu
 						break;
 					case ComponentState.Selected:
 						if (!Selected) state = ComponentState.UnSelected;
-						else if (InputIncrement || InputDecrement)state = ComponentState.Press;
+						else if (InputIncrement || InputDecrement)
+						{
+							state = ComponentState.Press;
+							goto case ComponentState.Press;
+						}
 						break;
 					case ComponentState.Press:
 						if(!Selected)state=ComponentState.UnSelected;

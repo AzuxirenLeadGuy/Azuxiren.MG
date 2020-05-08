@@ -12,7 +12,7 @@ namespace Azuxiren.MG
 		/// <param name="offset">The cleaerance(in px) between each rectangle</param>
 		/// <param name="Vertical">If true, the rectangles are fitted vertically. Otherwise they are fitted horizontally</param>
 		/// <returns></returns>
-		public static Rectangle[] FitRectangles(this Rectangle LargeRectangle, byte ToFit, uint offset=0, bool Vertical=true)
+		public static Rectangle[] FitRectangle(this Rectangle LargeRectangle, byte ToFit, uint offset=0, bool Vertical=false)
 		{
 			if(ToFit==0)throw new ArgumentException("Invalid box count");
 			else if(ToFit==1)return new Rectangle[]{LargeRectangle};

@@ -161,14 +161,6 @@ namespace Azuxiren.MG
 		/// <param name="den">Denominator of fraction</param>
 		public void SetSpeed(byte num,byte den)=>(Num,Den,Cur)=(num,den,0);
 		/// <summary>
-		///OBSOLETE: Works, but you are better off using the Draw() method (the one without arguments)
-	 	/// 	
-		/// Updates the sprite with gametime
-		/// </summary>
-		/// <param name="gt"></param>
-		[Obsolete]
-        public void Update(GameTime gt) => Update();
-		/// <summary>
 		/// Updates the frame for the sprite
 		/// </summary>
         public void Update()

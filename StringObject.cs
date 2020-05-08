@@ -2,6 +2,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
 {
+	/// <summary>The paramter for alignment of a text in a TextBox</summary>
+	public enum Alignment:byte
+	{
+		/// <summary>Aligns the text to the left of textbox</summary>
+		Left, 
+		/// <summary>Aligns the text to the center of TextBox</summary>
+		Centered, 
+		/// <summary>Aligns the text to the right of TextBox</summary>
+		Right
+	}
 	/// <summary>Maintains the drawing of text in the given Rectangle</summary>
 	public struct TextBox
 	{
@@ -20,6 +30,7 @@ namespace Azuxiren.MG
 			TextColor=Color.Black;
 			Pos=default;
 			Scale=default;
+			alignment=Alignment.Left;
 			FitText();
 		}
 		/// <summary>
@@ -29,7 +40,8 @@ namespace Azuxiren.MG
 		/// <param name="txt">The text to display</param>
 		/// <param name="fnt">The font used</param>
 		/// <param name="c">The color of the text</param>
-		public TextBox(Rectangle bd, string txt, SpriteFont fnt, Color c)
+		/// <param name="align">The alignment of the text</param>
+		public TextBox(Rectangle bd, string txt, SpriteFont fnt, Color c, Alignment align=Alignment.Left)
 		{
 			bounds=bd;
 			text=txt;
@@ -38,6 +50,7 @@ namespace Azuxiren.MG
 			TextColor=c;
 			Pos=default;
 			Scale=default;
+			alignment=align;
 			FitText();
 		}
 		/// <summary>
@@ -79,6 +92,19 @@ namespace Azuxiren.MG
 				FitText();
 			}
 		}
+		/// <summary>
+		/// The Alignment of the text within the box
+		/// </summary>
+		/// <value></value>
+		public Alignment Alignment
+		{
+			get=>alignment;
+			set
+			{
+				alignment=value;
+				FitText();
+			}
+		}
 		/// <summary>The LayerDepth of the text</summary>
 		public float LayerDepth;
 		/// <summary>The color of the text</summary>
@@ -88,9 +114,17 @@ namespace Azuxiren.MG
 		string text;
 		Vector2 Pos;
 		float Scale;
+		Alignment alignment;
 		internal void FitText()
 		{
 			bounds.FitText(font,text,out Scale,out Pos);
+			if(alignment!=Alignment.Left)
+			{
+				var len=(int)((font.MeasureString(text).X*Scale)+Pos.X);
+				var diff=bounds.Right-len;
+				if(alignment==Alignment.Right)Pos.X+=diff;
+				else Pos.X+=diff/2;
+			}
 		}
 		/// <summary>
 		/// Draws the string (Color of text is white, by default)

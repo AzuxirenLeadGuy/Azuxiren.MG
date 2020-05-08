@@ -16,7 +16,7 @@ namespace Azuxiren.MG
 	/// <summary>
 	/// Helper object defining a 2D physics object. Requires to input acceleration for every Update() called
 	/// </summary>
-	public abstract class PhyObj2D
+	public abstract class PhyObj2D:IPhyObj2D
 	{
 		/// <summary>These vectors are linked with the 2D motion</summary>
 		public Vector2 x,v,a;
@@ -28,6 +28,19 @@ namespace Azuxiren.MG
 		{
 			x=v=a=Vector2.Zero;
 			friction=fricval;
+		}
+		/// <summary>
+		/// Represents the current Touple of Velocity and Displacement
+		/// </summary>
+		/// <value></value>
+		public (Vector2, Vector2) Current 
+		{ 
+			get => (v,x); 
+			set
+			{
+				v=value.Item1;
+				x=value.Item2;
+			} 
 		}
 		/// <summary>
 		/// Draw the gameobject at bounds as destination
@@ -46,7 +59,7 @@ namespace Azuxiren.MG
 		}
 	}
 	/// <summary>Physics Object implementation in 3-Dimensions</summary>
-	public abstract class PhyObj3D
+	public abstract class PhyObj3D:IPhyObj3D
 	{
 		/// <summary>
 		/// The vectors x,v and a denote instantaneous values of position, velocity and acceleration respectivly
@@ -62,6 +75,19 @@ namespace Azuxiren.MG
 		{
 			x=v=a=Vector3.Zero;
 			friction=fricval;
+		}
+		/// <summary>
+		/// Represents the current Touple of Velocity and Displacement
+		/// </summary>
+		/// <value></value>
+		public (Vector3, Vector3) Current
+		{ 
+			get => (v,x); 
+			set
+			{
+				v=value.Item1;
+				x=value.Item2;
+			} 
 		}
 		/// <summary>
 		/// Draw the gameobject at bounds as destination
