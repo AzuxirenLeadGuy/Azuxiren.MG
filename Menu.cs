@@ -48,8 +48,8 @@ namespace Azuxiren.MG.Menu
 		/// <param name="cur">The value after change</param>
 		public SliderValueArgs(byte pre, byte cur)
 		{
-			Prev=pre;
-			Curr=cur;
+			Prev = pre;
+			Curr = cur;
 		}
 	}
 	/// <summary>
@@ -58,16 +58,16 @@ namespace Azuxiren.MG.Menu
 	public abstract class Menu
 	{
 		/// <summary>The collection of components</summary>
-		public abstract IEnumerable<AbstractComponent> Components{get;}
+		public abstract IEnumerable<AbstractComponent> Components { get; }
 		/// <summary>The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false</summary>
 		public virtual AbstractComponent CurrentlySelected
 		{
-			get=>currentlySelected;
+			get => currentlySelected;
 			set
 			{
-				currentlySelected.Selected=false;
-				currentlySelected=value;
-				currentlySelected.Selected=true;
+				currentlySelected.Selected = false;
+				currentlySelected = value;
+				currentlySelected.Selected = true;
 			}
 		}
 		/// <summary>The component that is currently selected in the menu</summary>
@@ -76,11 +76,11 @@ namespace Azuxiren.MG.Menu
 		/// Draws the menu
 		/// </summary>
 		/// <param name="gt">GameTime instance</param>
-		public virtual void Draw(GameTime gt){foreach(var comp in Components)comp.Draw(gt);}
+		public virtual void Draw(GameTime gt) { foreach (var comp in Components) comp.Draw(gt); }
 		/// <summary>
 		/// Updates the menu
 		/// </summary>
 		/// <param name="gt">GameTime instance</param>
-		public virtual void Update(GameTime gt){foreach(var comp in Components)comp.Update(gt);}
+		public virtual void Update(GameTime gt) { foreach (var comp in Components) comp.Update(gt); }
 	}
 }

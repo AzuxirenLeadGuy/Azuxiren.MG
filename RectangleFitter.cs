@@ -20,12 +20,12 @@ namespace Azuxiren.MG
 			if(Vertical)
 			{
 				width=LargeRectangle.Width;
-				height=(int)((LargeRectangle.Height-((ToFit-1)*offset))/(ToFit+1));
+				height=(int)((LargeRectangle.Height-((ToFit-1)*offset))/ToFit);
 			}
 			else
 			{
 				height=LargeRectangle.Height;
-				width=(int)((LargeRectangle.Width-((ToFit-1)*offset))/(ToFit+1));
+				width=(int)((LargeRectangle.Width-((ToFit-1)*offset))/ToFit);
 			}
 			if(height<=0||width<=0)throw new ArgumentException("Not possible to fit these many rectangles with the given LargeRectangle and offset");
 			Rectangle[] rectangles=new Rectangle[ToFit];
@@ -50,7 +50,7 @@ namespace Azuxiren.MG
 		public static Rectangle[,] FitRectangle(this Rectangle LargeRectangle, byte RectsInRow, uint xOffset, byte RectsInCollumn, uint yOffset)
 		{
 			if(RectsInCollumn*RectsInRow==0)throw new ArgumentException("Invalid box count");
-			int width=(int)((LargeRectangle.Height-((RectsInRow-1)*xOffset))/(RectsInRow+1)),height=(int)((LargeRectangle.Width-((RectsInCollumn-1)*yOffset))/(RectsInCollumn+1));
+			int width=(int)((LargeRectangle.Height-((RectsInRow-1)*xOffset))/RectsInRow),height=(int)((LargeRectangle.Width-((RectsInCollumn-1)*yOffset))/RectsInCollumn);
 			var Rects=new Rectangle[RectsInRow,RectsInCollumn];
 			int x,y=LargeRectangle.Y;
 			for(int i=0;i<RectsInRow;i++)

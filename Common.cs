@@ -252,11 +252,7 @@ namespace Azuxiren.MG
 			// Taking the smaller scaling value will result in the text always fitting in the boundaires.
 			scale = Math.Min(xScale, yScale);
 			// Figure out the location to absolutely-center it in the boundaries rectangle.
-			int strWidth = (int)Math.Round(size.X * scale);
-			int strHeight = (int)Math.Round(size.Y * scale);
-            Rectangle xx = new Rectangle(0, 0, strWidth, strHeight);
-            SetCenter(ref xx, Dest.Center);
-            position = xx.Location.ToVector2();
+            position = Dest.Location.ToVector2();
 		}
 		/// <summary>
 		/// Draws the StringObject Instance with the default settings
@@ -289,11 +285,11 @@ namespace Azuxiren.MG
 		/// <param name="friction">The friction on the body</param>
 		public static void Update(this IPhyObj2D obj2D, Vector2 acc, float friction=0)
 		{
-			var Current=obj2D.Current;
-			var v=new Vector2(Current.Item1.X, Current.Item1.Y);
-			var x=new Vector2(Current.Item2.X, Current.Item2.Y);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
+			var (V, X) = obj2D.Current;
+			var v=new Vector2(V.X, V.Y);
+			var x=new Vector2(X.X, X.Y);
+			v+=acc-(V*friction);
+			x+=V;
 			obj2D.Current=(v,x);
 		}
 		/// <summary>
@@ -304,10 +300,11 @@ namespace Azuxiren.MG
 		/// <param name="friction">The friction on the body</param>
 		public static (Vector2,Vector2) Update(this (Vector2,Vector2) Current, Vector2 acc, float friction=0)
 		{
-			var v=new Vector2(Current.Item1.X, Current.Item1.Y);
-			var x=new Vector2(Current.Item2.X, Current.Item2.Y);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
+			var (V,X) = Current;
+			var v=new Vector2(V.X, V.Y);
+			var x=new Vector2(X.X, X.Y);
+			v+=acc-(X*friction);
+			x+=X;
 			return (v,x);
 		}
 		/// <summary>
@@ -330,11 +327,11 @@ namespace Azuxiren.MG
 		/// <param name="friction">The friction on the object</param>
 		public static void Update(this IPhyObj3D obj3D, Vector3 acc, float friction=0)
 		{
-			var Current=obj3D.Current;
-			var v=new Vector3(Current.Item1.X, Current.Item1.Y, Current.Item1.Z);
-			var x=new Vector3(Current.Item2.X, Current.Item2.Y, Current.Item2.Z);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
+			var (V,X)=obj3D.Current;
+			var v=new Vector3(V.X, V.Y, V.Z);
+			var x=new Vector3(X.X, X.Y, X.Z);
+			v+=acc-(V*friction);
+			x+=V;
 			obj3D.Current=(v,x);
 		}
 		/// <summary>
@@ -343,12 +340,13 @@ namespace Azuxiren.MG
 		/// <param name="Current">The (Vector3,Vector3) Tuple object with elements Velocity and Displacement respectivly</param>
 		/// <param name="acc">The acceleration acting upon it</param>
 		/// <param name="friction">The friction on the object</param>
-		public static (Vector3,Vector3) Update(this (Vector3,Vector3)Current, Vector3 acc, float friction=0)
+		public static (Vector3,Vector3) Update(this (Vector3 V, Vector3 X)Current, Vector3 acc, float friction=0)
 		{
-			var v=new Vector3(Current.Item1.X, Current.Item1.Y, Current.Item1.Z);
-			var x=new Vector3(Current.Item2.X, Current.Item2.Y, Current.Item2.Z);
-			v+=acc-(Current.Item1*friction);
-			x+=Current.Item1;
+			var (V,X)= Current;
+			var v=new Vector3(V.X, V.Y, V.Z);
+			var x=new Vector3(X.X, X.Y, X.Z);
+			v+=acc-(V*friction);
+			x+=V;
 			return(v,x);
 		}
 		/// <summary>

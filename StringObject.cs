@@ -3,12 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
 {
 	/// <summary>The paramter for alignment of a text in a TextBox</summary>
-	public enum Alignment:byte
+	public enum Alignment : byte
 	{
 		/// <summary>Aligns the text to the left of textbox</summary>
-		Left, 
+		Left,
 		/// <summary>Aligns the text to the center of TextBox</summary>
-		Centered, 
+		Centered,
 		/// <summary>Aligns the text to the right of TextBox</summary>
 		Right
 	}
@@ -23,14 +23,14 @@ namespace Azuxiren.MG
 		/// <param name="fnt">The font used</param>
 		public TextBox(Rectangle bd, string txt, SpriteFont fnt)
 		{
-			bounds=bd;
-			text=txt;
-			font=fnt;
-			LayerDepth=0;
-			TextColor=Color.Black;
-			Pos=default;
-			Scale=default;
-			alignment=Alignment.Left;
+			bounds = bd;
+			text = txt;
+			font = fnt;
+			LayerDepth = 0;
+			TextColor = Color.Black;
+			Pos = default;
+			Scale = default;
+			alignment = Alignment.Left;
 			FitText();
 		}
 		/// <summary>
@@ -41,28 +41,28 @@ namespace Azuxiren.MG
 		/// <param name="fnt">The font used</param>
 		/// <param name="c">The color of the text</param>
 		/// <param name="align">The alignment of the text</param>
-		public TextBox(Rectangle bd, string txt, SpriteFont fnt, Color c, Alignment align=Alignment.Left)
+		public TextBox(Rectangle bd, string txt, SpriteFont fnt, Color c, Alignment align = Alignment.Centered)
 		{
-			bounds=bd;
-			text=txt;
-			font=fnt;
-			LayerDepth=0;
-			TextColor=c;
-			Pos=default;
-			Scale=default;
-			alignment=align;
+			bounds = bd;
+			text = txt;
+			font = fnt;
+			LayerDepth = 0;
+			TextColor = c;
+			Pos = default;
+			Scale = default;
+			alignment = align;
 			FitText();
 		}
 		/// <summary>
 		/// This is the Destination rectangle where the text is to be drawn 
 		/// </summary>
 		/// <value></value>
-		public Rectangle Bounds 
+		public Rectangle Bounds
 		{
-			get=>bounds;
+			get => bounds;
 			set
 			{
-				bounds=value;
+				bounds = value;
 				FitText();
 			}
 		}
@@ -72,10 +72,10 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public string Text
 		{
-			get=>text;
+			get => text;
 			set
 			{
-				text=value;
+				text = value;
 				FitText();
 			}
 		}
@@ -85,10 +85,10 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public SpriteFont Font
 		{
-			get=>font;
+			get => font;
 			set
 			{
-				font=value;
+				font = value;
 				FitText();
 			}
 		}
@@ -98,10 +98,10 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public Alignment Alignment
 		{
-			get=>alignment;
+			get => alignment;
 			set
 			{
-				alignment=value;
+				alignment = value;
 				FitText();
 			}
 		}
@@ -117,13 +117,14 @@ namespace Azuxiren.MG
 		Alignment alignment;
 		internal void FitText()
 		{
-			bounds.FitText(font,text,out Scale,out Pos);
-			if(alignment!=Alignment.Left)
+			bounds.FitText(font, text, out Scale, out Pos);
+			var fontlength = font.MeasureString(text) * Scale;
+			Pos.Y += (bounds.Height - fontlength.Y) / 2;
+			if (alignment != Alignment.Left)
 			{
-				var len=(int)((font.MeasureString(text).X*Scale)+Pos.X);
-				var diff=bounds.Right-len;
-				if(alignment==Alignment.Right)Pos.X+=diff;
-				else Pos.X+=diff/2;
+				var diff = bounds.Width - fontlength.X;
+				if (alignment == Alignment.Right) Pos.X += diff;
+				else Pos.X += diff / 2;
 			}
 		}
 		/// <summary>
@@ -132,7 +133,7 @@ namespace Azuxiren.MG
 		/// <param name="batch">The spritebatch for the game</param>
 		public void Draw(SpriteBatch batch)
 		{
-			batch.DrawString(font,text,Pos,TextColor,0,Vector2.Zero,Scale,SpriteEffects.None,LayerDepth);
+			batch.DrawString(font, text, Pos, TextColor, 0, Vector2.Zero, Scale, SpriteEffects.None, LayerDepth);
 		}
 		/// <summary>
 		/// Draws the string
@@ -142,7 +143,7 @@ namespace Azuxiren.MG
 		/// <param name="origin">The point to rotate the text about</param>
 		public void Draw(SpriteBatch batch, float Rotation, Vector2 origin)
 		{
-			batch.DrawString(font,text,Pos,TextColor,Rotation,origin,Scale,SpriteEffects.None,LayerDepth);
+			batch.DrawString(font, text, Pos, TextColor, Rotation, origin, Scale, SpriteEffects.None, LayerDepth);
 		}
 		/// <summary>
 		/// Draws the string
@@ -151,9 +152,9 @@ namespace Azuxiren.MG
 		/// <param name="Rotation">The value of rotation</param>
 		/// <param name="origin">The point to rotate the text about</param>
 		/// <param name="effects">The SpriteEffects to use</param>
-		public void Draw(SpriteBatch batch,float Rotation, Vector2 origin, SpriteEffects effects)
+		public void Draw(SpriteBatch batch, float Rotation, Vector2 origin, SpriteEffects effects)
 		{
-			batch.DrawString(font,text,Pos,TextColor,Rotation,origin,Scale,effects,LayerDepth);
+			batch.DrawString(font, text, Pos, TextColor, Rotation, origin, Scale, effects, LayerDepth);
 		}
 	}
 }

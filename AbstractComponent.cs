@@ -30,9 +30,11 @@ namespace Azuxiren.MG.Menu
 		}
 		/// <summary>Returns true if the button is Selected by the user</summary>
 		public abstract bool Selected { get; set; }
-		/// <summary>Add implementation of Button Action here</summary>
+		/// <summary>Recommended to add Button on button press here</summary>
+		public event EventHandler<ComponentArgs> OnRelease;
+		/// <summary>Add generic action on Button states here</summary>
 		public event EventHandler<ComponentArgs> StateChanged;
-		/// <summary>The method to call in the derived class for actionOnSelect Invokation</summary>
+		/// <summary>The method to call in the derived class for any action on change of state</summary>
 		/// <param name="gt">The instant in time</param>
 		/// <param name="ps">Keeps track of State of component</param>
 		protected void OnStateChanged(GameTime gt, ComponentState ps)
@@ -40,7 +42,12 @@ namespace Azuxiren.MG.Menu
 			//Make a temporary copy to avoid race condition :
 			//The subsciber just unsubscribes after invokation and before checking of null
 			EventHandler<ComponentArgs> x = StateChanged;
-			if (x != null) x.Invoke(this, new ComponentArgs(gt, ps, state));
+			if (x != null)
+			{ 
+				x.Invoke(this, new ComponentArgs(gt, ps, state));
+				var y=OnRelease;
+				if(ps==ComponentState.Release && y!=null)y.Invoke(this,new ComponentArgs(gt, ps, state));
+			}
 		}
 		/// <summary>The Draw function of this Component.</summary>
 		/// <param name="gt">The GameTime variable</param>

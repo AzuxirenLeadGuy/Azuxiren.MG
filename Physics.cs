@@ -5,13 +5,13 @@ namespace Azuxiren.MG
 	public interface IPhyObj2D
 	{
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
-		(Vector2,Vector2) Current{get;set;}
+		(Vector2 V,Vector2 X) Current{get;set;}
 	}
 	/// <summary>Interface for 3D Newtonian physics-based object</summary>
 	public interface IPhyObj3D
 	{
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
-		(Vector3,Vector3) Current{get;set;}
+		(Vector3 V,Vector3 X) Current{get;set;}
 	}
 	/// <summary>
 	/// Helper object defining a 2D physics object. Requires to input acceleration for every Update() called
@@ -33,13 +33,13 @@ namespace Azuxiren.MG
 		/// Represents the current Touple of Velocity and Displacement
 		/// </summary>
 		/// <value></value>
-		public (Vector2, Vector2) Current 
+		public (Vector2 V, Vector2 X) Current 
 		{ 
-			get => (v,x); 
+			get=>(v,x);
 			set
 			{
-				v=value.Item1;
-				x=value.Item2;
+				v=value.V;
+				x=value.X;
 			} 
 		}
 		/// <summary>
@@ -80,13 +80,13 @@ namespace Azuxiren.MG
 		/// Represents the current Touple of Velocity and Displacement
 		/// </summary>
 		/// <value></value>
-		public (Vector3, Vector3) Current
+		public (Vector3 V, Vector3 X) Current
 		{ 
 			get => (v,x); 
 			set
 			{
-				v=value.Item1;
-				x=value.Item2;
+				v=value.V;
+				x=value.X;
 			} 
 		}
 		/// <summary>
