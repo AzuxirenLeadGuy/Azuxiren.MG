@@ -26,7 +26,8 @@ namespace Azuxiren.MG.Menu
 				switch (state)
 				{
 					case ComponentState.UnSelected:
-						if (Selected) state = ComponentState.Selected;
+						if (Selected) 
+						state = ComponentState.Selected;
 						break;
 					case ComponentState.Selected:
 						if (!Selected) state = ComponentState.UnSelected;

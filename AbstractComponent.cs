@@ -43,11 +43,10 @@ namespace Azuxiren.MG.Menu
 			//The subsciber just unsubscribes after invokation and before checking of null
 			EventHandler<ComponentArgs> x = StateChanged;
 			if (x != null)
-			{ 
 				x.Invoke(this, new ComponentArgs(gt, ps, state));
-				var y=OnRelease;
-				if(ps==ComponentState.Release && y!=null)y.Invoke(this,new ComponentArgs(gt, ps, state));
-			}
+			EventHandler<ComponentArgs> y = OnRelease;
+			if (y != null && state == ComponentState.Release) 
+				y.Invoke(this, new ComponentArgs(gt, ps, state));
 		}
 		/// <summary>The Draw function of this Component.</summary>
 		/// <param name="gt">The GameTime variable</param>

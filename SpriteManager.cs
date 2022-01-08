@@ -202,8 +202,4 @@ namespace Azuxiren.MG
 		/// <param name="depth">The depth in the layer for this sprite</param>
 		public void Draw(SpriteBatch spriteBatch, Color Tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], Dest, null, Tint, angle, origin, effects, depth);
 	}
-	public struct MultiComponentSprite
-	{
-
-	}
 }
