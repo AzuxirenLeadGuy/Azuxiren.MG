@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
@@ -19,9 +20,9 @@ namespace Azuxiren.MG
 		///<summary>Keeps track of Frames on the SpriteSheet</summary>
 		internal int[] FrameX, FrameY, Next;
 		///<summary>The Count of Frames</summary>
-		int Frames;
+		public readonly int Frames;
 		///<summary>The Current Frame</summary>
-		int CurrentFrame;
+		private int _currentFrame;
 		///<summary>The Constructor that *MUST* be used</summary>
 		///<param name="sh">Sheet Image Texture</param>
 		///<param name="fw">Frame-width</param>
@@ -31,38 +32,53 @@ namespace Azuxiren.MG
 		public SpriteSheet(Texture2D sh, int fw, int fh, int lx, int ly)
 		{
 			Sheet = sh;
-			int FramesPerLine = sh.Width / fw;
+			int framesPerLine = sh.Width / fw;
 			Source = new Rectangle(0, 0, fw, fh);
 			Dest = new Rectangle(0, 0, fw, fh);
-			Frames = (FramesPerLine * ly) + lx + 1;
+			Frames = (framesPerLine * ly) + lx + 1;
 			FrameX = new int[Frames];
 			FrameY = new int[Frames];
 			Next = new int[Frames];
-			CurrentFrame = 0;
+			_currentFrame = 0;
 			int i, j;
 			for (i = 0; i < ly; i++)
 			{
-				for (j = 0; j < FramesPerLine; j++)
+				for (j = 0; j < framesPerLine; j++)
 				{
-					FrameX[CurrentFrame] = j * fw;
-					FrameY[CurrentFrame] = i * fh;
-					Next[CurrentFrame] = CurrentFrame + 1;
-					CurrentFrame++;
+					FrameX[_currentFrame] = j * fw;
+					FrameY[_currentFrame] = i * fh;
+					Next[_currentFrame] = _currentFrame + 1;
+					_currentFrame++;
 				}
 			}
 			for (j = 0; j <= lx; j++)
 			{
-				FrameX[CurrentFrame] = j * fw;
-				FrameY[CurrentFrame] = ly * fh;
-				Next[CurrentFrame] = CurrentFrame + 1;
-				CurrentFrame++;
+				FrameX[_currentFrame] = j * fw;
+				FrameY[_currentFrame] = ly * fh;
+				Next[_currentFrame] = _currentFrame + 1;
+				_currentFrame++;
 			}
 			Next[Frames - 1] = 0;
-			CurrentFrame = 0;
+			_currentFrame = 0;
+		}
+		/// <summary>
+		/// Copy the properties of another spritesheet, sharing the same reference of Texture2D Spritesheet image
+		/// </summary>
+		/// <param name="source"></param>
+		public SpriteSheet(SpriteSheet source)
+		{
+			Sheet = source.Sheet;
+			Next = source.Next;
+			FrameX = source.FrameX;
+			FrameY = source.FrameY;
+			Frames = source.Frames;
+			Source = source.Source;
+			Dest = source.Dest;
+			_currentFrame = 0;
 		}
 		///<summary>Sets the Current Animation frame at f</summary>
 		/// <param name="f">The frame value to set</param>
-		public void SetFrame(int f) => CurrentFrame = f;
+		public void SetFrame(int f) => _currentFrame = f;
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
@@ -79,36 +95,22 @@ namespace Azuxiren.MG
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="dest">The Rectangle to draw the sheet frame at. (You are better off using the Dest variable instide the Spritesheet class</param>
-		/// <param name="Tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Rectangle dest, Color Tint) { sb.Draw(Sheet, dest, Source, Tint); }
+		/// <param name="tint">The Color to tint the drawing with</param>
+		public void Draw(SpriteBatch sb, Rectangle dest, Color tint) => sb.Draw(Sheet, dest, Source, tint); 
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
-		/// <param name="Tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Color Tint) { sb.Draw(Sheet, Dest, Source, Tint); }
+		/// <param name="tint">The Color to tint the drawing with</param>
+		public void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint); 
 		///<summary>The Update Function of SpriteSheet
 		///
 		///Not Calling Update "Pauses" the Animation.</summary>
 		public void Update()
 		{
-			Source.X = FrameX[CurrentFrame];
-			Source.Y = FrameY[CurrentFrame];
-			CurrentFrame = Next[CurrentFrame];
-		}
-		/// <summary>
-		/// Copy the properties of another spritesheet, sharing the same reference of Texture2D Spritesheet image
-		/// </summary>
-		/// <param name="source"></param>
-		public void Copy(SpriteSheet source)
-		{
-			Sheet = source.Sheet;
-			Next = source.Next;
-			FrameX = source.FrameX;
-			FrameY = source.FrameY;
-			Frames = source.Frames;
-			Source = source.Source;
-			Dest = source.Dest;
+			Source.X = FrameX[_currentFrame];
+			Source.Y = FrameY[_currentFrame];
+			_currentFrame = Next[_currentFrame];
 		}
 	}
 	/// <summary>
@@ -122,13 +124,13 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// The constructor for LargeSprite
 		/// </summary>
-		/// <param name="Frames">The frames in this Sprite</param>
+		/// <param name="frames">The frames in this Sprite</param>
 		/// <param name="dest">The Rectangle where all the spirtes are being displayed</param>
 		/// <param name="speednum">The numenator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
 		/// <param name="speedden">The denominator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
-		public LargeSprite(IEnumerable<Texture2D> Frames, Rectangle dest, byte speednum = 1, byte speedden = 1)
+		public LargeSprite(IEnumerable<Texture2D> frames, Rectangle dest, byte speednum = 1, byte speedden = 1)
 		{
-			FrameImages = Enumerable.ToArray(Frames);
+			FrameImages = Enumerable.ToArray(frames);
 			Dest = dest;
 			Num = speednum;
 			Den = speedden;
@@ -182,24 +184,24 @@ namespace Azuxiren.MG
 		/// Draws the spirte using the given spritebatch
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
-		/// <param name="Tint">The tint color to add</param>
-		public void Draw(SpriteBatch sb, Color Tint) => Draw(sb, Tint, 0, Vector2.Zero);
+		/// <param name="tint">The tint color to add</param>
+		public void Draw(SpriteBatch sb, Color tint) => Draw(sb, tint, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the sprite using the given spritebatcj
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
-		/// <param name="Tint">The tint color to add</param>
+		/// <param name="tint">The tint color to add</param>
 		/// <param name="angle">The angle to rotate</param>
-		public void Draw(SpriteBatch spriteBatch, Color Tint, float angle) => Draw(spriteBatch, Tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
+		public void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
 		/// <summary>
 		/// Draws the sprite using the given spritebatcj
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
-		/// <param name="Tint">The tint color to add</param>
+		/// <param name="tint">The tint color to add</param>
 		/// <param name="angle">The angle to rotate</param>
 		/// <param name="origin">The origin of rotation</param>
 		/// <param name="effects">Added effects</param>
 		/// <param name="depth">The depth in the layer for this sprite</param>
-		public void Draw(SpriteBatch spriteBatch, Color Tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], Dest, null, Tint, angle, origin, effects, depth);
+		public void Draw(SpriteBatch spriteBatch, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], Dest, null, tint, angle, origin, effects, depth);
 	}
 }

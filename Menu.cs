@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Menu
 {
@@ -21,7 +22,7 @@ namespace Azuxiren.MG.Menu
 	public class ComponentArgs : EventArgs
 	{
 		/// <summary>The states invloved in transition of Button</summary>
-		public GameTime gt;
+		public GameTime Gametime;
 		/// <summary>The state of Component before Invokation</summary>
 		public ComponentState Previous;
 		/// <summary>The state of Component during Invokation</summary>
@@ -32,7 +33,7 @@ namespace Azuxiren.MG.Menu
 		/// <param name="g">GameTime object</param>
 		/// <param name="ps">Previous State</param>
 		/// <param name="cs">Current State</param>
-		public ComponentArgs(GameTime g, ComponentState ps, ComponentState cs) { gt = g; Previous = ps; Current = cs; }
+		public ComponentArgs(GameTime g, ComponentState ps, ComponentState cs) { Gametime = g; Previous = ps; Current = cs; }
 	}
 	/// <summary>Represents the changed value in an AbstractSlider</summary>
 	public class SliderValueArgs : EventArgs
@@ -62,16 +63,16 @@ namespace Azuxiren.MG.Menu
 		/// <summary>The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false</summary>
 		public virtual AbstractComponent CurrentlySelected
 		{
-			get => currentlySelected;
+			get => _currentlySelected;
 			set
 			{
-				currentlySelected.Selected = false;
-				currentlySelected = value;
-				currentlySelected.Selected = true;
+				_currentlySelected.Selected = false;
+				_currentlySelected = value;
+				_currentlySelected.Selected = true;
 			}
 		}
 		/// <summary>The component that is currently selected in the menu</summary>
-		protected AbstractComponent currentlySelected;
+		protected AbstractComponent _currentlySelected;
 		/// <summary>
 		/// Draws the menu
 		/// </summary>

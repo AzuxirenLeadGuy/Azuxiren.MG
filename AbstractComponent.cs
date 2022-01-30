@@ -1,4 +1,5 @@
 using System;
+
 using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Menu
 {
@@ -7,26 +8,26 @@ namespace Azuxiren.MG.Menu
 	public abstract class AbstractComponent : IScreen
 	{
 		/// <summary>Points to the menu this component belongs to</summary>
-		protected Menu RootMenu;
+		protected Menu _rootMenu;
 		/// <summary>Defines the boundaries of the button</summary>
-		public Rectangle bounds;
+		public Rectangle Bounds;
 		/// <summary>
 		/// The state of this component.
 		/// 
 		/// A button can be in state of Disabled,UnSelected,Selected,Press and Release.
 		/// </summary>
-		protected ComponentState state;
+		protected ComponentState _state;
 		/// <summary>
 		/// The state of this component.
 		/// 
 		/// A button can be in state of Disabled,UnSelected,Selected,Press and Release.
 		/// </summary>
-		public ComponentState State => state;
+		public ComponentState State => _state;
 		/// <summary>Returns true if the button is enabled</summary>
 		public virtual bool Enabled
 		{
-			get => state != ComponentState.Disabled;
-			set => state = value ? ComponentState.UnSelected : ComponentState.Disabled;
+			get => _state != ComponentState.Disabled;
+			set => _state = value ? ComponentState.UnSelected : ComponentState.Disabled;
 		}
 		/// <summary>Returns true if the button is Selected by the user</summary>
 		public abstract bool Selected { get; set; }
@@ -43,10 +44,10 @@ namespace Azuxiren.MG.Menu
 			//The subsciber just unsubscribes after invokation and before checking of null
 			EventHandler<ComponentArgs> x = StateChanged;
 			if (x != null)
-				x.Invoke(this, new ComponentArgs(gt, ps, state));
+				x.Invoke(this, new ComponentArgs(gt, ps, _state));
 			EventHandler<ComponentArgs> y = OnRelease;
-			if (y != null && state == ComponentState.Release) 
-				y.Invoke(this, new ComponentArgs(gt, ps, state));
+			if (y != null && _state == ComponentState.Release)
+				y.Invoke(this, new ComponentArgs(gt, ps, _state));
 		}
 		/// <summary>The Draw function of this Component.</summary>
 		/// <param name="gt">The GameTime variable</param>
@@ -60,11 +61,11 @@ namespace Azuxiren.MG.Menu
 		/// The constructor for an AbstractComponent
 		/// </summary>
 		/// <param name="bds">The bounds of the component</param>
-		/// <param name="EnableAtStart">If this is set to true, component will be enabled at start</param>
-		public AbstractComponent(Rectangle bds, bool EnableAtStart = true)
+		/// <param name="enableAtStart">If this is set to true, component will be enabled at start</param>
+		public AbstractComponent(Rectangle bds, bool enableAtStart = true)
 		{
-			bounds = bds;
-			Enabled = EnableAtStart;
+			Bounds = bds;
+			Enabled = enableAtStart;
 		}
 	}
 }

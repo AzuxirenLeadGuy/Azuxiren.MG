@@ -10,39 +10,39 @@ namespace Azuxiren.MG.Menu
 		/// The constructor for an AbstractButton object
 		/// </summary>
 		/// <param name="bounds">The rectangle region it is bounded at</param>
-		/// <param name="Message">The text to show</param>
-		/// <param name="EnableAtStart">If this is true, state of component will be Enabled at start</param>
+		/// <param name="message">The text to show</param>
+		/// <param name="enableAtStart">If this is true, state of component will be Enabled at start</param>
 		/// <returns></returns>
-		public AbstractButton(Rectangle bounds, string Message = "", bool EnableAtStart = true) : base(bounds, EnableAtStart) { Title = Message; }
+		public AbstractButton(Rectangle bounds, string message = "", bool enableAtStart = true) : base(bounds, enableAtStart) { Title = message; }
 		/// <summary>Returns true if the button is inputted for pressing</summary>
 		public abstract bool InputPressed { get; set; }
 		/// <summary>The update mechanism for button. Not calling this will "freeze" the button</summary>
 		/// <param name="gt"></param>
 		public override void Update(GameTime gt)
 		{
-			var ps = state;
+			var ps = _state;
 			if (Enabled)
 			{
-				switch (state)
+				switch (_state)
 				{
 					case ComponentState.UnSelected:
-						if (Selected) 
-						state = ComponentState.Selected;
+						if (Selected)
+							_state = ComponentState.Selected;
 						break;
 					case ComponentState.Selected:
-						if (!Selected) state = ComponentState.UnSelected;
-						else if (InputPressed) state = ComponentState.Press;
+						if (!Selected) _state = ComponentState.UnSelected;
+						else if (InputPressed) _state = ComponentState.Press;
 						break;
 					case ComponentState.Press:
-						if (!Selected) state = ComponentState.UnSelected;
-						else if (!InputPressed) state = ComponentState.Release;
+						if (!Selected) _state = ComponentState.UnSelected;
+						else if (!InputPressed) _state = ComponentState.Release;
 						break;
 					case ComponentState.Release:
-						state = ComponentState.UnSelected;
+						_state = ComponentState.UnSelected;
 						break;
 				}
 			}
-			if (state != ps) OnStateChanged(gt, ps);
+			if (_state != ps) OnStateChanged(gt, ps);
 		}
 	}
 }
