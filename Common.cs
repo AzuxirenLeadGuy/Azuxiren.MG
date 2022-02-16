@@ -224,6 +224,17 @@ namespace Azuxiren.MG
 			return a.Location;
 		}
 		/// <summary>
+		/// Creates a rectangle of a given size placed such that its center lies at the given point
+		/// </summary>
+		/// <param name="center">Where the center of the rectangle should lie</param>
+		/// <param name="size">The dimensions of the rectangle</param>
+		public static Rectangle SetCenter(Point center, Point size)
+		{
+			Rectangle x = new Rectangle(Point.Zero, size);
+			SetCenter(ref x, center);
+			return x;
+		}
+		/// <summary>
 		/// Sets rectangle a such that a is fitted inside b and both same the same center
 		/// </summary>
 		/// <param name="a">Rectangle to scale and shift</param>
