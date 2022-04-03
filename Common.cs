@@ -63,8 +63,6 @@ namespace Azuxiren.MG
 		/// </summary>
 		protected override void Initialize()
 		{
-			CurrentScreen = new StartScreen();
-			LoadingScreen = new LoadScreen();
 			base.Initialize();
 		}
 		/// <summary>
@@ -72,6 +70,8 @@ namespace Azuxiren.MG
 		/// </summary>
 		protected override void LoadContent()
 		{
+			CurrentScreen = new StartScreen();
+			LoadingScreen = new LoadScreen();
 			CurrentScreen.LoadContent();
 			LoadingScreen.LoadContent();
 			base.LoadContent();
