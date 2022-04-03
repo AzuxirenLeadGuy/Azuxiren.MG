@@ -5,7 +5,7 @@ namespace Azuxiren.MG.Menu
 {
 	/// <summary>A WPF-styled implementaion of a Component.It is advisable
 	/// for Action to be defined on Release State of Component</summary>
-	public abstract class AbstractComponent : IScreen
+	public abstract class AbstractComponent
 	{
 		/// <summary>Points to the menu this component belongs to</summary>
 		protected Menu _rootMenu;
@@ -52,8 +52,6 @@ namespace Azuxiren.MG.Menu
 		/// <summary>The Draw function of this Component.</summary>
 		/// <param name="gt">The GameTime variable</param>
 		public abstract void Draw(GameTime gt);
-		/// <summary>Load contents for the Component(If required)</summary>
-		public abstract void LoadContent();
 		/// <summary>The update mechanism for button. Not calling this will "freeze" the Component</summary>
 		/// <param name="gt"></param>
 		public abstract void Update(GameTime gt);
