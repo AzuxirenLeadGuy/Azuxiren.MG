@@ -122,23 +122,6 @@ namespace Azuxiren.MG
 			else CurrentScreen.Update(gameTime);
 			base.Update(gameTime);
 		}
-		///<summary>
-		/// 	THIS METHOD IS NOW OBSOLETE!
-		///
-		///   	the LoadingScreen is now drawn/updated while the parameter IScreen object is first Loaded (LoadContent() is done) and then replaces the earlier CurrentScreen</summary>
-		/// <param name="screen">The IScreen object to replace the CurrentScreen</param>
-		[Obsolete("This methods is now obsolete. Please use ScreenLoad<IScreen>() method for better performance")]
-		public void ScreenLoad(IScreen screen)
-		{
-			IsLoading = true;
-			Task.Run(() => TaskPerform());
-			void TaskPerform()
-			{
-				screen.LoadContent();
-				CurrentScreen = screen;
-				IsLoading = false;
-			}
-		}
 		/// <summary>
 		/// the LoadingScreen is now drawn/updated while the parameter IScreen object is first Loaded (LoadContent() is done) and then replaces the earlier CurrentScreen
 		/// </summary>
