@@ -123,7 +123,7 @@ namespace Azuxiren.MG
 			base.Update(gameTime);
 		}
 		/// <summary>
-		/// the LoadingScreen is now drawn/updated while the parameter IScreen object is first Loaded (LoadContent() is done) and then replaces the earlier CurrentScreen
+		/// The LoadingScreen is drawn/updated while the parameter IScreen object is first Loaded (LoadContent() is called) and then replaces the earlier CurrentScreen
 		/// </summary>
 		/// <typeparam name="T">The Screen to load</typeparam>
 		public void ScreenLoad<T>() where T : IScreen, new()
@@ -134,6 +134,22 @@ namespace Azuxiren.MG
 					var screen = new T();
 					screen.LoadContent();
 					CurrentScreen = screen;
+					IsLoading = false;
+				}
+			);
+		}
+		/// <summary>
+		/// 
+		/// The LoadingScreen is drawn/updated while the parameter IScreen object is first generated from the delegate, then loaded, (LoadContent() is called) and then replaces the earlier CurrentScreen
+		/// </summary>
+		/// <param name="generator">A delegate to generate the IScreen instance</param>
+		public void ScreenLoad(Func<IScreen> generator)
+		{
+			IsLoading = true;
+			Task.Run(() =>
+				{
+					CurrentScreen = generator.Invoke();
+					CurrentScreen.LoadContent();
 					IsLoading = false;
 				}
 			);
