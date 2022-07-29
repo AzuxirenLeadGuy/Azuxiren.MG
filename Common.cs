@@ -1,163 +1,25 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
 {
-	/// <summary>
-	/// The Common Interface to use for all Screens
-	/// </summary>
-	public interface IScreen
+	/// <summary> Represents a side of a Rectangle</summary>
+	[Flags]
+	public enum RectangleSide : byte
 	{
-		/// <summary>
-		/// Loads all the components of the screen
-		/// </summary>
-		void LoadContent();
-		/// <summary>
-		/// Updates a frame of the screen
-		/// </summary>
-		/// <param name="gt">Denotes an instant of time in Monogame</param>
-		void Update(GameTime gt);
-		/// <summary>
-		/// Draws a frame of a game
-		/// </summary>
-		/// <param name="gt">Denotes an instant of time in Monogame</param>
-		void Draw(GameTime gt);
+		/// <summary> No side of a Rectangle</summary>
+		None = 0,
+		/// <summary> Left side of a Rectangle</summary>
+		Left = 1,
+		/// <summary> Right side of a Rectangle</summary>
+		Right = 2,
+		/// <summary> Top of a Rectangle</summary>
+		Top = 4,
+		/// <summary> Bottom side of a Rectangle</summary>
+		Bottom = 8
 	}
-	/// <summary>
-	/// Azuxiren Monogame Game Class: Standard Template for Monogame Game Class.
-	/// 
-	/// Consists of two IScreen objects : CurrentScreen and LoadingScreen.
-	/// 
-	/// CurrentScreen is the screen that is alwaus being updated and drawn except when loading a new screen
-	/// 
-	/// At that time, a new IScreen object is instaniated and called  LoadContent() as a parallel task. 
-	/// 
-	/// Needless to say, this is when the LoadingScreen object is updated and drawn
-	/// 
-	/// ----------
-	/// 
-	/// Please use base.LoadContent() methods on overriding of LoadContent() method
-	/// 
-	/// Use the base Constructor and initalize the CurrentScreen and LoadingScreen objects
-	/// </summary>
-	public abstract class AMGC<StartScreen, LoadScreen> : Game
-		where StartScreen : IScreen, new()
-		where LoadScreen : IScreen, new()
-	{
-		/// <summary>Manages the graphic setting fot the game</summary>
-		public GraphicsDeviceManager GraphicsDM;
-		internal bool IsLoading;
-		internal IScreen CurrentScreen, LoadingScreen;
-		/// <summary>
-		/// The Default Constructor
-		/// </summary>
-		public AMGC()
-		{
-			GraphicsDM = new GraphicsDeviceManager(this);
-			IsLoading = false;
-		}
-		/// <summary>
-		/// The Provided Initializer for Monogame. This is where the LoadContent method of each IScreen types are done.
-		/// </summary>
-		protected override void Initialize()
-		{
-			base.Initialize();
-		}
-		/// <summary>
-		/// Loads the CurrentScreen and LoadingScreen
-		/// </summary>
-		protected override void LoadContent()
-		{
-			CurrentScreen = new StartScreen();
-			LoadingScreen = new LoadScreen();
-			CurrentScreen.LoadContent();
-			LoadingScreen.LoadContent();
-			base.LoadContent();
-		}
-		/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
-		public virtual void SetFullScreen() => SetFullScreen(GraphicsDevice.DisplayMode.Width, GraphicsDevice.DisplayMode.Height);
-		/// <summary>
-		/// This will Set the Screen as FullScreen with the given Width/Height
-		/// </summary>
-		/// <param name="w">The Width to occupy</param>
-		/// <param name="h">The Height to cover</param>
-		public virtual void SetFullScreen(int w, int h)
-		{
-			GraphicsDM.PreferredBackBufferWidth = w;
-			GraphicsDM.PreferredBackBufferHeight = h;
-			GraphicsDM.IsFullScreen = true;
-			GraphicsDM.ApplyChanges();
-		}
-		/// <summary>
-		/// This will set The Screen as windowed with the given width/height
-		/// </summary>
-		/// <param name="w">The width of window</param>
-		/// <param name="h">The height of window</param>
-		public virtual void RevertFullScreen(int w, int h)
-		{
-			GraphicsDM.PreferredBackBufferWidth = w;
-			GraphicsDM.PreferredBackBufferHeight = h;
-			GraphicsDM.IsFullScreen = false;
-			GraphicsDM.ApplyChanges();
-		}
-		/// <summary>
-		/// The Draw method implementation for CFMG
-		/// </summary>
-		/// <param name="gt">Denotes an instant in time</param>
-		protected override void Draw(GameTime gt)
-		{
-			if (IsLoading) LoadingScreen.Draw(gt);
-			else CurrentScreen.Draw(gt);
-			base.Draw(gt);
-		}
-		/// <summary>
-		/// The Update method implementation for CFMG
-		/// </summary>
-		/// <param name="gameTime">Denotes an instant in time</param>
-		protected override void Update(GameTime gameTime)
-		{
-			if (IsLoading) LoadingScreen.Update(gameTime);
-			else CurrentScreen.Update(gameTime);
-			base.Update(gameTime);
-		}
-		/// <summary>
-		/// The LoadingScreen is drawn/updated while the parameter IScreen object is first Loaded (LoadContent() is called) and then replaces the earlier CurrentScreen
-		/// </summary>
-		/// <typeparam name="T">The Screen to load</typeparam>
-		public void ScreenLoad<T>() where T : IScreen, new()
-		{
-			IsLoading = true;
-			Task.Run(() =>
-				{
-					var screen = new T();
-					screen.LoadContent();
-					CurrentScreen = screen;
-					IsLoading = false;
-				}
-			);
-		}
-		/// <summary>
-		/// 
-		/// The LoadingScreen is drawn/updated while the parameter IScreen object is first generated from the delegate, then loaded, (LoadContent() is called) and then replaces the earlier CurrentScreen
-		/// </summary>
-		/// <param name="generator">A delegate to generate the IScreen instance</param>
-		public void ScreenLoad(Func<IScreen> generator)
-		{
-			IsLoading = true;
-			Task.Run(() =>
-				{
-					CurrentScreen = generator.Invoke();
-					CurrentScreen.LoadContent();
-					IsLoading = false;
-				}
-			);
-		}
-	}
-	/// <summary>
-	/// Global class for all-weather running
-	/// </summary>
+	/// <summary> Global class for all utilities </summary>
 	public static partial class Global
 	{
 		/// <summary>Shortcut to draw part of a image(Texture2D)</summary>
@@ -166,19 +28,22 @@ namespace Azuxiren.MG
 		/// <param name="dest">The position on screen of drawing</param>
 		/// <param name="sb">The SpriteBatch Object</param>
 		/// <param name="c">Tint color (by default white)</param>
-		public static void Draw(this Texture2D tex, Rectangle source, Rectangle dest, SpriteBatch sb, Color? c = null) => sb.Draw(tex, source, dest, c ?? Color.White);
+		public static void Draw(this Texture2D tex, Rectangle source, Rectangle dest, SpriteBatch sb, Color? c = null)
+			=> sb.Draw(tex, source, dest, c ?? Color.White);
 		/// <summary>Shortcut to draw the image(Texture2D)</summary>
 		/// <param name="tex">The image to draw</param>
 		/// <param name="dest">The position on screen to draw</param>
 		/// <param name="sb">The SpriteBatch Object</param>
 		/// <param name="c">Tint color (by default White)</param>
-		public static void Draw(this Texture2D tex, Rectangle dest, SpriteBatch sb, Color? c = null) => sb.Draw(tex, dest, c ?? Color.White);
+		public static void Draw(this Texture2D tex, Rectangle dest, SpriteBatch sb, Color? c = null)
+			=> sb.Draw(tex, dest, c ?? Color.White);
 		/// <summary> Shortcut to draw an image on a Vector2D</summary>
 		/// <param name="tex">The image to draw</param>
 		/// <param name="dest">The Position to draw</param>
 		/// <param name="sb">The SpriteBatch Object</param>
 		/// <param name="c">Tint color (by default White)</param>
-		public static void Draw(this Texture2D tex, Vector2 dest, SpriteBatch sb, Color? c = null) => sb.Draw(tex, dest, c ?? Color.White);
+		public static void Draw(this Texture2D tex, Vector2 dest, SpriteBatch sb, Color? c = null)
+			=> sb.Draw(tex, dest, c ?? Color.White);
 		/// <summary>Writes a String on display at the provided Rectangle</summary>
 		/// <param name="font">Spritefont object</param>
 		/// <param name="sb">The SpriteBatch Object</param>
@@ -249,13 +114,15 @@ namespace Azuxiren.MG
 			SetCenter(ref a, b);
 			return a.Location;
 		}
-		/// <summary>Initalizes the Vector2 and Float value of poition and scale to fit the text in the rectangle</summary>
+		/// <summary>Initalizes the Vector2 and Float value of poition and 
+		/// scale to fit the text in the rectangle</summary>
 		/// <param name="dest">The rectangle to fit the string</param>
 		/// <param name="font">The Spritefont object</param>
 		/// <param name="message">The content of the string</param>
 		/// <param name="scale">The scale to fit</param>
 		/// <param name="position">The position of fitting</param>
-		public static void FitText(this Rectangle dest, SpriteFont font, string message, out float scale, out Vector2 position)
+		public static void FitText(this Rectangle dest, SpriteFont font, string message,
+			out float scale, out Vector2 position)
 		{
 			Vector2 size = font.MeasureString(message);
 			float xScale = dest.Width / size.X;
@@ -278,7 +145,8 @@ namespace Azuxiren.MG
 		/// <param name="stringObject">The instance of StringObject</param>
 		/// <param name="rotation">The angle of rotation</param>
 		/// <param name="origin">The origin about which rotation takes place</param>
-		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin) => stringObject.Draw(batch, rotation, origin);
+		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin)
+			=> stringObject.Draw(batch, rotation, origin);
 		/// <summary>
 		/// 
 		/// </summary>
@@ -287,7 +155,22 @@ namespace Azuxiren.MG
 		/// <param name="rotation"></param>
 		/// <param name="origin"></param>
 		/// <param name="effects"></param>
-		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin, SpriteEffects effects) => stringObject.Draw(batch, rotation, origin, effects);
+		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin,
+			SpriteEffects effects) => stringObject.Draw(batch, rotation, origin, effects);
+
+		/// <summary>
+		/// Updates an object for the given acceleration and friction
+		/// </summary>
+		/// <param name="current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="acc">The acceleration acting on it</param>
+		/// <param name="friction">The friction on the body</param>
+		public static (Vector2 Velocity, Vector2 Position) Update(
+				this (Vector2 Velocity, Vector2 Position) current, Vector2 acc, float friction = 0)
+		{
+			current.Velocity += acc - (current.Velocity * friction);
+			current.Position += current.Velocity;
+			return current;
+		}
 		/// <summary>
 		/// Updates an object for the given acceleration and friction
 		/// </summary>
@@ -295,41 +178,23 @@ namespace Azuxiren.MG
 		/// <param name="acc">The acceleration acting on it</param>
 		/// <param name="friction">The friction on the body</param>
 		public static void Update(this IPhyObj2D obj2D, Vector2 acc, float friction = 0)
-		{
-			var (v, x) = obj2D.Current;
-			var v_vec = new Vector2(v.X, v.Y);
-			var x_vec = new Vector2(x.X, x.Y);
-			v_vec += acc - (v * friction);
-			x_vec += v;
-			obj2D.Current = (v_vec, x_vec);
-		}
-		/// <summary>
-		/// Updates an object for the given acceleration and friction
-		/// </summary>
-		/// <param name="current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
-		/// <param name="acc">The acceleration acting on it</param>
-		/// <param name="friction">The friction on the body</param>
-		public static (Vector2 Velocity, Vector2 Position) Update(this (Vector2 Velocity, Vector2 Position) current, Vector2 acc, float friction = 0)
-		{
-			var (v, x) = current;
-			var v_vec = new Vector2(v.X, v.Y);
-			var x_vec = new Vector2(x.X, x.Y);
-			v_vec += acc - (x * friction);
-			x_vec += x;
-			return (v_vec, x_vec);
-		}
+			=> obj2D.Current = Update(obj2D.Current, acc, friction);
 		/// <summary>
 		/// Updates an object when no acceleration is acting upon it
 		/// </summary>
 		/// <param name="obj2D">The IPhyObj2D object</param>
 		/// <param name="friction">The friction acting upon it</param>
-		public static void Update(this IPhyObj2D obj2D, float friction = 0) => Update(obj2D, Vector2.Zero, friction);
+		public static void Update(this IPhyObj2D obj2D, float friction = 0)
+			=> Update(obj2D, Vector2.Zero, friction);
 		/// <summary>
 		/// Updates an object when no acceleration is acting upon it
 		/// </summary>
-		/// <param name="current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="current">The (Vector2,Vector2) Tuple object with 
+		/// elements Velocity and Displacement respectivly</param>
 		/// <param name="friction">The friction acting upon it</param>
-		public static (Vector2 Velocity, Vector2 Position) Update(this (Vector2 Velocity, Vector2 Position) current, float friction = 0) => Update(current, Vector2.Zero, friction);
+		public static (Vector2 Velocity, Vector2 Position) Update(
+				this (Vector2 Velocity, Vector2 Position) current, float friction = 0)
+					=> Update(current, Vector2.Zero, friction);
 		/// <summary>
 		/// Updates an object when acted upon with the given acceleration and friction
 		/// </summary>
@@ -337,28 +202,20 @@ namespace Azuxiren.MG
 		/// <param name="acc">The acceleration acting upon it</param>
 		/// <param name="friction">The friction on the object</param>
 		public static void Update(this IPhyObj3D obj3D, Vector3 acc, float friction = 0)
-		{
-			var (v, x) = obj3D.Current;
-			var v_vec = new Vector3(v.X, v.Y, v.Z);
-			var x_vec = new Vector3(x.X, x.Y, x.Z);
-			v_vec += acc - (v * friction);
-			x_vec += v;
-			obj3D.Current = (v_vec, x_vec);
-		}
+			=> obj3D.Current = Update(obj3D.Current, acc, friction);
 		/// <summary>
 		/// Updates an object when acted upon with the given acceleration and friction
 		/// </summary>
-		/// <param name="current">The (Vector3,Vector3) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// Velocity and Displacement respectivly</param>
 		/// <param name="acc">The acceleration acting upon it</param>
 		/// <param name="friction">The friction on the object</param>
-		public static (Vector3 Velocity, Vector3 Position) Update(this (Vector3 Velcoity, Vector3 Position) current, Vector3 acc, float friction = 0)
+		public static (Vector3 Velocity, Vector3 Position) Update(
+				this (Vector3 Velocity, Vector3 Position) current, Vector3 acc, float friction = 0)
 		{
-			var (v, x) = current;
-			var v_vec = new Vector3(v.X, v.Y, v.Z);
-			var x_vec = new Vector3(x.X, x.Y, x.Z);
-			v_vec += acc - (v * friction);
-			x_vec += v;
-			return (v_vec, x_vec);
+			current.Velocity += acc - (current.Velocity * friction);
+			current.Position += current.Velocity;
+			return current;
 		}
 		/// <summary>
 		/// Updates an object when no acceleration acts on it
@@ -369,8 +226,108 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// Updates an object when no acceleration acts on it
 		/// </summary>
-		/// <param name="current">The (Vector3,Vector3) Tuple object with elements Velocity and Displacement respectivly </param>
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// Velocity and Displacement respectivly </param>
 		/// <param name="friction">The friction on the body</param>
-		public static (Vector3 Velocity, Vector3 Position) Update(this (Vector3 Velocity, Vector3 Position) current, float friction = 0) => Update(current, Vector3.Zero, friction);
+		public static (Vector3 Velocity, Vector3 Position) Update(
+				this (Vector3 Velocity, Vector3 Position) current, float friction = 0)
+					=> Update(current, Vector3.Zero, friction);
+		/// <summary>
+		/// Bounces an object with given position and velocity against a boundary
+		/// </summary>
+		/// <param name="boundary">The boundary on which the object is supposed to strike</param>
+		/// <param name="velocity">The velocity vector object that struck the boundary</param>
+		/// <param name="bounds">The rectangle boundary of the object that struck the boundary</param>
+		/// <param name="inside">if true, the object is supposed to stay inside the boundary, else outside</param>
+		/// <param name="bounceForce">If the object is to be bounced with an additional force. 
+		/// If the object is supposed to stop, keep this as 0. If no additional force is </param>
+		/// <returns>Returns the side of the <c>bounds</c> rectangle which has bounced</returns>
+		public static RectangleSide Bounce(this Rectangle boundary,
+			ref Vector2 velocity, ref Rectangle bounds,
+				bool inside, float bounceForce = 1)
+		{
+			RectangleSide side = RectangleSide.None;
+			if (inside)
+			{
+				if (boundary.X > bounds.X)
+				{
+					side |= RectangleSide.Left;
+					bounds.X = boundary.X + 1;
+				}
+				else if (bounds.X + bounds.Width > boundary.X + boundary.Width)
+				{
+					side |= RectangleSide.Right;
+					bounds.X = boundary.X + boundary.Width - bounds.Width - 1;
+				}
+				if (boundary.Y > bounds.Y)
+				{
+					side |= RectangleSide.Top;
+					bounds.Y = boundary.Y + 1;
+				}
+				else if (bounds.Y + bounds.Height > boundary.Y + boundary.Height)
+				{
+					side |= RectangleSide.Bottom;
+					bounds.Y = boundary.Y + boundary.Height - bounds.Height - 1;
+				}
+			}
+			else
+			{
+				// Intersect
+				// return value.Left < Right && Left < value.Right && value.Top < Bottom && Top < value.Bottom;
+				bool li = bounds.X < boundary.X + boundary.Width,
+					ri = boundary.X < bounds.X + bounds.Width,
+					ti = bounds.Y < boundary.Y + boundary.Height,
+					bi = boundary.Y < bounds.Y + bounds.Height;
+				if (!li || !ri || !ti || !bi)
+					return RectangleSide.None;
+				if (boundary.X + boundary.Width < bounds.X + bounds.Width)
+				{
+					side |= RectangleSide.Left;
+					bounds.X = boundary.X + boundary.Width + 1;
+				}
+				else if(bounds.X < boundary.X)
+				{
+					side |= RectangleSide.Right;
+					bounds.X = boundary.X - bounds.Width - 1;
+				}
+				if (boundary.Y + boundary.Height < bounds.Y + bounds.Height)
+				{
+					side |= RectangleSide.Top;
+					bounds.Y = boundary.Y + boundary.Height + 1;
+				}
+				else if(bounds.Y < boundary.Y)
+				{
+					side |= RectangleSide.Bottom;
+					bounds.Y = boundary.Y - bounds.Height - 1;
+				}
+			}
+			if ((side & (RectangleSide.Left | RectangleSide.Right)) != 0)
+				velocity.X = (-velocity.X) * bounceForce;
+			if ((side & (RectangleSide.Top | RectangleSide.Bottom)) != 0)
+				velocity.Y = (-velocity.Y) * bounceForce;
+			return side;
+		}
+		/// <summary>
+		/// Bounces an object with given position and velocity against a boundary
+		/// </summary>
+		/// <param name="boundary">The boundary on which the object is supposed to strike</param>
+		/// <param name="velocity">The velocity vector object that struck the boundary</param>
+		/// <param name="position">The position vector object that struck the boundary</param>
+		/// <param name="bounds">The rectangle boundary of the object that struck the boundary</param>
+		/// <param name="inside">if true, the object is supposed to stay inside the boundary, else outside</param>
+		/// <param name="bounceForce">If the object is to be bounced with an additional force. 
+		/// If the object is supposed to stop, keep this as 0. If no additional force is </param>
+		/// <returns>Returns the side of the <c>bounds</c> rectangle which has bounced</returns>
+		public static RectangleSide Bounce(this Rectangle boundary,
+			ref Vector2 velocity, ref Vector2 position, ref Rectangle bounds,
+				bool inside, float bounceForce = 1)
+		{
+			bounds.X = (int)position.X;
+			bounds.Y = (int)position.Y;
+			var side = Bounce(boundary, ref velocity, ref bounds, inside, bounceForce);
+			position.X = bounds.X;
+			position.Y = bounds.Y;
+			return side;
+		}
 	}
 }
