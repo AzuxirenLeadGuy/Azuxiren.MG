@@ -272,8 +272,6 @@ namespace Azuxiren.MG
 			}
 			else
 			{
-				// Intersect
-				// return value.Left < Right && Left < value.Right && value.Top < Bottom && Top < value.Bottom;
 				bool li = bounds.X < boundary.X + boundary.Width,
 					ri = boundary.X < bounds.X + bounds.Width,
 					ti = bounds.Y < boundary.Y + boundary.Height,
@@ -290,7 +288,7 @@ namespace Azuxiren.MG
 					side |= RectangleSide.Right;
 					bounds.X = boundary.X - bounds.Width - 1;
 				}
-				if (boundary.Y + boundary.Height < bounds.Y + bounds.Height)
+				else if (boundary.Y + boundary.Height < bounds.Y + bounds.Height)
 				{
 					side |= RectangleSide.Top;
 					bounds.Y = boundary.Y + boundary.Height + 1;
