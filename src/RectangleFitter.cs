@@ -77,7 +77,7 @@ namespace Azuxiren.MG
 		public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte[] ratios, uint offset, bool vertical = false)
 		{
 			var len = ratios.Length;
-			if (len == 0) throw new ArgumentException();
+			if (len == 0) throw new ArgumentException("There should be at least one value in the list of ratios", nameof(ratios));
 			else if (len == 1) return new Rectangle[] { largeRectangle };
 			int sum = 0, i, x = largeRectangle.X, y = largeRectangle.Y, width, height;
 			for (i = 0; i < len; i++) sum += ratios[i];
@@ -91,7 +91,7 @@ namespace Azuxiren.MG
 				height = largeRectangle.Height;
 				width = (int)(largeRectangle.Width - ((len - 1) * offset)) / sum;
 			}
-			if (width <= 0 || height <= 0) throw new ArgumentException();
+			if (width <= 0 || height <= 0) throw new ArgumentException("Invalid dimensions for the menu", nameof(largeRectangle));
 			Rectangle[] rectangles = new Rectangle[len];
 			for (i = 0; i < len; i++)
 			{
