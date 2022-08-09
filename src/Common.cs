@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,13 +58,13 @@ namespace Azuxiren.MG
 			float scale = Math.Min(xScale, yScale);
 			int strWidth = (int)Math.Round(size.X * scale);
 			int strHeight = (int)Math.Round(size.Y * scale);
-			Vector2 position = new Vector2
+			Vector2 position = new()
 			{
 				X = ((dest.Width - strWidth) / 2) + dest.X,
 				Y = ((dest.Height - strHeight) / 2) + dest.Y
 			};
 			float rotation = 0.0f;
-			Vector2 spriteOrigin = new Vector2(0, 0);
+			Vector2 spriteOrigin = new(0, 0);
 			float spriteLayer = 0.0f; // all the way in the front
 			SpriteEffects spriteEffects = SpriteEffects.None;
 			Color cc = c ?? Color.White;// Draw the string to the sprite batch!
@@ -94,7 +94,7 @@ namespace Azuxiren.MG
 		/// <param name="size">The dimensions of the rectangle</param>
 		public static Rectangle SetCenter(Point center, Point size)
 		{
-			Rectangle x = new Rectangle(Point.Zero, size);
+			Rectangle x = new(Point.Zero, size);
 			SetCenter(ref x, center);
 			return x;
 		}
@@ -283,7 +283,7 @@ namespace Azuxiren.MG
 					side |= RectangleSide.Left;
 					bounds.X = boundary.X + boundary.Width + 1;
 				}
-				else if(bounds.X < boundary.X)
+				else if (bounds.X < boundary.X)
 				{
 					side |= RectangleSide.Right;
 					bounds.X = boundary.X - bounds.Width - 1;
@@ -293,7 +293,7 @@ namespace Azuxiren.MG
 					side |= RectangleSide.Top;
 					bounds.Y = boundary.Y + boundary.Height + 1;
 				}
-				else if(bounds.Y < boundary.Y)
+				else if (bounds.Y < boundary.Y)
 				{
 					side |= RectangleSide.Bottom;
 					bounds.Y = boundary.Y - bounds.Height - 1;
