@@ -1,5 +1,5 @@
-using System;
-
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
@@ -327,5 +327,127 @@ namespace Azuxiren.MG
 			position.Y = bounds.Y;
 			return side;
 		}
+		/// <summary>
+		/// Generates a Texture Image from the grid of Colors
+		/// </summary>
+		/// <param name="grid">The grid of colors to generate image from</param>
+		/// <param name="game">The game object whose GraphicsDevice must be used</param>
+		/// <returns>The converted texture image</returns>
+		public static Texture2D FromColorGrid(Color[,] grid, Game game)
+		{
+			int r = grid.GetLength(0), c = grid.GetLength(1);
+			Texture2D tex = new(game.GraphicsDevice, r, c);
+			Color[] Dest = new Color[grid.Length];
+			for (int i = 0, k = 0; i < r; i++)
+			{
+				for (int j = 0; j < c; j++)
+				{
+					Dest[k++] = grid[i, j];
+				}
+			}
+			tex.SetData<Color>(Dest);
+			return tex;
+		}
+		/// <summary>Iterates over all points lying in the lines between the 
+		/// two points in argument</summary>
+		/// <param name="x0">x coordinate of the first point</param>
+		/// <param name="y0">y coordinate of the first point</param>
+		/// <param name="x1">x coordinate of the second point</param>
+		/// <param name="y1">y coordinate of the second point</param>
+		/// <returns>Enumeration of points lying in the line between the points</returns>
+		public static IEnumerable<Point> GetPointsOnLine(int x0, int y0, int x1, int y1)
+		{
+			bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+			if (steep)
+			{
+				int t;
+				t = x0; // swap x0 and y0
+				x0 = y0;
+				y0 = t;
+				t = x1; // swap x1 and y1
+				x1 = y1;
+				y1 = t;
+			}
+			if (x0 > x1)
+			{
+				int t;
+				t = x0; // swap x0 and x1
+				x0 = x1;
+				x1 = t;
+				t = y0; // swap y0 and y1
+				y0 = y1;
+				y1 = t;
+			}
+			int dx = x1 - x0;
+			int dy = Math.Abs(y1 - y0);
+			int error = dx / 2;
+			int ystep = (y0 < y1) ? 1 : -1;
+			int y = y0;
+			for (int x = x0; x <= x1; x++)
+			{
+				if (steep)
+					yield return new(y, x);
+				else
+					yield return new(x, y);
+				error -= dy;
+				if (error < 0)
+				{
+					y += ystep;
+					error += dx;
+				}
+			}
+			yield break;
+		}
+		/// <summary>Iterates over all points lying in the lines between the 
+		/// two points in argument</summary>
+		/// <param name="p0">The first input point</param>
+		/// <param name="p1">The second input point</param>
+		/// <returns>Enumeration of points lying in the line between the points</returns>
+		public static IEnumerable<Point> GetPointsOnLine(Point p0, Point p1) => GetPointsOnLine(p0.X, p0.Y, p1.X, p1.Y);
+		/// <summary>Iterates over all points of a circle at a given centre and radius</summary>
+		/// <param name="x0">x coordinate of the centre</param>
+		/// <param name="y0">y coordinate of the centre</param>
+		/// <param name="radius">radius of the circle</param>
+		/// <returns>Enumeration of all points on the circle</returns>
+		public static IEnumerable<Point> GetPointsOnCircle(int x0, int y0, int radius)
+		{
+			if (radius <= 0)
+				throw new ArgumentException("Radius should be greater than 0", nameof(radius));
+			int x = 0, y = radius, d = 3 - (2 * radius), i;
+			Point[] ps = new Point[8];
+			SetPoints();
+			for (i = 0; i < 8; i++)
+				yield return ps[i];
+			while (y >= x)
+			{
+				x++;
+				if (d > 0)
+				{
+					y--;
+					d = d + 4 * (x - y) + 10;
+				}
+				else
+					d = d + (4 * x) + 6;
+				SetPoints();
+				for (i = 0; i < 8; i++)
+					yield return ps[i];
+			}
+			void SetPoints()
+			{
+				ps[0] = new(x0 + x, y0 + y);
+				ps[1] = new(x0 + x, y0 - y);
+				ps[2] = new(x0 - x, y0 + y);
+				ps[3] = new(x0 - x, y0 - y);
+				ps[4] = new(x0 + y, y0 + x);
+				ps[5] = new(x0 + y, y0 - x);
+				ps[6] = new(x0 - y, y0 + x);
+				ps[7] = new(x0 - y, y0 - x);
+			}
+		}
+		/// <summary>Iterates over all points of a circle at a given centre and radius</summary>
+		/// <param name="p">Centre of the circle</param>
+		/// <param name="radius">radius of the circle</param>
+		/// <returns>Enumeration of all points on the circle</returns>
+		public static IEnumerable<Point> GetPointsOnCircle(Point p, int radius) => GetPointsOnCircle(p.X, p.Y, radius);
 	}
 }
