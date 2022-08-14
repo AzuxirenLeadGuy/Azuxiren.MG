@@ -337,15 +337,15 @@ namespace Azuxiren.MG
 		{
 			int r = grid.GetLength(0), c = grid.GetLength(1);
 			Texture2D tex = new(game.GraphicsDevice, r, c);
-			Color[] Dest = new Color[grid.Length];
+			Color[] dest = new Color[grid.Length];
 			for (int i = 0, k = 0; i < r; i++)
 			{
 				for (int j = 0; j < c; j++)
 				{
-					Dest[k++] = grid[i, j];
+					dest[k++] = grid[i, j];
 				}
 			}
-			tex.SetData<Color>(Dest);
+			tex.SetData<Color>(dest);
 			return tex;
 		}
 		/// <summary>Iterates over all points lying in the lines between the 
@@ -385,10 +385,7 @@ namespace Azuxiren.MG
 			int y = y0;
 			for (int x = x0; x <= x1; x++)
 			{
-				if (steep)
-					yield return new(y, x);
-				else
-					yield return new(x, y);
+				yield return steep ? (new(y, x)) : (new(x, y));
 				error -= dy;
 				if (error < 0)
 				{
