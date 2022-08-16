@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
@@ -333,23 +334,23 @@ namespace Azuxiren.MG
 		/// <param name="grid">The grid of colors to generate image from</param>
 		/// <param name="game">The game object whose GraphicsDevice must be used</param>
 		/// <returns>The converted texture image</returns>
-		public static Texture2D FromColorGrid(Color[,] grid, Game game)
+		public static Texture2D FromColorGrid(this Game game, Color[,] grid)
 		{
 			int r = grid.GetLength(0), c = grid.GetLength(1);
 			Texture2D tex = new(game.GraphicsDevice, r, c);
 			Color[] dest = new Color[grid.Length];
-			for (int i = 0, k = 0; i < r; i++)
+			for (int i = 0, k = 0; i < c; i++)
 			{
-				for (int j = 0; j < c; j++)
+				for (int j = 0; j < r; j++)
 				{
-					dest[k++] = grid[i, j];
+					dest[k++] = grid[j, i];
 				}
 			}
-			tex.SetData<Color>(dest);
+			tex.SetData(dest);
 			return tex;
 		}
 		/// <summary>Iterates over all points lying in the lines between the 
-		/// two points in argument</summary>
+		/// two points in argument, using Bresenham line drawing algorithm</summary>
 		/// <param name="x0">x coordinate of the first point</param>
 		/// <param name="y0">y coordinate of the first point</param>
 		/// <param name="x1">x coordinate of the second point</param>
@@ -357,59 +358,42 @@ namespace Azuxiren.MG
 		/// <returns>Enumeration of points lying in the line between the points</returns>
 		public static IEnumerable<Point> GetPointsOnLine(int x0, int y0, int x1, int y1)
 		{
-			bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
-			if (steep)
-			{
-				int t;
-				t = x0; // swap x0 and y0
-				x0 = y0;
-				y0 = t;
-				t = x1; // swap x1 and y1
-				x1 = y1;
-				y1 = t;
-			}
-			if (x0 > x1)
-			{
-				int t;
-				t = x0; // swap x0 and x1
-				x0 = x1;
-				x1 = t;
-				t = y0; // swap y0 and y1
-				y0 = y1;
-				y1 = t;
-			}
+			bool dxy = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+			if (dxy) (x0, y0, x1, y1) = (y0, x0, y1, x1);
+			if (x0 > x1) (x0, y0, x1, y1) = (x1, y1, x0, y0);
 			int dx = x1 - x0;
 			int dy = Math.Abs(y1 - y0);
-			int error = dx / 2;
-			int ystep = (y0 < y1) ? 1 : -1;
+			int decision = dx / 2;
+			int inc = (y0 < y1) ? 1 : -1;
 			int y = y0;
 			for (int x = x0; x <= x1; x++)
 			{
-				yield return steep ? (new(y, x)) : (new(x, y));
-				error -= dy;
-				if (error < 0)
+				yield return dxy ? (new(y, x)) : (new(x, y));
+				decision -= dy;
+				if (decision < 0)
 				{
-					y += ystep;
-					error += dx;
+					y += inc;
+					decision += dx;
 				}
 			}
 			yield break;
 		}
 		/// <summary>Iterates over all points lying in the lines between the 
-		/// two points in argument</summary>
+		/// two points in argument, using Bresenham line drawing algorithm</summary>
 		/// <param name="p0">The first input point</param>
 		/// <param name="p1">The second input point</param>
 		/// <returns>Enumeration of points lying in the line between the points</returns>
 		public static IEnumerable<Point> GetPointsOnLine(Point p0, Point p1) => GetPointsOnLine(p0.X, p0.Y, p1.X, p1.Y);
-		/// <summary>Iterates over all points of a circle at a given centre and radius</summary>
+		/// <summary>Iterates over all points of a circle at a given centre and radius
+		/// using the Midpoint Circle drawing algorithm</summary>
 		/// <param name="x0">x coordinate of the centre</param>
 		/// <param name="y0">y coordinate of the centre</param>
 		/// <param name="radius">radius of the circle</param>
 		/// <returns>Enumeration of all points on the circle</returns>
 		public static IEnumerable<Point> GetPointsOnCircle(int x0, int y0, int radius)
 		{
-			if (radius <= 0)
-				throw new ArgumentException("Radius should be greater than 0", nameof(radius));
+			if (radius <= 1)
+				throw new ArgumentException("Radius should be greater than 1", nameof(radius));
 			int x = 0, y = radius, d = 3 - (2 * radius), i;
 			Point[] ps = new Point[8];
 			SetPoints();
