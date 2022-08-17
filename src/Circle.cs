@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 namespace Azuxiren.MG
@@ -15,13 +16,57 @@ namespace Azuxiren.MG
 			get => _radius;
 			set => _radius = value >= 0 ? value : throw new ArgumentException("Radius cannot be negative", nameof(value));
 		}
-		public static Color[,] CreateFilledGrid(int radius)
+		/// <summary>
+		/// Draws a filled circle within the rectangular array of colors
+		/// </summary>
+		/// <param name="radius">The radius(r) of the circle.
+		/// Note that the image dimension would be 2r x 2r</param>
+		/// <param name="color">The color to fill the circle with</param>
+		/// <returns>Color[,] rectangular array depicting a drawn circle</returns>
+		public static Color[,] CreateFilledGrid(int radius, Color color)
 		{
-			throw new NotImplementedException();
+			int side = 1 + ((--radius) * 2), x;
+			Color[,] grid = new Color[side, side];
+			IEnumerator<Point> itr = Global.GetPointsOnCircle(radius, radius, radius).GetEnumerator();
+			Point p, q;
+			bool success = true;
+			do
+			{
+				for (x = 0; x < 4; x++)
+				{
+					success = itr.MoveNext();
+					p = itr.Current;
+					success = success && itr.MoveNext();
+					q = itr.Current;
+					if (success == false)
+						break;
+					for (int i = p.X, j = p.Y; j >= q.Y; j--)
+					{
+						grid[i, j] = color;
+					}
+				}
+			} while (success);
+			return grid;
 		}
-		public static Color[,] CreateBorderGrid(int radius)
+		/// <summary>
+		/// Draws a circle border with given radius on the rectangular array of colors
+		/// </summary>
+		/// <param name="radius">The radius(r) of the circle.
+		/// Note that the image dimension would be 2r x 2r</param>
+		/// <param name="color">The color to fill the circle with</param>
+		/// <returns>Color[,] rectangular array depicting a drawn circle border</returns>
+		public static Color[,] CreateBorderGrid(int radius, Color color)
 		{
-			throw new NotImplementedException();
+			int side = 1 + ((--radius) * 2), thick = 1 + (radius / 32), i, r = radius;
+			Color[,] grid = new Color[side, side];
+			for (i = 0; i < thick; i++)
+			{
+				foreach (Point p in Global.GetPointsOnCircle(radius, radius, r--))
+				{
+					grid[p.X, p.Y] = color;
+				}
+			}
+			return grid;
 		}
 		/// <summary>The smallest rectangle which bounds/contains this circle</summary>
 		/// <returns>The smallest rectangle bounding/containing this circle</returns>
@@ -57,7 +102,7 @@ namespace Azuxiren.MG
 		/// for any two circles x, y
 		/// </summary>
 		/// <param name="other">The other circle to compare with</param>
-		/// <returns>true if both instances are equivalent; false otherwise</returns>
+		/// <returns>true if `other` circle is contained within `this` circle; false otherwise</returns>
 		public bool Contains(Circle other)
 		{
 			int dx = Center.X - other.Center.X;
@@ -82,7 +127,7 @@ namespace Azuxiren.MG
 		public override bool Equals(object obj) => obj is Circle circle && Equals(circle);
 		/// <summary> Returns the radius value as the hash </summary>
 		/// <returns>radius as hash</returns>
-		public override int GetHashCode() => _radius;
+		public override int GetHashCode() => _radius + Center.X + Center.Y;
 		/// <summary>
 		/// Prints the value of this object
 		/// </summary>
