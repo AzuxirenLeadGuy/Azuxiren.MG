@@ -430,5 +430,51 @@ namespace Azuxiren.MG
 		/// <param name="radius">radius of the circle</param>
 		/// <returns>Enumeration of all points on the circle</returns>
 		public static IEnumerable<Point> GetPointsOnCircle(Point p, int radius) => GetPointsOnCircle(p.X, p.Y, radius);
+		/// <summary>The smallest rectangle which bounds/contains this circle</summary>
+		/// <returns>The smallest rectangle bounding/containing this circle</returns>
+		public static Rectangle OuterBound(this Circle c) => new(c.Center.X - c.ActualRadius, c.Center.Y - c.ActualRadius, 2 * c.ActualRadius, 2 * c.ActualRadius);
+		/// <summary>The largest rectangle bounded/contained by this circle</summary>
+		/// <returns>The largest rectangle bounded/contained by this circle</returns>
+		public static Rectangle InnerBound(this Circle c)
+		{
+			int half_side = (int)MathF.Round(c.ActualRadius * 0.707106781f);
+			return new(c.Center.X - half_side, c.Center.Y - half_side, 2 * half_side, 2 * half_side);
+		}
+		/// <summary>Checks if two circles intersect.<br/>
+		/// This is a commutative operation.
+		/// i.e x.Intersect(y) is always equal to y.Intersect(x)
+		/// for any two circles x, y <br/>
+		/// If one circle is inside the other
+		/// </summary>
+		/// <param name="c">The circle to check for intersection</param>
+		/// <param name="other">The other circle for which we wish to know the intersection</param>
+		/// <returns>true if the circles intersect; false otherwise</returns>
+		public static bool Intersect(this Circle c, Circle other)
+		{
+			int dx = c.Center.X - other.Center.X;
+			int dy = c.Center.Y - other.Center.Y;
+			int sq_dist = (dx * dx) + (dy * dy);
+			int sq_rad_sum = c.ActualRadius + other.ActualRadius;
+			sq_rad_sum *= sq_rad_sum;
+			return sq_dist <= sq_rad_sum;
+		}
+		/// <summary>
+		/// Checks if this circle contains the other circle. <br/><br/>
+		/// This is not a commutative operation, 
+		/// i.e x.Contains(y) is not always equal to y.Contains(x) <br/>
+		/// for any two circles x, y
+		/// </summary>
+		/// <param name="c">The circle to check if it contains the other</param>
+		/// <param name="other">The other circle to compare with</param>
+		/// <returns>true if `other` circle is contained within `this` circle; false otherwise</returns>
+		public static bool Contains(this Circle c, Circle other)
+		{
+			int dx = c.Center.X - other.Center.X;
+			int dy = c.Center.Y - other.Center.Y;
+			int sq_dist = (dx * dx) + (dy * dy);
+			int sq_rad_diff = c.ActualRadius - other.ActualRadius;
+			sq_rad_diff *= sq_rad_diff;
+			return sq_dist <= sq_rad_diff;
+		}
 	}
 }
