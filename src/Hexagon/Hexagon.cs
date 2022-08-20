@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 
 using System;
-namespace Azuxiren.MG.Hexagon
+namespace Azuxiren.MG.Hex
 {
 	/// <summary> Represents a Regular Hexagon</summary>
 	public struct Hexagon : IEquatable<Hexagon>
@@ -14,7 +14,7 @@ namespace Azuxiren.MG.Hexagon
 		/// <summary>The angle with which the hexagon is rotated about its center</summary>
 		public float Angle { get => _angle; set => _angle = FloatMod(value, Pi); }
 		/// <summary>Constant values for computation</summary>
-		public const float Pi = MathF.PI, PiBy2 = Pi / 2, PiBy3 = Pi / 3, PiBy6 = Pi / 6, Root2 = 1.4142135623f, Root3 = 1.7320508f;
+		public const float Pi = MathF.PI, Root3 = 1.7320508f;
 		private static float FloatMod(float givenAngle, float mod)
 		{
 			if (givenAngle > mod)
@@ -27,27 +27,66 @@ namespace Azuxiren.MG.Hexagon
 			}
 			return givenAngle;
 		}
-		public static Color[,] CreateFilledGrid(int sideLength)
+		/// <summary>
+		/// Returns a rectangular array of Color instances 
+		/// depicting a filled hexagon
+		/// </summary>
+		/// <param name="sideLength">Length of a single side of the regular hexagon</param>
+		/// <param name="color">The color to draw the hexagon with</param>
+		/// <returns>Color[,] array depicting a filled hexagon</returns>
+		public static Color[,] CreateFilledGrid(int sideLength, Color color)
 		{
-			throw new NotImplementedException();
-		}
-		public static Color[,] CreateBorderGrid(int sideLength)
-		{
-			throw new NotImplementedException();
+			int width = 2 * sideLength, height = (int)MathF.Round(sideLength * Root3);
+			if ((height & 1) == 1)
+				height++;// Keeping height even
+			Color[,] grid = new Color[width, height];
+			int topleftX = sideLength / 2, i, j;
+			foreach (Point p in Global.GetPointsOnLine(topleftX, 0, 0, (height + 1) / 2))
+			{
+				for (i = p.X, j = width - p.X - 1; i <= j; i++)
+				{
+					grid[i, p.Y] = color;
+					grid[i, height - p.Y - 1] = color;
+				}
+			}
+			return grid;
 		}
 		/// <summary>
-		/// The smallest rectangle that contains this hexagon. <br/>
-		/// Note: The rectangle is returned without taking the rotaion into account.
+		/// Returns a rectangular array of Color instances 
+		/// depicting a hexagon with colored border
 		/// </summary>
-		/// <returns>The outer boundary of the hexagon</returns>
-		public Rectangle OuterBound()
+		/// <param name="sideLength">Length of a single side of the regular hexagon</param>
+		/// <param name="color">The color of border of hexagon</param>
+		/// <returns>Color[,] array depicting a filled hexagon</returns>
+		public static Color[,] CreateBorderGrid(int sideLength, Color color)
 		{
-			int h = (int)MathF.Round(Root3 * SideLength);
-			return new(Center.X - SideLength, Center.Y - h / 2, SideLength * 2, h);
+			int width = 2 * sideLength, height = (int)MathF.Round(sideLength * Root3);
+			if ((height & 1) == 1)
+				height++;// Keeping height even
+			Color[,] grid = new Color[width, height];
+			int topleftX = sideLength / 2, thick = 1 + (sideLength / 32), i, j, k, y;
+			foreach (Point p in Global.GetPointsOnLine(topleftX, 0, 0, (height + 1) / 2))
+			{
+				for (i = p.X, j = width - p.X - 1, k = 0; k < thick; i++, j--, k++)
+				{
+					grid[i, p.Y] = color;
+					grid[j, p.Y] = color;
+					y = height - p.Y - 1;
+					grid[i, y] = color;
+					grid[j, y] = color;
+				}
+			}
+			for (j = width - 1 - topleftX, k = 0; k < thick; k++)
+			{
+				y = height - 1 - k;
+				for (i = topleftX; i <= j; i++)
+				{
+					grid[i, k] = color;
+					grid[i, y] = color;
+				}
+			}
+			return grid;
 		}
-		/// <summary>The circle that circumscribes this hexagon</summary>
-		/// <returns>Circle circumscribing this hexagon</returns>
-		public Circle OuterCircle() => new() { Center = Center, Radius = SideLength };
 		/// <summary>Checks if two hexagon instances are equivalent to each other</summary>
 		/// <param name="other">The other hexagon instance to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
