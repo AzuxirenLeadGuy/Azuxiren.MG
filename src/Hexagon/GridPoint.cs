@@ -52,6 +52,31 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Returns the string representation of the values of this hexagon grid position</summary>
 		/// <returns>The string representation of the values of this hexagon grid position</returns>
 		public override string ToString() => $"\"Hexgrid\": ({Q}, {R})";
+		/// <summary>Implicit conversion from tuple of integers to GridPoint</summary>
+		/// <param name="x">Tuple of integers</param>
+		public static implicit operator GridPoint((int, int) x) => new(x.Item1, x.Item2);
+		/// <summary>Implicit conversion from tuple of sbytes to GridPoint</summary>
+		/// <param name="x">Tuple of sbytes</param>
+		public static implicit operator GridPoint((sbyte, sbyte) x) => new(x.Item1, x.Item2);
+		/// <summary>Adds two gridpoints together</summary>
+		/// <param name="a">LHS of addition</param>
+		/// <param name="b">RHS of addition</param>
+		/// <returns>The sum of the two GridPoint</returns>
+		public static GridPoint operator +(GridPoint a, GridPoint b) => new(a.Q + b.Q, a.R + b.R);
+		/// <summary>Negates a gridpoint</summary>
+		/// <param name="a">The point to negate</param>
+		/// <returns>The negation of the given point</returns>
+		public static GridPoint operator -(GridPoint a) => new(-a.Q, -a.R);
+		/// <summary>Subtracts two gridpoints together</summary>
+		/// <param name="a">LHS of subtraction</param>
+		/// <param name="b">RHS of subtraction</param>
+		/// <returns>The difference of the two GridPoint</returns>
+		public static GridPoint operator -(GridPoint a, GridPoint b) => a + (-b);
+		/// <summary>Multiplies a Gridpoint with a given factor</summary>
+		/// <param name="a">The gridpoint to multiply</param>
+		/// <param name="f">The factor to multiply with</param>
+		/// <returns>The multiplication with the given factor</returns>
+		public static GridPoint operator *(GridPoint a, int f) => new(a.Q * f, a.R * f);
 		/// <summary>
 		/// Rounds a floating point coordinate to the nearest valid HexGrid point
 		/// </summary>

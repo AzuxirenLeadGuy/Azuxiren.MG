@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using System;
 namespace Azuxiren.MG.Hex
@@ -14,7 +15,7 @@ namespace Azuxiren.MG.Hex
 		/// <summary>The angle with which the hexagon is rotated about its center</summary>
 		public float Angle { get => _angle; set => _angle = FloatMod(value, Pi); }
 		/// <summary>Constant values for computation</summary>
-		public const float Pi = MathF.PI, Root3 = 1.7320508f;
+		public const float Pi = MathF.PI, Root3 = 1.7320508075688f, Root3By2 = 0.8660254037844f;
 		private static float FloatMod(float givenAngle, float mod)
 		{
 			if (givenAngle > mod)

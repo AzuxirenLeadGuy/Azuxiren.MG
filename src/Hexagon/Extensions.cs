@@ -152,5 +152,21 @@ namespace Azuxiren.MG.Hex
 		/// <param name="point">The point to reflect</param>
 		/// <returns>The reflection point for this point</returns>
 		public static GridPoint ReflectAxisS(this GridPoint point) => new(point.R, point.Q);
+		/// <summary>Evaluates the Vector2 for the given hexagonal GridPoint</summary>
+		/// <param name="coordinate">The hexagonal GridPoint</param>
+		/// <returns>The Vector2 representation for the hexagonal GridPoint</returns>
+		public static Vector2 GetVector2(this GridPoint coordinate)
+		{
+			Vector2 qv = new(1, 0);						// +S  \
+			Vector2 rv = new(-0.5f, -Hexagon.Root3By2); //      O--> +Q
+			Vector2 sv = new(-0.5f, Hexagon.Root3By2);	// +R  /
+			return (coordinate.Q * qv) + (coordinate.R * rv) + (coordinate.S * sv);
+		}
+		/// <summary> Traverses from a given 2D point going along the Hexagonal "Axis"</summary>
+		/// <param name="coordinate">The coordinate to traverse along</param>
+		/// <param name="origin">The point to start from</param>
+		/// <param name="hex_width">The width of the individual hexagons</param>
+		/// <returns>The 2D point after traversing in the given directions</returns>
+		public static Vector2 Traverse(this GridPoint coordinate, Vector2 origin, float hex_width) => origin + (hex_width * coordinate.GetVector2());
 	}
 }
