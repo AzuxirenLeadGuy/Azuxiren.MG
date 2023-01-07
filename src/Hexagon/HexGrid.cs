@@ -41,14 +41,15 @@ namespace Azuxiren.MG.Hex
 		/// <returns>Enumeration of the key/value pairs within the grid</returns>
 		public IEnumerator<KeyValuePair<GridPoint, T>> GetEnumerator() => ((IEnumerable<KeyValuePair<GridPoint, T>>)_data).GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_data).GetEnumerator();
-		/// <summary>Default Constructor</summary>
+		/// <summary>Default Constructor, fills all positions with the given value</summary>
+		/// <param name="defaultvalue">The value to fill all cells with</param>
 		/// <param name="r">Radius of the grid</param>
-		public HexGrid(byte r = 1)
+		public HexGrid(T defaultvalue, byte r = 1)
 		{
 			Radius = r;
 			_data = new();
 			foreach (var pt in new GridPoint(0, 0).GetSpiralRing(r))
-				_data.Add(pt, default);
+				_data.Add(pt, defaultvalue);
 		}
 		/// <summary>Gets the element from the grid safely</summary>
 		/// <param name="point">The point to get the value from</param>
@@ -56,7 +57,7 @@ namespace Azuxiren.MG.Hex
 		/// <returns>true if retrival was successful. Otherwise false</returns>
 		public bool TryGetValue(GridPoint point, out T value)
 		{
-			if(_data.ContainsKey(point))
+			if (_data.ContainsKey(point))
 			{
 				value = _data[point];
 				return true;
@@ -70,7 +71,7 @@ namespace Azuxiren.MG.Hex
 		/// <returns>true if setting value was successful. Otherwise false</returns>
 		public bool Set(GridPoint point, T value)
 		{
-			if(_data.ContainsKey(point)==false)
+			if (_data.ContainsKey(point) == false)
 				return false;
 			_data[point] = value;
 			return true;
@@ -96,8 +97,8 @@ namespace Azuxiren.MG.Hex
 		/// <returns>A Hexgrid of Vector2 points that denote the center of each hexagon in the grid</returns>
 		public static HexGrid<Vector2> HexCenters(Vector2 center, byte radius, float width)
 		{
-			HexGrid<Vector2> points = new(radius);
-			foreach(var key in points._data.Keys)
+			HexGrid<Vector2> points = new(Vector2.Zero, radius);
+			foreach (var key in points._data.Keys)
 				points._data[key] = key.Traverse(center, width);
 			return points;
 		}
