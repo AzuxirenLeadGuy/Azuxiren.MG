@@ -61,18 +61,20 @@ namespace Azuxiren.MG.Menu
 		/// <summary>The collection of components</summary>
 		public abstract IEnumerable<AbstractComponent> Components { get; }
 		/// <summary>The element that is Currently selected in the menu, i.e the component which has Selected property true, others have it false</summary>
-		public virtual AbstractComponent CurrentlySelected
+		public virtual AbstractComponent? CurrentlySelected
 		{
 			get => _currentlySelected;
 			set
 			{
-				_currentlySelected.Selected = false;
+				if (value == null) return;
+				if (_currentlySelected != null)
+					_currentlySelected.Selected = false;
 				_currentlySelected = value;
 				_currentlySelected.Selected = true;
 			}
 		}
 		/// <summary>The component that is currently selected in the menu</summary>
-		protected AbstractComponent _currentlySelected;
+		protected AbstractComponent? _currentlySelected;
 		/// <summary>
 		/// Draws the menu
 		/// </summary>

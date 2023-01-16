@@ -37,6 +37,8 @@ namespace Azuxiren.MG
 		{
 			GraphicsDM = new GraphicsDeviceManager(this);
 			IsLoading = false;
+			CurrentScreen = null!;
+			LoadingScreen = null!;
 		}
 		/// <summary>
 		/// The Provided Initializer for Monogame. This is where the LoadContent 

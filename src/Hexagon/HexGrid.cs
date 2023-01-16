@@ -62,7 +62,7 @@ namespace Azuxiren.MG.Hex
 				value = _data[point];
 				return true;
 			}
-			value = default;
+			value = default!;
 			return false;
 		}
 		/// <summary>Sets the object at the given point</summary>

@@ -13,96 +13,82 @@ namespace Azuxiren.MG
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
 		(Vector3 V, Vector3 X) Current { get; set; }
 	}
-	/// <summary>
-	/// Helper object defining a 2D physics object. Requires to input acceleration for every Update() called
-	/// </summary>
-	public abstract class PhyObj2D : IPhyObj2D
+	public partial class Global
 	{
-		/// <summary>These vectors are linked with the 2D motion</summary>
-		public Vector2 Position, Velocity, Acceleration;
-		/// <summary>The friction value to consider for the acceleration. Must be a non-negative number</summary>
-		public float Friction;
-		/// <summary>Creates an instance of PhyObj2D with provided friction value</summary>
-		/// <param name="fricval"></param>
-		public PhyObj2D(float fricval = 0.5f)
+
+		/// <summary>
+		/// Updates an object for the given acceleration and friction
+		/// </summary>
+		/// <param name="current">The (Vector2,Vector2) Tuple object with elements Velocity and Displacement respectivly</param>
+		/// <param name="acc">The acceleration acting on it</param>
+		/// <param name="friction">The friction on the body</param>
+		public static (Vector2 Velocity, Vector2 Position) Update(
+				this (Vector2 Velocity, Vector2 Position) current, Vector2 acc, float friction = 0)
 		{
-			Position = Velocity = Acceleration = Vector2.Zero;
-			Friction = fricval;
+			current.Velocity += acc - (current.Velocity * friction);
+			current.Position += current.Velocity;
+			return current;
 		}
 		/// <summary>
-		/// Represents the current Touple of Velocity and Displacement
+		/// Updates an object when no acceleration is acting upon it
 		/// </summary>
-		/// <value></value>
-		public (Vector2 V, Vector2 X) Current
+		/// <param name="current">The (Vector2,Vector2) Tuple object with 
+		/// elements Velocity and Displacement respectivly</param>
+		/// <param name="friction">The friction acting upon it</param>
+		public static (Vector2 Velocity, Vector2 Position) Update(
+				this (Vector2 Velocity, Vector2 Position) current, float friction = 0)
+					=> Update(current, Vector2.Zero, friction);
+		/// <summary>
+		/// Updates an object for the given acceleration and friction
+		/// </summary>
+		/// <param name="obj2D">The IPhyObj2D object</param>
+		/// <param name="acc">The acceleration acting on it</param>
+		/// <param name="friction">The friction on the body</param>
+		public static void Update(this IPhyObj2D obj2D, Vector2 acc, float friction = 0)
+			=> obj2D.Current = Update(obj2D.Current, acc, friction);
+		/// <summary>
+		/// Updates an object when no acceleration is acting upon it
+		/// </summary>
+		/// <param name="obj2D">The IPhyObj2D object</param>
+		/// <param name="friction">The friction acting upon it</param>
+		public static void Update(this IPhyObj2D obj2D, float friction = 0)
+			=> Update(obj2D, Vector2.Zero, friction);
+		/// <summary>
+		/// Updates an object when acted upon with the given acceleration and friction
+		/// </summary>
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// Velocity and Displacement respectivly</param>
+		/// <param name="acc">The acceleration acting upon it</param>
+		/// <param name="friction">The friction on the object</param>
+		public static (Vector3 Velocity, Vector3 Position) Update(
+				this (Vector3 Velocity, Vector3 Position) current, Vector3 acc, float friction = 0)
 		{
-			get => (Velocity, Position);
-			set
-			{
-				Velocity = value.V;
-				Position = value.X;
-			}
+			current.Velocity += acc - (current.Velocity * friction);
+			current.Position += current.Velocity;
+			return current;
 		}
 		/// <summary>
-		/// Draw the gameobject at bounds as destination
+		/// Updates an object when no acceleration acts on it
 		/// </summary>
-		/// <param name="gt"></param>
-		public abstract void Draw(GameTime gt);
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// Velocity and Displacement respectivly </param>
+		/// <param name="friction">The friction on the body</param>
+		public static (Vector3 Velocity, Vector3 Position) Update(
+				this (Vector3 Velocity, Vector3 Position) current, float friction = 0)
+					=> Update(current, Vector3.Zero, friction);
 		/// <summary>
-		/// Goes in the direction of Velocity (Vector2 v) which is added by Acceleration and subtracted with friction
+		/// Updates an object when acted upon with the given acceleration and friction
 		/// </summary>
-		/// <param name="gt">GameTime argument</param>
-		public virtual void Update(GameTime gt)
-		{
-			Acceleration = Vector2.Subtract(Acceleration, Velocity * Friction);
-			Vector2.Add(ref Acceleration, ref Velocity, out Velocity);
-			Vector2.Add(ref Velocity, ref Position, out Position);
-		}
-	}
-	/// <summary>Physics Object implementation in 3-Dimensions</summary>
-	public abstract class PhyObj3D : IPhyObj3D
-	{
+		/// <param name="obj3D">The IPhyObj3D</param>
+		/// <param name="acc">The acceleration acting upon it</param>
+		/// <param name="friction">The friction on the object</param>
+		public static void Update(this IPhyObj3D obj3D, Vector3 acc, float friction = 0)
+			=> obj3D.Current = Update(obj3D.Current, acc, friction);
 		/// <summary>
-		/// The vectors x,v and a denote instantaneous values of position, velocity and acceleration respectivly
+		/// Updates an object when no acceleration acts on it
 		/// </summary>
-		public Vector3 Position, Velocity, Acceleration;
-		/// <summary>The friction value to consider for the acceleration. Must be a non-negative number</summary>
-		public float Friction;
-		/// <summary>
-		/// Creates a new PhyObj3D instance with given Friction value
-		/// </summary>
-		/// <param name="fricval"></param>
-		public PhyObj3D(float fricval = 0.05f)
-		{
-			Position = Velocity = Acceleration = Vector3.Zero;
-			Friction = fricval;
-		}
-		/// <summary>
-		/// Represents the current Touple of Velocity and Displacement
-		/// </summary>
-		/// <value></value>
-		public (Vector3 V, Vector3 X) Current
-		{
-			get => (Velocity, Position);
-			set
-			{
-				Velocity = value.V;
-				Position = value.X;
-			}
-		}
-		/// <summary>
-		/// Draw the gameobject at bounds as destination
-		/// </summary>
-		/// <param name="gt"></param>
-		public abstract void Draw(GameTime gt);
-		/// <summary>
-		/// Goes in the direction of Velocity (Vector2 v) which is added by Acceleration and subtracted with friction
-		/// </summary>
-		/// <param name="gt">GameTime argument</param>
-		public virtual void Update(GameTime gt)
-		{
-			Acceleration = Vector3.Subtract(Acceleration, Velocity * Friction);
-			Vector3.Add(ref Acceleration, ref Velocity, out Velocity);
-			Vector3.Add(ref Velocity, ref Position, out Position);
-		}
+		/// <param name="obj3D">The IPhyObj3D object</param>
+		/// <param name="friction">The friction on the body</param>
+		public static void Update(this IPhyObj3D obj3D, float friction = 0) => Update(obj3D, Vector3.Zero, friction);
 	}
 }

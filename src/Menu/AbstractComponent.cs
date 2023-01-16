@@ -8,7 +8,7 @@ namespace Azuxiren.MG.Menu
 	public abstract class AbstractComponent
 	{
 		/// <summary>Points to the menu this component belongs to</summary>
-		protected Menu _rootMenu;
+		protected Menu? _rootMenu;
 		/// <summary>Defines the boundaries of the button</summary>
 		public Rectangle Bounds;
 		/// <summary>
@@ -32,9 +32,9 @@ namespace Azuxiren.MG.Menu
 		/// <summary>Returns true if the button is Selected by the user</summary>
 		public abstract bool Selected { get; set; }
 		/// <summary>Recommended to add Button on button press here</summary>
-		public event EventHandler<ComponentArgs> OnRelease;
+		public event EventHandler<ComponentArgs>? OnRelease;
 		/// <summary>Add generic action on Button states here</summary>
-		public event EventHandler<ComponentArgs> StateChanged;
+		public event EventHandler<ComponentArgs>? StateChanged;
 		/// <summary>The method to call in the derived class for any action on change of state</summary>
 		/// <param name="gt">The instant in time</param>
 		/// <param name="ps">Keeps track of State of component</param>
@@ -42,10 +42,8 @@ namespace Azuxiren.MG.Menu
 		{
 			//Make a temporary copy to avoid race condition :
 			//The subsciber just unsubscribes after invokation and before checking of null
-			EventHandler<ComponentArgs> x = StateChanged;
-			if (x != null)
-				x.Invoke(this, new ComponentArgs(gt, ps, _state));
-			EventHandler<ComponentArgs> y = OnRelease;
+			StateChanged?.Invoke(this, new ComponentArgs(gt, ps, _state));
+			EventHandler<ComponentArgs>? y = OnRelease;
 			if (y != null && _state == ComponentState.Release)
 				y.Invoke(this, new ComponentArgs(gt, ps, _state));
 		}

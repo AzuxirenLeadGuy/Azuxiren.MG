@@ -88,7 +88,7 @@ namespace Azuxiren.MG
 		/// </summary>
 		/// <param name="obj">The other object to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
-		public override bool Equals(object obj) => obj is Circle circle && Equals(circle);
+		public override bool Equals(object? obj) => obj != null && obj is Circle circle && Equals(circle);
 		/// <summary> Returns the radius value as the hash </summary>
 		/// <returns>radius as hash</returns>
 		public override int GetHashCode() => ActualRadius + Center.X + Center.Y;

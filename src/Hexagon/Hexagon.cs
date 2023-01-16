@@ -111,6 +111,6 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Checks if two hexagon instances are equivalent to each other</summary>
 		/// <param name="obj">The other object to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
-		public override bool Equals(object obj) => obj is Hexagon hex && Equals(hex);
+		public override bool Equals(object? obj) => obj!=null && obj is Hexagon hex && Equals(hex);
 	}
 }

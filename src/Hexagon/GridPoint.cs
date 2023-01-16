@@ -23,7 +23,7 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Checks for the equality compared to another object</summary>
 		/// <param name="obj">The object to compare</param>
 		/// <returns>true if they are equal; false otherwise</returns>
-		public override bool Equals(object obj) => obj is GridPoint pos && Equals(pos);
+		public override bool Equals(object? obj) => obj != null && obj is GridPoint pos && Equals(pos);
 		/// <summary>Checks for the equality of two instances</summary>
 		/// <param name="left">The left operand</param>
 		/// <param name="right">The right operand</param>
