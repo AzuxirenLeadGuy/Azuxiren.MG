@@ -46,7 +46,7 @@ public interface ISidds<T> : IEnumerable<T>
 	/// If the item is to be deleted, the function should 
 	/// return false. Otherwise, it should return true.
 	/// </param>
-	void IterateAndDelete(Func<T, bool> function);
+	void CustomIterate(Func<T, bool> function);
 	/// <summary>
 	/// Iterate through the references of items in the list and 
 	/// performs a given function provided in the arguments.
@@ -61,5 +61,7 @@ public interface ISidds<T> : IEnumerable<T>
 	/// If the item is to be deleted, the function should 
 	/// return false. Otherwise, it should return true.
 	/// </param>
-	void IterateAndDelete(RefActionOrDelete<T> function);
+	void CustomIterate(RefActionOrDelete<T> function);
+	/// <summary>Removes all elements from the colletion</summary>
+	void Clear();
 }

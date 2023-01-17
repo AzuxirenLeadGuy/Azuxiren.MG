@@ -37,13 +37,23 @@ where T : IEquatable<T>
 	protected LLNode? _head;
 	/// <summary>Represents the number of items in the list</summary>
 	protected uint _count;
+	/// <summary>The limit of number of items in the list</summary>
+	protected uint _cap;
 	/// <inheritdoc/>
 	public uint Count => _count;
 	/// <summary>Constructs an instance</summary>
-	public Lerds()
+	/// <param name="cap">
+	/// The Number of items in the collection will
+	/// be capped to this number. More precisely, if
+	/// cap = x, then the list is not allowed to insert
+	/// an element if there are (x-1) in the list. <br/>
+	/// A value of 0 means there is no capacity limit
+	/// </param>
+	public Lerds(uint cap = 0)
 	{
 		_count = 0;
 		_head = null;
+		_cap = cap;
 	}
 	/// <inheritdoc/>
 	public IEnumerator<T> GetEnumerator()
@@ -59,6 +69,7 @@ where T : IEquatable<T>
 	/// <inheritdoc/>
 	public bool Add(T item)
 	{
+		if (_count + 1 == _cap) return false;
 		if (item == null) return false;
 		LLNode node = new(item) { Next = _head, Prev = null };
 		node.Next = _head;
@@ -96,17 +107,17 @@ where T : IEquatable<T>
 			next.Prev = prev;
 		}
 		item.Next = item.Prev = null;
-        _count--;
+		_count--;
 		return true;
 	}
 	/// <inheritdoc/>
-	public void IterateAndDelete(Func<T, bool> function)
+	public void CustomIterate(Func<T, bool> function)
 	{
-        bool Action(ref T item) => function(item);
-        IterateAndDelete(Action);
+		bool Action(ref T item) => function(item);
+		CustomIterate(Action);
 	}
 	/// <inheritdoc/>
-	public void IterateAndDelete(RefActionOrDelete<T> function)
+	public void CustomIterate(RefActionOrDelete<T> function)
 	{
 		LLNode? x = _head, y;
 		while (x != null)
@@ -117,4 +128,6 @@ where T : IEquatable<T>
 			x = y;
 		}
 	}
+	/// <inheritdoc/>
+	public void Clear() => _head = null;
 }

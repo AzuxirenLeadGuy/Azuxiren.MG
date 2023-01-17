@@ -75,13 +75,13 @@ where T : IEquatable<T>
 		return false;
 	}
 	/// <inheritdoc/>
-	public void IterateAndDelete(Func<T, bool> function)
+	public void CustomIterate(Func<T, bool> function)
 	{
-        bool Action(ref T item) => function(item);
-        IterateAndDelete(Action);
+		bool Action(ref T item) => function(item);
+		CustomIterate(Action);
 	}
 	/// <inheritdoc/>
-	public void IterateAndDelete(RefActionOrDelete<T> function)
+	public void CustomIterate(RefActionOrDelete<T> function)
 	{
 		uint i = 0;
 		while (i < _currentLength)
@@ -90,4 +90,6 @@ where T : IEquatable<T>
 			else Remove(i);
 		}
 	}
+	/// <inheritdoc/>
+	public void Clear() => _currentLength = 0;
 }
