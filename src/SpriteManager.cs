@@ -96,13 +96,13 @@ namespace Azuxiren.MG
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="dest">The Rectangle to draw the sheet frame at. (You are better off using the Dest variable instide the Spritesheet class</param>
 		/// <param name="tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Rectangle dest, Color tint) => sb.Draw(Sheet, dest, Source, tint); 
+		public void Draw(SpriteBatch sb, Rectangle dest, Color tint) => sb.Draw(Sheet, dest, Source, tint);
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint); 
+		public void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint);
 		///<summary>The Update Function of SpriteSheet
 		///
 		///Not Calling Update "Pauses" the Animation.</summary>
@@ -128,7 +128,8 @@ namespace Azuxiren.MG
 		/// <param name="dest">The Rectangle where all the spirtes are being displayed</param>
 		/// <param name="speednum">The numenator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
 		/// <param name="speedden">The denominator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
-		public LargeSprite(IEnumerable<Texture2D> frames, Rectangle dest, byte speednum = 1, byte speedden = 1)
+		/// <param name="next">A custom updater for frames in between. For normal propagation, set as null</param>
+		public LargeSprite(IEnumerable<Texture2D> frames, Rectangle dest, byte speednum = 1, byte speedden = 1, IEnumerable<int>? next = null)
 		{
 			FrameImages = Enumerable.ToArray(frames);
 			Dest = dest;
@@ -136,6 +137,16 @@ namespace Azuxiren.MG
 			Den = speedden;
 			Cur = 0;
 			CurrentFrame = 0;
+			if (next == null)
+			{
+				int len = FrameImages.Length;
+				_next = Enumerable.Range(1, len).ToArray();
+				_next[len - 1] = 0;
+			}
+			else 
+				_next = Enumerable.ToArray(next);
+			if (_next.Length != FrameImages.Length) 
+				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
 		}
 		/// <summary>
 		/// The sprite Image collection
@@ -154,6 +165,7 @@ namespace Azuxiren.MG
 		/// </summary>
 		public int TotalFrame => FrameImages.Length;
 		internal byte Num, Den, Cur;
+		private readonly int[] _next;
 		/// <summary>
 		/// Sets the speed of unrolling the sprite as a fraction of the current game's FPS.
 		/// 
@@ -169,11 +181,7 @@ namespace Azuxiren.MG
 		{
 			Cur += Num;
 			if (Cur >= Den)
-			{
-				CurrentFrame++;
-				CurrentFrame %= TotalFrame;
-				Cur = (byte)(Cur % Den);
-			}
+				CurrentFrame = _next[CurrentFrame];
 		}
 		/// <summary>
 		/// Draws the Sprite using the given spritebatch 
@@ -194,7 +202,7 @@ namespace Azuxiren.MG
 		/// <param name="angle">The angle to rotate</param>
 		public void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
 		/// <summary>
-		/// Draws the sprite using the given spritebatcj
+		/// Draws the sprite using the given spritebatch
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
 		/// <param name="tint">The tint color to add</param>
