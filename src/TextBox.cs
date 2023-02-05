@@ -156,5 +156,14 @@ namespace Azuxiren.MG
 		{
 			batch.DrawString(_font, _text, _pos, TextColor, rotation, origin, _scale, effects, LayerDepth);
 		}
+		/// <summary>
+		/// Draws the string of a specific temporary color
+		/// </summary>
+		/// <param name="batch">The spritebatch for the game</param>
+		/// <param name="color">Color to use for drawing</param>
+		public void Draw(SpriteBatch batch, Color color)
+		{
+			batch.DrawString(_font, _text, _pos, color, 0, Vector2.Zero, _scale, SpriteEffects.None, LayerDepth);			
+		}
 	}
 }
