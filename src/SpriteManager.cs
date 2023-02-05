@@ -140,12 +140,12 @@ namespace Azuxiren.MG
 			if (next == null)
 			{
 				int len = FrameImages.Length;
-				_next = Enumerable.Range(1, len).ToArray();
-				_next[len - 1] = 0;
+				Next = Enumerable.Range(1, len).ToArray();
+				Next[len - 1] = 0;
 			}
 			else 
-				_next = Enumerable.ToArray(next);
-			if (_next.Length != FrameImages.Length) 
+				Next = Enumerable.ToArray(next);
+			if (Next.Length != FrameImages.Length) 
 				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
 		}
 		/// <summary>
@@ -165,7 +165,8 @@ namespace Azuxiren.MG
 		/// </summary>
 		public int TotalFrame => FrameImages.Length;
 		internal byte Num, Den, Cur;
-		private readonly int[] _next;
+		/// <summary>The next function for each index</summary>
+		public readonly int[] Next;
 		/// <summary>
 		/// Sets the speed of unrolling the sprite as a fraction of the current game's FPS.
 		/// 
@@ -181,35 +182,45 @@ namespace Azuxiren.MG
 		{
 			Cur += Num;
 			if (Cur >= Den)
-				CurrentFrame = _next[CurrentFrame];
+			{
+				CurrentFrame = Next[CurrentFrame];
+				Cur = 0;
+			}
 		}
 		/// <summary>
 		/// Draws the Sprite using the given spritebatch 
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
-		public void Draw(SpriteBatch sb) => Draw(sb, Color.White, 0, Vector2.Zero);
+		public void Draw(SpriteBatch sb) => Draw(sb, Dest, Color.White, 0, Vector2.Zero);
+		/// <summary>
+		/// Draws the Sprite using the given spritebatch 
+		/// </summary>
+		/// <param name="sb">The given SpriteBatch</param>
+		/// <param name="dest">The temporary destination rectangle</param>
+		public void Draw(SpriteBatch sb, Rectangle dest) => Draw(sb, dest, Color.White, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the spirte using the given spritebatch
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
 		/// <param name="tint">The tint color to add</param>
-		public void Draw(SpriteBatch sb, Color tint) => Draw(sb, tint, 0, Vector2.Zero);
+		public void Draw(SpriteBatch sb, Color tint) => Draw(sb, Dest, tint, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the sprite using the given spritebatcj
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
 		/// <param name="tint">The tint color to add</param>
 		/// <param name="angle">The angle to rotate</param>
-		public void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
+		public void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, Dest, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
 		/// <summary>
 		/// Draws the sprite using the given spritebatch
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
+		/// <param name="dest">The temporary destination rectangle</param>
 		/// <param name="tint">The tint color to add</param>
 		/// <param name="angle">The angle to rotate</param>
 		/// <param name="origin">The origin of rotation</param>
 		/// <param name="effects">Added effects</param>
 		/// <param name="depth">The depth in the layer for this sprite</param>
-		public void Draw(SpriteBatch spriteBatch, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], Dest, null, tint, angle, origin, effects, depth);
+		public void Draw(SpriteBatch spriteBatch, Rectangle dest, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], dest, null, tint, angle, origin, effects, depth);
 	}
 }
