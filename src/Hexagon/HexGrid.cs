@@ -14,7 +14,7 @@ namespace Azuxiren.MG.Hex
 	/// The type of object that occupies a position
 	/// within the Grid.
 	/// </typeparam>
-	public struct HexGrid<T> : IReadOnlyDictionary<GridPoint, T>
+	public readonly struct HexGrid<T> : IReadOnlyDictionary<GridPoint, T>
 	{
 		/// <summary>
 		/// The distance from between center (0, 0, [0]) 

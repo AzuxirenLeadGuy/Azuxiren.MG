@@ -17,7 +17,7 @@ namespace Azuxiren.MG
 		/// Draws the image
 		/// </summary>
 		/// <param name="batch">The spritebatch used for drawing</param>
-		public void Draw(SpriteBatch batch) => batch.Draw(Image, Dest, Color.White);
+		public void Draw(SpriteBatch batch) => Draw(batch, Color.White);
 		/// <summary>
 		/// Draws the image
 		/// </summary>
