@@ -143,15 +143,42 @@ namespace Azuxiren.MG
 				Next = Enumerable.Range(1, len).ToArray();
 				Next[len - 1] = 0;
 			}
-			else 
+			else
 				Next = Enumerable.ToArray(next);
-			if (Next.Length != FrameImages.Length) 
+			if (Next.Length != FrameImages.Length)
+				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
+		}
+		/// <summary>
+		/// The constructor for LargeSprite
+		/// </summary>
+		/// <param name="frames">The frames in this Sprite</param>
+		/// <param name="dest">The Rectangle where all the spirtes are being displayed</param>
+		/// <param name="copy">If true, the texture and next frame array are copied, otherwise, the same reference is used</param>
+		/// <param name="speednum">The numenator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
+		/// <param name="speedden">The denominator of the ratio of speed of unrolling the sprite with respect to the framerate of the game. Don't touch if you don't understand</param>
+		/// <param name="next">A custom updater for frames in between. For normal propagation, set as null</param>
+		public LargeSprite(Texture2D[] frames, Rectangle dest, bool copy, byte speednum = 1, byte speedden = 1, int[]? next = null)
+		{
+			FrameImages = copy ? Enumerable.ToArray(frames) : frames;
+			Dest = dest;
+			Num = speednum;
+			Den = speedden;
+			Cur = 0;
+			CurrentFrame = 0;
+			if (next == null)
+			{
+				int len = FrameImages.Length;
+				Next = Enumerable.Range(1, len).ToArray();
+				Next[len - 1] = 0;
+			}
+			else Next = copy ? Enumerable.ToArray(next) : next;
+			if (Next.Length != FrameImages.Length)
 				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
 		}
 		/// <summary>
 		/// The sprite Image collection
 		/// </summary>
-		public Texture2D[] FrameImages;
+		public readonly Texture2D[] FrameImages;
 		/// <summary>
 		/// This is where the sprite is drawn
 		/// </summary>
