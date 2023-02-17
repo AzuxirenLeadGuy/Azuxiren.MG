@@ -29,7 +29,8 @@ namespace Azuxiren.MG
 		/// <summary>Manages the graphic setting fot the game</summary>
 		public GraphicsDeviceManager GraphicsDM;
 		internal bool IsLoading;
-		internal IScreen CurrentScreen, LoadingScreen;
+		/// <summary>The screens being managed internally</summary>
+		protected internal IScreen _currentScreen, _loadingScreen;
 		/// <summary>
 		/// The Default Constructor
 		/// </summary>
@@ -37,8 +38,8 @@ namespace Azuxiren.MG
 		{
 			GraphicsDM = new GraphicsDeviceManager(this);
 			IsLoading = false;
-			CurrentScreen = null!;
-			LoadingScreen = null!;
+			_currentScreen = null!;
+			_loadingScreen = null!;
 		}
 		/// <summary>
 		/// The Provided Initializer for Monogame. This is where the LoadContent 
@@ -53,10 +54,10 @@ namespace Azuxiren.MG
 		/// </summary>
 		protected override void LoadContent()
 		{
-			CurrentScreen = new StartScreen();
-			LoadingScreen = new LoadScreen();
-			CurrentScreen.LoadContent();
-			LoadingScreen.LoadContent();
+			_currentScreen = new StartScreen();
+			_loadingScreen = new LoadScreen();
+			_currentScreen.LoadContent();
+			_loadingScreen.LoadContent();
 			base.LoadContent();
 		}
 		/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
@@ -92,8 +93,8 @@ namespace Azuxiren.MG
 		/// <param name="gt">Denotes an instant in time</param>
 		protected override void Draw(GameTime gt)
 		{
-			if (IsLoading) LoadingScreen.Draw(gt);
-			else CurrentScreen.Draw(gt);
+			if (IsLoading) _loadingScreen.Draw(gt);
+			else _currentScreen.Draw(gt);
 			base.Draw(gt);
 		}
 		/// <summary>
@@ -102,8 +103,8 @@ namespace Azuxiren.MG
 		/// <param name="gameTime">Denotes an instant in time</param>
 		protected override void Update(GameTime gameTime)
 		{
-			if (IsLoading) LoadingScreen.Update(gameTime);
-			else CurrentScreen.Update(gameTime);
+			if (IsLoading) _loadingScreen.Update(gameTime);
+			else _currentScreen.Update(gameTime);
 			base.Update(gameTime);
 		}
 		/// <summary>
@@ -118,7 +119,7 @@ namespace Azuxiren.MG
 				{
 					var screen = new T();
 					screen.LoadContent();
-					CurrentScreen = screen;
+					_currentScreen = screen;
 					IsLoading = false;
 				}
 			);
@@ -135,8 +136,8 @@ namespace Azuxiren.MG
 			IsLoading = true;
 			Task.Run(() =>
 				{
-					CurrentScreen = generator.Invoke();
-					CurrentScreen.LoadContent();
+					_currentScreen = generator.Invoke();
+					_currentScreen.LoadContent();
 					IsLoading = false;
 				}
 			);
