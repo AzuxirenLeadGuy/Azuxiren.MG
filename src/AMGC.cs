@@ -10,7 +10,7 @@ namespace Azuxiren.MG
 	/// 
 	/// Consists of two IScreen objects : CurrentScreen and LoadingScreen.<br/>
 	/// 
-	/// CurrentScreen is the screen that is alwaus 
+	/// CurrentScreen is the screen that is always 
 	/// being updated and drawn except when loading a new screen <br/>
 	/// 
 	/// At that time, a new IScreen object is instaniated and calls 

@@ -59,7 +59,7 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public Rectangle Bounds
 		{
-			get => _bounds;
+			readonly get => _bounds;
 			set
 			{
 				_bounds = value;
@@ -72,7 +72,7 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public string Text
 		{
-			get => _text;
+			readonly get => _text;
 			set
 			{
 				_text = value;
@@ -85,7 +85,7 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public SpriteFont Font
 		{
-			get => _font;
+			readonly get => _font;
 			set
 			{
 				_font = value;
@@ -98,7 +98,7 @@ namespace Azuxiren.MG
 		/// <value></value>
 		public Alignment Alignment
 		{
-			get => _alignment;
+			readonly get => _alignment;
 			set
 			{
 				_alignment = value;
@@ -131,7 +131,7 @@ namespace Azuxiren.MG
 		/// Draws the string (Color of text is white, by default)
 		/// </summary>
 		/// <param name="batch">The spritebatch for the game</param>
-		public void Draw(SpriteBatch batch)
+		public readonly void Draw(SpriteBatch batch)
 		{
 			batch.DrawString(_font, _text, _pos, TextColor, 0, Vector2.Zero, _scale, SpriteEffects.None, LayerDepth);
 		}
@@ -141,7 +141,7 @@ namespace Azuxiren.MG
 		/// <param name="batch">The spritebatch for the game</param>
 		/// <param name="rotation">The value of rotation</param>
 		/// <param name="origin">The point to rotate the text about</param>
-		public void Draw(SpriteBatch batch, float rotation, Vector2 origin)
+		public readonly void Draw(SpriteBatch batch, float rotation, Vector2 origin)
 		{
 			batch.DrawString(_font, _text, _pos, TextColor, rotation, origin, _scale, SpriteEffects.None, LayerDepth);
 		}
@@ -152,7 +152,7 @@ namespace Azuxiren.MG
 		/// <param name="rotation">The value of rotation</param>
 		/// <param name="origin">The point to rotate the text about</param>
 		/// <param name="effects">The SpriteEffects to use</param>
-		public void Draw(SpriteBatch batch, float rotation, Vector2 origin, SpriteEffects effects)
+		public readonly void Draw(SpriteBatch batch, float rotation, Vector2 origin, SpriteEffects effects)
 		{
 			batch.DrawString(_font, _text, _pos, TextColor, rotation, origin, _scale, effects, LayerDepth);
 		}
@@ -161,7 +161,7 @@ namespace Azuxiren.MG
 		/// </summary>
 		/// <param name="batch">The spritebatch for the game</param>
 		/// <param name="color">Color to use for drawing</param>
-		public void Draw(SpriteBatch batch, Color color)
+		public readonly void Draw(SpriteBatch batch, Color color)
 		{
 			batch.DrawString(_font, _text, _pos, color, 0, Vector2.Zero, _scale, SpriteEffects.None, LayerDepth);			
 		}

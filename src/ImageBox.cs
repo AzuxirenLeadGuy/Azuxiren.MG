@@ -17,12 +17,12 @@ namespace Azuxiren.MG
 		/// Draws the image
 		/// </summary>
 		/// <param name="batch">The spritebatch used for drawing</param>
-		public void Draw(SpriteBatch batch) => Draw(batch, Color.White);
+		public readonly void Draw(SpriteBatch batch) => Draw(batch, Color.White);
 		/// <summary>
 		/// Draws the image
 		/// </summary>
 		/// <param name="batch">The spritebatch used for drawing</param>
 		/// <param name="tint">The color to tint the image with</param>
-		public void Draw(SpriteBatch batch, Color tint) => batch.Draw(Image, Dest, tint);
+		public readonly void Draw(SpriteBatch batch, Color tint) => batch.Draw(Image, Dest, tint);
 	}
 }

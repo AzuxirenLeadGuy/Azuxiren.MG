@@ -13,7 +13,7 @@ namespace Azuxiren.MG
 		/// <summary>Radius of this circle</summary>
 		public int Radius
 		{
-			get => ActualRadius;
+			readonly get => ActualRadius;
 			set => ActualRadius = value >= 0 ? value : throw new ArgumentException("Radius cannot be negative", nameof(value));
 		}
 		/// <summary>The Y coordinate of the top of this circle instance</summary>
@@ -79,7 +79,7 @@ namespace Azuxiren.MG
 		/// <summary> Checks if two circles are equal or not</summary>
 		/// <param name="other">The other circle to compare</param>
 		/// <returns>true if both circles are equal; false otherwise</returns>
-		public bool Equals(Circle other) => ActualRadius == other.ActualRadius && Center == other.Center;
+		public readonly bool Equals(Circle other) => ActualRadius == other.ActualRadius && Center == other.Center;
 		/// <summary>
 		/// Checks if this circle contains the other circle. <br/><br/>
 		/// This is not a commutative operation, 
@@ -88,15 +88,15 @@ namespace Azuxiren.MG
 		/// </summary>
 		/// <param name="obj">The other object to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
-		public override bool Equals(object? obj) => obj != null && obj is Circle circle && Equals(circle);
+		public override readonly bool Equals(object? obj) => obj != null && obj is Circle circle && Equals(circle);
 		/// <summary> Returns the radius value as the hash </summary>
 		/// <returns>radius as hash</returns>
-		public override int GetHashCode() => ActualRadius + Center.X + Center.Y;
+		public override readonly int GetHashCode() => ActualRadius + Center.X + Center.Y;
 		/// <summary>
 		/// Prints the value of this object
 		/// </summary>
 		/// <returns>string representation of the values contained by this instance</returns>
-		public override string ToString() => "Circle: { " + $"Center: {(Center.X, Center.Y)}, Radius: {ActualRadius}" + " }";
+		public override readonly string ToString() => "Circle: { " + $"Center: {(Center.X, Center.Y)}, Radius: {ActualRadius}" + " }";
 		/// <summary>
 		/// Checks if two circles are equivalent to each other
 		/// </summary>

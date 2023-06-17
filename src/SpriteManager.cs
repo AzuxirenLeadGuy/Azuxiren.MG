@@ -83,26 +83,26 @@ namespace Azuxiren.MG
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
-		public void Draw(SpriteBatch sb) { sb.Draw(Sheet, Dest, Source, Color.White); }
+		public readonly void Draw(SpriteBatch sb) { sb.Draw(Sheet, Dest, Source, Color.White); }
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="dest"></param>
-		public void Draw(SpriteBatch sb, Rectangle dest) { sb.Draw(Sheet, dest, Source, Color.White); }
+		public readonly void Draw(SpriteBatch sb, Rectangle dest) { sb.Draw(Sheet, dest, Source, Color.White); }
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="dest">The Rectangle to draw the sheet frame at. (You are better off using the Dest variable instide the Spritesheet class</param>
 		/// <param name="tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Rectangle dest, Color tint) => sb.Draw(Sheet, dest, Source, tint);
+		public readonly void Draw(SpriteBatch sb, Rectangle dest, Color tint) => sb.Draw(Sheet, dest, Source, tint);
 		/// <summary>
 		/// Draws the SpriteSheet
 		/// </summary>
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="tint">The Color to tint the drawing with</param>
-		public void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint);
+		public readonly void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint);
 		///<summary>The Update Function of SpriteSheet
 		///
 		///Not Calling Update "Pauses" the Animation.</summary>
@@ -218,26 +218,26 @@ namespace Azuxiren.MG
 		/// Draws the Sprite using the given spritebatch 
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
-		public void Draw(SpriteBatch sb) => Draw(sb, Dest, Color.White, 0, Vector2.Zero);
+		public readonly void Draw(SpriteBatch sb) => Draw(sb, Dest, Color.White, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the Sprite using the given spritebatch 
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
 		/// <param name="dest">The temporary destination rectangle</param>
-		public void Draw(SpriteBatch sb, Rectangle dest) => Draw(sb, dest, Color.White, 0, Vector2.Zero);
+		public readonly void Draw(SpriteBatch sb, Rectangle dest) => Draw(sb, dest, Color.White, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the spirte using the given spritebatch
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
 		/// <param name="tint">The tint color to add</param>
-		public void Draw(SpriteBatch sb, Color tint) => Draw(sb, Dest, tint, 0, Vector2.Zero);
+		public readonly void Draw(SpriteBatch sb, Color tint) => Draw(sb, Dest, tint, 0, Vector2.Zero);
 		/// <summary>
 		/// Draws the sprite using the given spritebatcj
 		/// </summary>
 		/// <param name="spriteBatch">The given SpriteBatch</param>
 		/// <param name="tint">The tint color to add</param>
 		/// <param name="angle">The angle to rotate</param>
-		public void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, Dest, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
+		public readonly void Draw(SpriteBatch spriteBatch, Color tint, float angle) => Draw(spriteBatch, Dest, tint, angle, FrameImages[CurrentFrame].Bounds.Center.ToVector2());
 		/// <summary>
 		/// Draws the sprite using the given spritebatch
 		/// </summary>
@@ -248,6 +248,6 @@ namespace Azuxiren.MG
 		/// <param name="origin">The origin of rotation</param>
 		/// <param name="effects">Added effects</param>
 		/// <param name="depth">The depth in the layer for this sprite</param>
-		public void Draw(SpriteBatch spriteBatch, Rectangle dest, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], dest, null, tint, angle, origin, effects, depth);
+		public readonly void Draw(SpriteBatch spriteBatch, Rectangle dest, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], dest, null, tint, angle, origin, effects, depth);
 	}
 }

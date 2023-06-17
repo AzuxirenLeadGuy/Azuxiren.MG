@@ -19,11 +19,11 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Checks for the equality compared to another HexGrid.Point</summary>
 		/// <param name="other">The other position to compare</param>
 		/// <returns>true if they are equal; false otherwise</returns>
-		public bool Equals(GridPoint other) => Q == other.Q && R == other.R;
+		public readonly bool Equals(GridPoint other) => Q == other.Q && R == other.R;
 		/// <summary>Checks for the equality compared to another object</summary>
 		/// <param name="obj">The object to compare</param>
 		/// <returns>true if they are equal; false otherwise</returns>
-		public override bool Equals(object? obj) => obj != null && obj is GridPoint pos && Equals(pos);
+		public override readonly bool Equals(object? obj) => obj != null && obj is GridPoint pos && Equals(pos);
 		/// <summary>Checks for the equality of two instances</summary>
 		/// <param name="left">The left operand</param>
 		/// <param name="right">The right operand</param>
@@ -36,7 +36,7 @@ namespace Azuxiren.MG.Hex
 		public static bool operator !=(GridPoint left, GridPoint right) => !(left == right);
 		/// <summary>Computes a suitable hash for this positional value</summary>
 		/// <returns>Hash for this position</returns>
-		public override int GetHashCode()
+		public override readonly int GetHashCode()
 		{
 			ushort q = (ushort)Q, r = (ushort)R;
 			return (q << 16) + r;
@@ -48,10 +48,10 @@ namespace Azuxiren.MG.Hex
 		/// 0 if this element is in the same order;
 		/// positive value otherwise 
 		/// </returns>
-		public int CompareTo(GridPoint other) => Q != other.Q ? Q.CompareTo(other.Q) : R.CompareTo(other.R);
+		public readonly int CompareTo(GridPoint other) => Q != other.Q ? Q.CompareTo(other.Q) : R.CompareTo(other.R);
 		/// <summary>Returns the string representation of the values of this hexagon grid position</summary>
 		/// <returns>The string representation of the values of this hexagon grid position</returns>
-		public override string ToString() => $"\"Hexgrid\": ({Q}, {R})";
+		public override readonly string ToString() => $"\"Hexgrid\": ({Q}, {R})";
 		/// <summary>Implicit conversion from tuple of integers to GridPoint</summary>
 		/// <param name="x">Tuple of integers</param>
 		public static implicit operator GridPoint((int, int) x) => new(x.Item1, x.Item2);

@@ -13,7 +13,7 @@ namespace Azuxiren.MG.Hex
 		public int SideLength;
 		private float _angle;
 		/// <summary>The angle with which the hexagon is rotated about its center</summary>
-		public float Angle { get => _angle; set => _angle = FloatMod(value, Pi); }
+		public float Angle { readonly get => _angle; set => _angle = FloatMod(value, Pi); }
 		/// <summary>Constant values for computation</summary>
 		public const float Pi = MathF.PI, Root3 = 1.7320508075688f, Root3By2 = 0.8660254037844f;
 		private static float FloatMod(float givenAngle, float mod)
@@ -91,13 +91,13 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Checks if two hexagon instances are equivalent to each other</summary>
 		/// <param name="other">The other hexagon instance to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
-		public bool Equals(Hexagon other) => SideLength == other.SideLength && Center == other.Center && _angle == other._angle;
+		public readonly bool Equals(Hexagon other) => SideLength == other.SideLength && Center == other.Center && _angle == other._angle;
 		/// <summary>Returns the SideLength as the hashcode</summary>
 		/// <returns>SideLength as the hashcode</returns>
-		public override int GetHashCode() => SideLength;
+		public override readonly int GetHashCode() => SideLength;
 		/// <summary>Returns the string representation of the values of this hexagon</summary>
 		/// <returns>The string representation of the values of this hexagon</returns>
-		public override string ToString() => "Hexagon: { " + $"Centre: {(Center.X, Center.Y)}, SideLength = {SideLength}, Angle = {_angle}" + " }";
+		public override readonly string ToString() => "Hexagon: { " + $"Centre: {(Center.X, Center.Y)}, SideLength = {SideLength}, Angle = {_angle}" + " }";
 		/// <summary> Checks if two hexagon instances are equivalent</summary>
 		/// <param name="left">The left operand</param>
 		/// <param name="right">The right operand</param>
@@ -111,6 +111,6 @@ namespace Azuxiren.MG.Hex
 		/// <summary>Checks if two hexagon instances are equivalent to each other</summary>
 		/// <param name="obj">The other object to compare with</param>
 		/// <returns>true if both instances are equivalent; false otherwise</returns>
-		public override bool Equals(object? obj) => obj!=null && obj is Hexagon hex && Equals(hex);
+		public override readonly bool Equals(object? obj) => obj!=null && obj is Hexagon hex && Equals(hex);
 	}
 }
