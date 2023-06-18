@@ -56,7 +56,7 @@ namespace Azuxiren.MG.Menu
 	/// <summary>
 	/// Interface for a basic menu which is a collection of AbstractComponents
 	/// </summary>
-	public abstract class Menu
+	public abstract class AbstractMenu
 	{
 		/// <summary>The collection of components</summary>
 		public abstract IEnumerable<AbstractComponent> Components { get; }

@@ -8,7 +8,7 @@ namespace Azuxiren.MG.Menu
 	public abstract class AbstractComponent
 	{
 		/// <summary>Points to the menu this component belongs to</summary>
-		protected Menu? _rootMenu;
+		protected AbstractMenu? _rootMenu;
 		/// <summary>Defines the boundaries of the button</summary>
 		public Rectangle Bounds;
 		/// <summary>
