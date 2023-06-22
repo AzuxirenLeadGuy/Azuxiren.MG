@@ -22,6 +22,7 @@ namespace Azuxiren.MG
 	/// 
 	/// Use the base Constructor and initalize the CurrentScreen and LoadingScreen objects
 	/// </summary>
+	[Obsolete("This class is now outdated. It works, but you should probably use the new AzuxirenMonogame")]
 	public abstract class AMGC<StartScreen, LoadScreen> : Game
 		where StartScreen : IScreen, new()
 		where LoadScreen : IScreen, new()
