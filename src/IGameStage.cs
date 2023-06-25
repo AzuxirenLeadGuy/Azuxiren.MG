@@ -8,6 +8,7 @@ namespace Azuxiren.MG;
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public interface IGameLoadableComponent<Parameters, Settings>
+where Parameters : class
 {
 	/// <summary>
 	/// Loads the required content. This is a required 
@@ -24,6 +25,7 @@ public interface IGameLoadableComponent<Parameters, Settings>
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public interface IDrawableComponent<Parameters, Settings>
+where Parameters : class
 {
 	/// <summary>
 	/// The logic for drawing the components within the game. 
@@ -42,6 +44,7 @@ public interface IDrawableComponent<Parameters, Settings>
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public interface IGameStage<Parameters, Settings> : IGameLoadableComponent<Parameters, Settings>, IDrawableComponent<Parameters, Settings>
+where Parameters : class
 {
 	/// <summary>
 	/// The logic for updating the components within the game. 
