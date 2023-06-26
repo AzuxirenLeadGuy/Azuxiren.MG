@@ -190,7 +190,7 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// The total count of frames in the object
 		/// </summary>
-		public int TotalFrame => FrameImages.Length;
+		public readonly int TotalFrame => FrameImages.Length;
 		internal byte Num, Den, Cur;
 		/// <summary>The next function for each index</summary>
 		public readonly int[] Next;
