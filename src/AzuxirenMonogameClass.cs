@@ -8,6 +8,7 @@ namespace Azuxiren.MG;
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public class AzuxirenMonogameClass<Parameters, Settings> : Game
+where Parameters : class
 {
 	/// <summary>The constant Parameters of the game</summary>
 	public readonly Parameters GameParameters;
