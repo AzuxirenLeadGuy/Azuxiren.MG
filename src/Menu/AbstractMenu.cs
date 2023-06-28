@@ -76,11 +76,6 @@ namespace Azuxiren.MG.Menu
 		/// <summary>The component that is currently selected in the menu</summary>
 		protected AbstractComponent? _currentlySelected;
 		/// <summary>
-		/// Draws the menu
-		/// </summary>
-		/// <param name="gt">GameTime instance</param>
-		public virtual void Draw(GameTime gt) { foreach (var comp in Components) comp.Draw(gt); }
-		/// <summary>
 		/// Updates the menu
 		/// </summary>
 		/// <param name="gt">GameTime instance</param>

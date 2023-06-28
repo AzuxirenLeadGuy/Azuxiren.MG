@@ -47,9 +47,6 @@ namespace Azuxiren.MG.Menu
 			if (y != null && _state == ComponentState.Release)
 				y.Invoke(this, new ComponentArgs(gt, ps, _state));
 		}
-		/// <summary>The Draw function of this Component.</summary>
-		/// <param name="gt">The GameTime variable</param>
-		public abstract void Draw(GameTime gt);
 		/// <summary>The update mechanism for button. Not calling this will "freeze" the Component</summary>
 		/// <param name="gt"></param>
 		public abstract void Update(GameTime gt);
