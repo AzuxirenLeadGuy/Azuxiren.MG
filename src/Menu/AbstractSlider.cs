@@ -13,6 +13,8 @@ namespace Azuxiren.MG.Menu
 	{
 		/// <summary>This is the variable that is sliding</summary>
 		public abstract byte Value { get; protected set; }
+		/// <summary>This is the value string that is currently selected</summary>
+		public abstract string CurrentlySelected{get; protected set;}
 		/// <summary>The title of the Slider</summary>
 		public string Title;
 		/// <summary>
@@ -22,11 +24,16 @@ namespace Azuxiren.MG.Menu
 		/// <param name="message">The text to show</param>
 		/// <param name="enableAtStart">The state of enabled will be set if this value is true</param>
 		/// <returns></returns>
-		public AbstractSlider(Rectangle bounds, string message = "", bool enableAtStart = true) : base(bounds, enableAtStart) => Title = message;
+		public AbstractSlider(Rectangle bounds, string message = "", bool enableAtStart = true) : base(bounds, enableAtStart)
+		{
+			Title = message;
+			ValueChanged = null!;
+		}
+
 		/// <summary>
 		/// The event invoked on any change in Value
 		/// </summary>
-		public abstract event EventHandler<SliderValueArgs> OnValueChange;
+		public event EventHandler<SliderArgs>? ValueChanged;
 		/// <returns>Returns true if increment is inputted, otherwise false</returns>
 		public abstract bool InputIncrement { get; set; }
 		/// <summary>Used for checking input to decrease value of Slider</summary>
@@ -62,7 +69,11 @@ namespace Azuxiren.MG.Menu
 						_state = ComponentState.UnSelected;
 						break;
 				}
-				if (ps != _state) OnStateChanged(gt, ps);
+				if (ps != _state) 
+				{
+					OnStateChanged(gt, ps);
+					ValueChanged?.Invoke(this, new(CurrentlySelected, Value));
+				}
 			}
 		}
 	}

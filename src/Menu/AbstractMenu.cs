@@ -18,41 +18,6 @@ namespace Azuxiren.MG.Menu
 		/// <summary>The component is inaccessible</summary>
 		Disabled = 4
 	}
-	/// <summary>The EventArgs implementation for components</summary>
-	public class ComponentArgs : EventArgs
-	{
-		/// <summary>The states invloved in transition of Button</summary>
-		public GameTime Gametime;
-		/// <summary>The state of Component before Invokation</summary>
-		public ComponentState Previous;
-		/// <summary>The state of Component during Invokation</summary>
-		public ComponentState Current;
-		/// <summary>
-		/// Defines all the values of ButtonArgs
-		/// </summary>
-		/// <param name="g">GameTime object</param>
-		/// <param name="ps">Previous State</param>
-		/// <param name="cs">Current State</param>
-		public ComponentArgs(GameTime g, ComponentState ps, ComponentState cs) { Gametime = g; Previous = ps; Current = cs; }
-	}
-	/// <summary>Represents the changed value in an AbstractSlider</summary>
-	public class SliderValueArgs : EventArgs
-	{
-		/// <summary>The value before the change</summary>
-		public byte Prev;
-		/// <summary>The value after the change</summary>
-		public byte Curr;
-		/// <summary>
-		/// The constructor for SliderValueArgs class
-		/// </summary>
-		/// <param name="pre">The value before change</param>
-		/// <param name="cur">The value after change</param>
-		public SliderValueArgs(byte pre, byte cur)
-		{
-			Prev = pre;
-			Curr = cur;
-		}
-	}
 	/// <summary>
 	/// Interface for a basic menu which is a collection of AbstractComponents
 	/// </summary>
