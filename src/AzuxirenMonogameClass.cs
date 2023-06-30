@@ -7,8 +7,9 @@ namespace Azuxiren.MG;
 /// </summary>
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
-public class AzuxirenMonogameClass<Parameters, Settings> : Game
+public abstract class AzuxirenMonogameClass<Parameters, Settings> : Game
 where Parameters : class
+where Settings: new()
 {
 	/// <summary>The constant Parameters of the game</summary>
 	public readonly Parameters GameParameters;
@@ -28,27 +29,29 @@ where Parameters : class
 	/// Initializes the game object
 	/// </summary>
 	/// <param name="parameters">The constant parameters for this game</param>
-	/// <param name="initalSettings">The initial settings of the game</param>
 	/// <param name="startScreen">The screen to begin the game with</param>
 	/// <param name="loadScreen">The screen for loading, to be shown during transitions</param>
 	public AzuxirenMonogameClass(
 		Parameters parameters,
-		Settings initalSettings,
 		IGameStage<Parameters, Settings> startScreen,
 		IGameStage<Parameters, Settings> loadScreen)
 	{
 		GameParameters = parameters;
-		_settings = initalSettings;
+		_settings = new();
 		GraphicsDM = new(this);
 		_isLoading = false;
 		_loadScreen = loadScreen;
 		_mainScreen = startScreen;
 	}
+	/// <summary>Prepares the initial loaded setting based on the game</summary>
+	/// <returns>The Loaded Setting object</returns>
+	protected abstract Settings LoadInitialSetting();
 	/// <summary>
 	/// Loads the Content for both the screens
 	/// </summary>
 	protected override void LoadContent()
 	{
+		_settings = LoadInitialSetting();
 		_mainScreen.LoadContent(GameParameters, ref _settings);
 		_loadScreen.LoadContent(GameParameters, ref _settings);
 		base.LoadContent();

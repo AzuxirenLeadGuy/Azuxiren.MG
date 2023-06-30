@@ -17,13 +17,13 @@ namespace Azuxiren.MG
 			set => ActualRadius = value >= 0 ? value : throw new ArgumentException("Radius cannot be negative", nameof(value));
 		}
 		/// <summary>The Y coordinate of the top of this circle instance</summary>
-		public int Top => Center.Y - ActualRadius;
+		public readonly int Top => Center.Y - ActualRadius;
 		/// <summary>The Y coordinate of the bottom of this circle instance</summary>
-		public int Bottom => Center.Y + ActualRadius;
+		public readonly int Bottom => Center.Y + ActualRadius;
 		/// <summary>The X coordinate of the left of this circle instance</summary>
-		public int Left => Center.X - ActualRadius;
+		public readonly int Left => Center.X - ActualRadius;
 		/// <summary>The X coordinate of the right of this circle instance</summary>
-		public int Right => Center.X + ActualRadius;
+		public readonly int Right => Center.X + ActualRadius;
 		/// <summary>
 		/// Draws a filled circle within the rectangular array of colors
 		/// </summary>

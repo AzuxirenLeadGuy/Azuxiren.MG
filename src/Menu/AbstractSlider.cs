@@ -48,6 +48,7 @@ namespace Azuxiren.MG.Menu
 		public override void Update(GameTime gt)
 		{
 			var ps = _state;
+			var pv = Value;
 			if (Enabled)
 			{
 				switch (_state)
@@ -72,6 +73,9 @@ namespace Azuxiren.MG.Menu
 				if (ps != _state) 
 				{
 					OnStateChanged(gt, ps);
+				}
+				if (pv != Value)
+				{
 					ValueChanged?.Invoke(this, new(CurrentlySelected, Value));
 				}
 			}
