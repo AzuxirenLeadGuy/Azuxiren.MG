@@ -23,7 +23,7 @@ public class Camera2D
 	{
 		Zoom = 1f;
 		Rotation = 0;
-		Position = new(0, 0);
+		Position = screen.Center.ToVector2();
 		Viewport = screen;
 	}
 	/// <summary>With the given values, update the transform matrix for the camera</summary>
