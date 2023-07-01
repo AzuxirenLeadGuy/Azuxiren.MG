@@ -47,9 +47,36 @@ namespace Azuxiren.MG.Menu
 			if (y != null && _state == ComponentState.Release)
 				y.Invoke(this, new ComponentArgs(gt, ps, _state));
 		}
-		/// <summary>The update mechanism for button. Not calling this will "freeze" the Component</summary>
-		/// <param name="gt"></param>
-		public abstract void Update(GameTime gt);
+		/// <summary>Returns true if the some input is given/pressed</summary>
+		public abstract bool InputPressed { get; set; }
+		/// <summary>The general/default update mechanism. Not calling this will "freeze" the Component</summary>
+		/// <param name="gt">GameTime instance on update</param>
+		public virtual void Update(GameTime gt)
+		{
+			var ps = _state;
+			if (Enabled)
+			{
+				switch (_state)
+				{
+					case ComponentState.UnSelected:
+						if (Selected)
+							_state = ComponentState.Selected;
+						break;
+					case ComponentState.Selected:
+						if (!Selected) _state = ComponentState.UnSelected;
+						else if (InputPressed) _state = ComponentState.Press;
+						break;
+					case ComponentState.Press:
+						if (!Selected) _state = ComponentState.UnSelected;
+						else if (!InputPressed) _state = ComponentState.Release;
+						break;
+					case ComponentState.Release:
+						_state = ComponentState.UnSelected;
+						break;
+				}
+			}
+			if (_state != ps) OnStateChanged(gt, ps);
+		}
 		/// <summary>
 		/// The constructor for an AbstractComponent
 		/// </summary>

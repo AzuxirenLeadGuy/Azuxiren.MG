@@ -14,7 +14,7 @@ namespace Azuxiren.MG.Menu
 		/// <summary>This is the variable that is sliding</summary>
 		public abstract byte Value { get; protected set; }
 		/// <summary>This is the value string that is currently selected</summary>
-		public abstract string CurrentlySelected{get; protected set;}
+		public abstract string CurrentlySelected { get; protected set; }
 		/// <summary>The title of the Slider</summary>
 		public string Title;
 		/// <summary>
@@ -51,28 +51,14 @@ namespace Azuxiren.MG.Menu
 			var pv = Value;
 			if (Enabled)
 			{
-				switch (_state)
+				InputPressed = InputIncrement || InputDecrement;
+				base.Update(gt);
+				if(_state == ComponentState.Press)
 				{
-					case ComponentState.UnSelected:
-						if (Selected) _state = ComponentState.Selected;
-						break;
-					case ComponentState.Selected:
-						if (!Selected) _state = ComponentState.UnSelected;
-						else if (InputIncrement || InputDecrement) _state = ComponentState.Press;
-						break;
-					case ComponentState.Press:
-						if (!Selected) _state = ComponentState.UnSelected;
-						else if (InputIncrement) Increment();
-						else if (InputDecrement) Decrement();
-						else _state = ComponentState.Release;
-						break;
-					case ComponentState.Release:
-						_state = ComponentState.UnSelected;
-						break;
-				}
-				if (ps != _state) 
-				{
-					OnStateChanged(gt, ps);
+					if(InputIncrement)
+						Increment();
+					else if(InputDecrement)
+						Decrement();
 				}
 				if (pv != Value)
 				{
