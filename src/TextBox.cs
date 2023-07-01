@@ -30,7 +30,7 @@ namespace Azuxiren.MG
 			TextColor = Color.Black;
 			_pos = default;
 			_scale = default;
-			_alignment = Alignment.Left;
+			_alignment = Alignment.Centered;
 			FitText();
 		}
 		/// <summary>
