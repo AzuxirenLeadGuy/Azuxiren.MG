@@ -11,6 +11,18 @@ namespace Azuxiren.MG.Menu
 	/// </summary>
 	public abstract class AbstractSlider : AbstractComponent
 	{
+		/// <summary>The state of input being pressed for the slider</summary>
+		protected enum PressState : byte
+		{
+			/// <summary>No input is being pressed</summary>
+			NoInputPressed,
+			/// <summary>Increment input is being pressed</summary>
+			IncPress,
+			/// <summary>Decrement input is being pressed</summary>
+			DecPress,
+		}
+		/// <summary>The current pressed state of the instance</summary>
+		protected PressState _pressState;
 		/// <summary>This is the variable that is sliding</summary>
 		public abstract byte Value { get; protected set; }
 		/// <summary>This is the value string that is currently selected</summary>
@@ -28,8 +40,14 @@ namespace Azuxiren.MG.Menu
 		{
 			Title = message;
 			ValueChanged = null!;
+			_pressState = PressState.NoInputPressed;
 		}
-
+		/// <inheritdoc/>
+		public override bool InputPressed
+		{
+			get => InputIncrement || InputDecrement;
+			set => (InputIncrement, InputDecrement) = (value, value);
+		}
 		/// <summary>
 		/// The event invoked on any change in Value
 		/// </summary>
@@ -51,14 +69,16 @@ namespace Azuxiren.MG.Menu
 			var pv = Value;
 			if (Enabled)
 			{
-				InputPressed = InputIncrement || InputDecrement;
 				base.Update(gt);
-				if(_state == ComponentState.Press)
+				if (InputPressed)
+					_pressState = InputIncrement ? PressState.IncPress : PressState.DecPress;
+				else if(_state == ComponentState.Release)
 				{
-					if(InputIncrement)
+					if (_pressState == PressState.IncPress)
 						Increment();
-					else if(InputDecrement)
+					else // if(_pressState == PressState.DecrementPressed)
 						Decrement();
+					_pressState = PressState.NoInputPressed;
 				}
 				if (pv != Value)
 				{

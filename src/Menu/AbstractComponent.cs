@@ -22,7 +22,7 @@ namespace Azuxiren.MG.Menu
 		/// 
 		/// A button can be in state of Disabled,UnSelected,Selected,Press and Release.
 		/// </summary>
-		public ComponentState State => _state;
+		public virtual ComponentState State => _state;
 		/// <summary>Returns true if the button is enabled</summary>
 		public virtual bool Enabled
 		{
