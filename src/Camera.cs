@@ -5,7 +5,7 @@ namespace Azuxiren.MG;
 /// <summary>A simple 2D camera implementation with zooming and rotation</summary>
 public class Camera2D
 {
-	/// <summary>The position of the top left rectangle of camera source</summary>
+	/// <summary>The position of the center of the rectangle of camera source</summary>
 	/// <value>Vector2 Value of position</value>
 	public Vector2 Position { get; set; }
 	/// <summary>The zoom for camera</summary>
