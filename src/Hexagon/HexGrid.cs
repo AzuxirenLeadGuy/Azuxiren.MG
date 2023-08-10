@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Hex
 {
 	/// <summary>
-	/// Represents a basic 2D Heaxagonal Grid with cubic/axial 
+	/// Represents a basic 2D Heaxagonal Grid with cubic/axial
 	/// coordinates centered at (0,0,[0]) and arranged
 	/// in a hexagonal layout.
 	/// </summary>
@@ -17,7 +17,7 @@ namespace Azuxiren.MG.Hex
 	public readonly struct HexGrid<T> : IReadOnlyDictionary<GridPoint, T>
 	{
 		/// <summary>
-		/// The distance from between center (0, 0, [0]) 
+		/// The distance from between center (0, 0, [0])
 		/// to any of the edge point of the Grid that itself is shaped
 		/// as a hexagon
 		/// </summary>
@@ -71,7 +71,7 @@ namespace Azuxiren.MG.Hex
 		/// <returns>true if setting value was successful. Otherwise false</returns>
 		public bool Set(GridPoint point, T value)
 		{
-			if (_data.ContainsKey(point) == false)
+			if (!_data.ContainsKey(point))
 				return false;
 			_data[point] = value;
 			return true;
@@ -85,22 +85,6 @@ namespace Azuxiren.MG.Hex
 		{
 			get => _data[point];
 			set => _data[point] = value;
-		}
-		/// <summary>
-		/// Gets a Grid of Vector2 that would store the
-		/// Vector2 denoting the center of each hexagon of a Hexgrid. 
-		/// Should be useful for drawing a Hexgrid 
-		/// </summary>
-		/// <param name="center">The center of the hexagon at (0, 0, [0])</param>
-		/// <param name="radius">The radius of the Hexgrid</param>
-		/// <param name="width">The uniform width of each radius in the grid</param>
-		/// <returns>A Hexgrid of Vector2 points that denote the center of each hexagon in the grid</returns>
-		public static HexGrid<Vector2> HexCenters(Vector2 center, byte radius, float width)
-		{
-			HexGrid<Vector2> points = new(Vector2.Zero, radius);
-			foreach (var key in points._data.Keys)
-				points._data[key] = key.Traverse(center, width);
-			return points;
 		}
 	}
 }

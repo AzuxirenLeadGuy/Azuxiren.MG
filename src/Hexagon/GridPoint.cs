@@ -46,7 +46,7 @@ namespace Azuxiren.MG.Hex
 		/// <returns>
 		/// negative value if this element precedes the other;
 		/// 0 if this element is in the same order;
-		/// positive value otherwise 
+		/// positive value otherwise
 		/// </returns>
 		public readonly int CompareTo(GridPoint other) => Q != other.Q ? Q.CompareTo(other.Q) : R.CompareTo(other.R);
 		/// <summary>Returns the string representation of the values of this hexagon grid position</summary>

@@ -18,7 +18,7 @@ namespace Azuxiren.MG.Hex
 		public static Rectangle OuterBound(this Hexagon hex)
 		{
 			int h = (int)MathF.Round(Hexagon.Root3 * hex.SideLength);
-			return new(hex.Center.X - hex.SideLength, hex.Center.Y - h / 2, hex.SideLength * 2, h);
+			return new(hex.Center.X - hex.SideLength, hex.Center.Y - (h / 2), hex.SideLength * 2, h);
 		}
 		/// <summary>The circle that circumscribes this hexagon</summary>
 		/// <returns>Circle circumscribing this hexagon</returns>
@@ -28,7 +28,7 @@ namespace Azuxiren.MG.Hex
 		public static Circle InnerCircle(this Hexagon hex) => new() { Center = hex.Center, Radius = (int)MathF.Round(hex.SideLength * (Hexagon.Root3 / 2)) };
 		/// <summary>
 		/// The Manhattan distance between two points, that is:<br/>
-		/// The number of hops on the hexagonal grid required to reach 
+		/// The number of hops on the hexagonal grid required to reach
 		/// at one GridPoint from the other.
 		/// </summary>
 		/// <param name="a">Point in the grid</param>
@@ -47,7 +47,7 @@ namespace Azuxiren.MG.Hex
 		/// <param name="source">The start of the line</param>
 		/// <param name="end">The end of the line</param>
 		/// <returns>
-		/// Enumeration of the GridPoints encountered in 
+		/// Enumeration of the GridPoints encountered in
 		/// the line drawn between the given two points
 		/// </returns>
 		public static IEnumerable<GridPoint> GetLine(this GridPoint source, GridPoint end)
@@ -98,7 +98,10 @@ namespace Azuxiren.MG.Hex
 		/// <returns>The enumeration of all points forming a ring at the given distance</returns>
 		public static IEnumerable<GridPoint> GetSingleRing(this GridPoint point, int radius)
 		{
-			if (radius <= 0) yield return point;
+			if (radius <= 0)
+			{
+				yield return point;
+			}
 			else
 			{
 				int i = radius;
@@ -168,5 +171,21 @@ namespace Azuxiren.MG.Hex
 		/// <param name="hex_width">The width of the individual hexagons</param>
 		/// <returns>The 2D point after traversing in the given directions</returns>
 		public static Vector2 Traverse(this GridPoint coordinate, Vector2 origin, float hex_width) => origin + (hex_width * coordinate.GetVector2());
+		/// <summary>
+		/// Gets a Grid of Vector2 that would store the
+		/// Vector2 denoting the center of each hexagon of a Hexgrid.
+		/// Should be useful for drawing a Hexgrid
+		/// </summary>
+		/// <param name="origin">The center of the hexagon at (0, 0, [0])</param>
+		/// <param name="radius">The radius of the Hexgrid</param>
+		/// <param name="width">The uniform width of each radius in the grid</param>
+		/// <returns>A Hexgrid of Vector2 points that denote the center of each hexagon in the grid</returns>
+		public static HexGrid<Vector2> HexCenters(this Vector2 origin, byte radius, float width)
+		{
+			HexGrid<Vector2> points = new(Vector2.Zero, radius);
+			foreach (var key in points)
+				points[key.Key] = key.Key.Traverse(origin, width);
+			return points;
+		}
 	}
 }

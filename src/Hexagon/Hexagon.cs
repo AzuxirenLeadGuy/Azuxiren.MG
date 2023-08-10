@@ -29,7 +29,7 @@ namespace Azuxiren.MG.Hex
 			return givenAngle;
 		}
 		/// <summary>
-		/// Returns a rectangular array of Color instances 
+		/// Returns a rectangular array of Color instances
 		/// depicting a filled hexagon
 		/// </summary>
 		/// <param name="sideLength">Length of a single side of the regular hexagon</param>
@@ -53,7 +53,7 @@ namespace Azuxiren.MG.Hex
 			return grid;
 		}
 		/// <summary>
-		/// Returns a rectangular array of Color instances 
+		/// Returns a rectangular array of Color instances
 		/// depicting a hexagon with colored border
 		/// </summary>
 		/// <param name="sideLength">Length of a single side of the regular hexagon</param>

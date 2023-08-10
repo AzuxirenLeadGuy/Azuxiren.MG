@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <PackageId>Azuxiren.MG</PackageId>
-    <Version>3.0.0.2</Version>
+    <Version>3.0.0.3</Version>
     <Authors>AzuxirenLeadGuy</Authors>
     <Company>Azuxiren</Company>
     <RepositoryUrl>https://github.com/AzuxirenLeadGuy/Azuxiren.MG</RepositoryUrl>
