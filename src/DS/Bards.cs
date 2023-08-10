@@ -58,7 +58,10 @@ where T : IEquatable<T>
 			_data[index] = _data[_currentLength];
 			return true;
 		}
-		else return false;
+		else
+		{
+			return false;
+		}
 	}
 	/// <summary>Removes the item from the list (does not deallocate)</summary>
 	/// <param name="item">the item to search and remove</param>

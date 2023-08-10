@@ -90,7 +90,10 @@ where T : IEquatable<T>
 		LLNode? prev = item.Prev, next = item.Next;
 		if (prev == null) // Only possible for _head
 		{
-			if (next == null) _head = null;
+			if (next == null)
+			{
+				_head = null;
+			}
 			else
 			{
 				next.Prev = null;
@@ -123,7 +126,7 @@ where T : IEquatable<T>
 		while (x != null)
 		{
 			y = x.Next;
-			if (function(ref x.Item) == false)
+			if (!function(ref x.Item))
 				Delete(x);
 			x = y;
 		}
