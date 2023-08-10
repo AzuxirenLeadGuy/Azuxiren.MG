@@ -12,15 +12,13 @@ namespace Azuxiren.MG.Menu
 		/// <summary>Defines the boundaries of the button</summary>
 		public Rectangle Bounds;
 		/// <summary>
-		/// The state of this component.
-		/// 
-		/// A button can be in state of Disabled,UnSelected,Selected,Press and Release.
+		/// <para>The state of this component.</para>
+		/// <para>A button can be in state of Disabled,UnSelected,Selected,Press and Release.</para>
 		/// </summary>
 		protected ComponentState _state;
 		/// <summary>
-		/// The state of this component.
-		/// 
-		/// A button can be in state of Disabled,UnSelected,Selected,Press and Release.
+		/// <para>The state of this component.</para>
+		/// <para>A button can be in state of Disabled,UnSelected,Selected,Press and Release.</para>
 		/// </summary>
 		public virtual ComponentState State => _state;
 		/// <summary>Returns true if the button is enabled</summary>
@@ -82,7 +80,7 @@ namespace Azuxiren.MG.Menu
 		/// </summary>
 		/// <param name="bds">The bounds of the component</param>
 		/// <param name="enableAtStart">If this is set to true, component will be enabled at start</param>
-		public AbstractComponent(Rectangle bds, bool enableAtStart = true)
+		protected AbstractComponent(Rectangle bds, bool enableAtStart = true)
 		{
 			Bounds = bds;
 			Enabled = enableAtStart;

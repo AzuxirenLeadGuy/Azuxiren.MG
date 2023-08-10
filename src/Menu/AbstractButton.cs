@@ -13,6 +13,6 @@ namespace Azuxiren.MG.Menu
 		/// <param name="btext">The text to show</param>
 		/// <param name="enabled">If this is true, state of component will be Enabled at start</param>
 		/// <returns></returns>
-		public AbstractButton(Rectangle bds, string btext = "", bool enabled = true) : base(bds, enabled) => ButtonText = btext;
+		protected AbstractButton(Rectangle bds, string btext = "", bool enabled = true) : base(bds, enabled) => ButtonText = btext;
 	}
 }

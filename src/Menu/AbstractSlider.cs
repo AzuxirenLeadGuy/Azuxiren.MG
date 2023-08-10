@@ -5,8 +5,8 @@ namespace Azuxiren.MG.Menu
 {
 	/// <summary>
 	/// It is a Component offering a varying parameter.
-	/// Can be implemented as a Parameter input for a variable taking values from 
-	/// Min to Max in a array of T(T=int/float/string/etc) with Value showing the 
+	/// Can be implemented as a Parameter input for a variable taking values from
+	/// Min to Max in a array of T(T=int/float/string/etc) with Value showing the
 	/// current index selected from the Array
 	/// </summary>
 	public abstract class AbstractSlider : AbstractComponent
@@ -36,7 +36,7 @@ namespace Azuxiren.MG.Menu
 		/// <param name="message">The text to show</param>
 		/// <param name="enableAtStart">The state of enabled will be set if this value is true</param>
 		/// <returns></returns>
-		public AbstractSlider(Rectangle bounds, string message = "", bool enableAtStart = true) : base(bounds, enableAtStart)
+		protected AbstractSlider(Rectangle bounds, string message = "", bool enableAtStart = true) : base(bounds, enableAtStart)
 		{
 			Title = message;
 			ValueChanged = null!;
@@ -52,6 +52,7 @@ namespace Azuxiren.MG.Menu
 		/// The event invoked on any change in Value
 		/// </summary>
 		public event EventHandler<SliderArgs>? ValueChanged;
+		/// <summary>Used for checking input to increase value of Slider</summary>
 		/// <returns>Returns true if increment is inputted, otherwise false</returns>
 		public abstract bool InputIncrement { get; set; }
 		/// <summary>Used for checking input to decrease value of Slider</summary>
@@ -71,8 +72,10 @@ namespace Azuxiren.MG.Menu
 			{
 				base.Update(gt);
 				if (InputPressed)
+				{
 					_pressState = InputIncrement ? PressState.IncPress : PressState.DecPress;
-				else if(_state == ComponentState.Release)
+				}
+				else if (_state == ComponentState.Release)
 				{
 					if (_pressState == PressState.IncPress)
 						Increment();
