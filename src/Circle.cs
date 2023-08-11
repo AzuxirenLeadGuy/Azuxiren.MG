@@ -46,7 +46,7 @@ namespace Azuxiren.MG
 					p = itr.Current;
 					success = success && itr.MoveNext();
 					q = itr.Current;
-					if (success == false)
+					if (!success)
 						break;
 					for (int i = p.X, j = p.Y; j >= q.Y; j--)
 					{
@@ -82,7 +82,7 @@ namespace Azuxiren.MG
 		public readonly bool Equals(Circle other) => ActualRadius == other.ActualRadius && Center == other.Center;
 		/// <summary>
 		/// Checks if this circle contains the other circle. <br/><br/>
-		/// This is not a commutative operation, 
+		/// This is not a commutative operation,
 		/// i.e x.Contains(y) is not always equal to y.Contains(x) <br/>
 		/// for any two circles x, y
 		/// </summary>

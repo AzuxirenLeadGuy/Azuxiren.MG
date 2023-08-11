@@ -11,7 +11,7 @@ public interface IGameLoadableComponent<Parameters, Settings>
 where Parameters : class
 {
 	/// <summary>
-	/// Loads the required content. This is a required 
+	/// Loads the required content. This is a required
 	/// phase for transitioning between game stages.
 	/// </summary>
 	/// <param name="parameters">The object that contain all constant paramters for the game</param>
@@ -28,7 +28,7 @@ public interface IDrawableComponent<Parameters, Settings>
 where Parameters : class
 {
 	/// <summary>
-	/// The logic for drawing the components within the game. 
+	/// The logic for drawing the components within the game.
 	/// It is not supposed to alter any existing setting
 	/// </summary>
 	/// <param name="gt">The GameTime object for this frame of the game</param>
@@ -36,7 +36,6 @@ where Parameters : class
 	/// <param name="settings">The shared settings for the game</param>
 	public void Draw(GameTime gt, in Parameters parameters, in Settings settings);
 }
-
 
 /// <summary>
 /// Represents a stage within the game
@@ -47,7 +46,7 @@ public interface IGameStage<Parameters, Settings> : IGameLoadableComponent<Param
 where Parameters : class
 {
 	/// <summary>
-	/// The logic for updating the components within the game. 
+	/// The logic for updating the components within the game.
 	/// It may alter any existing setting. <br/>
 	/// Transitions to other GameStages must be handled here as well. <br/>
     /// If return value is false, no transition is performed<br/>

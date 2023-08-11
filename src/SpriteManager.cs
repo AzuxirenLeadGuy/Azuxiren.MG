@@ -6,9 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG
 {
-	///<summary>SpriteSheet Manager. 
-	///
-	///Only use Draw and Update methods once initialized</summary>
+	///<summary><para>SpriteSheet Manager. </para>
+	/// <para>Only use Draw and Update methods once initialized</para></summary>
 	public struct SpriteSheet
 	{
 		///<summary>SpriteSheet Image</summary>
@@ -103,9 +102,8 @@ namespace Azuxiren.MG
 		/// <param name="sb">SpriteBatch object to use</param>
 		/// <param name="tint">The Color to tint the drawing with</param>
 		public readonly void Draw(SpriteBatch sb, Color tint) => sb.Draw(Sheet, Dest, Source, tint);
-		///<summary>The Update Function of SpriteSheet
-		///
-		///Not Calling Update "Pauses" the Animation.</summary>
+		///<summary><para>The Update Function of SpriteSheet</para>
+		/// <para>Not Calling Update "Pauses" the Animation.</para></summary>
 		public void Update()
 		{
 			Source.X = FrameX[_currentFrame];
@@ -114,10 +112,11 @@ namespace Azuxiren.MG
 		}
 	}
 	/// <summary>
-	/// LargeSprite consist of series of Texture2D. This is Not a SpriteSheet. 
-	/// 
+	/// <para>LargeSprite consist of series of Texture2D. This is Not a SpriteSheet. </para>
+	/// <para>
 	/// If the animation consists of very large frames, this is the struct you need, provieded you are able to give
 	/// an array of images/Texture2D as input
+	/// </para>
 	/// </summary>
 	public struct LargeSprite
 	{
@@ -131,7 +130,7 @@ namespace Azuxiren.MG
 		/// <param name="next">A custom updater for frames in between. For normal propagation, set as null</param>
 		public LargeSprite(IEnumerable<Texture2D> frames, Rectangle dest, byte speednum = 1, byte speedden = 1, IEnumerable<int>? next = null)
 		{
-			FrameImages = Enumerable.ToArray(frames);
+			FrameImages = frames.ToArray();
 			Dest = dest;
 			Num = speednum;
 			Den = speedden;
@@ -144,7 +143,10 @@ namespace Azuxiren.MG
 				Next[len - 1] = 0;
 			}
 			else
-				Next = Enumerable.ToArray(next);
+			{
+				Next = next.ToArray();
+			}
+
 			if (Next.Length != FrameImages.Length)
 				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
 		}
@@ -159,7 +161,7 @@ namespace Azuxiren.MG
 		/// <param name="next">A custom updater for frames in between. For normal propagation, set as null</param>
 		public LargeSprite(Texture2D[] frames, Rectangle dest, bool copy, byte speednum = 1, byte speedden = 1, int[]? next = null)
 		{
-			FrameImages = copy ? Enumerable.ToArray(frames) : frames;
+			FrameImages = copy ? frames.ToArray() : frames;
 			Dest = dest;
 			Num = speednum;
 			Den = speedden;
@@ -171,7 +173,11 @@ namespace Azuxiren.MG
 				Next = Enumerable.Range(1, len).ToArray();
 				Next[len - 1] = 0;
 			}
-			else Next = copy ? Enumerable.ToArray(next) : next;
+			else
+			{
+				Next = copy ? next.ToArray() : next;
+			}
+
 			if (Next.Length != FrameImages.Length)
 				throw new ArgumentException("Expected equal size of `frames` and `next`", nameof(next));
 		}
@@ -195,9 +201,8 @@ namespace Azuxiren.MG
 		/// <summary>The next function for each index</summary>
 		public readonly int[] Next;
 		/// <summary>
-		/// Sets the speed of unrolling the sprite as a fraction of the current game's FPS.
-		/// 
-		/// For example, if the game is 60 fps, and the function is invoked with num=1,den=2 (1/2), then the speed of unrolling this spritesheet will be (1/2) of 60fps, ie 30fps
+		/// <para>Sets the speed of unrolling the sprite as a fraction of the current game's FPS.</para>
+		/// <para>For example, if the game is 60 fps, and the function is invoked with num=1,den=2 (1/2), then the speed of unrolling this spritesheet will be (1/2) of 60fps, ie 30fps</para>
 		/// </summary>
 		/// <param name="num">Numenator of the fraction</param>
 		/// <param name="den">Denominator of fraction</param>
@@ -215,12 +220,12 @@ namespace Azuxiren.MG
 			}
 		}
 		/// <summary>
-		/// Draws the Sprite using the given spritebatch 
+		/// Draws the Sprite using the given spritebatch
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
 		public readonly void Draw(SpriteBatch sb) => Draw(sb, Dest, Color.White, 0, Vector2.Zero);
 		/// <summary>
-		/// Draws the Sprite using the given spritebatch 
+		/// Draws the Sprite using the given spritebatch
 		/// </summary>
 		/// <param name="sb">The given SpriteBatch</param>
 		/// <param name="dest">The temporary destination rectangle</param>

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 namespace Azuxiren.MG;
 
 /// <summary>
-/// Common Game class wrapper for games 
+/// Common Game class wrapper for games
 /// </summary>
 /// <typeparam name="Parameters">Constant Parameter Type shared for the game</typeparam>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
@@ -14,8 +14,8 @@ where Settings: new()
 	/// <summary>The constant Parameters of the game</summary>
 	public readonly Parameters GameParameters;
 	/// <summary>
-	/// The shared setting of the game. This object 
-	/// is shared between the multipls GameStages 
+	/// The shared setting of the game. This object
+	/// is shared between the multipls GameStages
 	/// in the lifetime of this object
 	/// </summary>
 	protected Settings _settings;
@@ -31,7 +31,7 @@ where Settings: new()
 	/// <param name="parameters">The constant parameters for this game</param>
 	/// <param name="startScreen">The screen to begin the game with</param>
 	/// <param name="loadScreen">The screen for loading, to be shown during transitions</param>
-	public AzuxirenMonogameClass(
+	protected AzuxirenMonogameClass(
 		Parameters parameters,
 		IGameStage<Parameters, Settings> startScreen,
 		IGameStage<Parameters, Settings> loadScreen)
@@ -96,27 +96,33 @@ where Settings: new()
     /// <inheritdoc/>
 	protected override void Update(GameTime gameTime)
 	{
-        if(_isLoading) _ = _loadScreen.Update(
-            gameTime, 
-            GameParameters, 
-            ref _settings, 
-            out var _);
-        else if(_mainScreen.Update(gameTime, GameParameters, ref _settings, out var nextStage))
-        {
-            if(nextStage == null)
-                Exit();
-            else
-            {
-                _isLoading = true;
-                _mainScreen = nextStage;
-                _ = System.Threading.Tasks.Task.Run(
-                    ()=>{
-                        _mainScreen.LoadContent(GameParameters, ref _settings);
-                        _isLoading = false;    
-                    }
-                );
-            }
-        }
+		if (_isLoading)
+		{
+			_ = _loadScreen.Update(
+			gameTime,
+			GameParameters,
+			ref _settings,
+			out var _);
+		}
+		else if (_mainScreen.Update(gameTime, GameParameters, ref _settings, out var nextStage))
+		{
+			if (nextStage == null)
+			{
+				Exit();
+			}
+			else
+			{
+				_isLoading = true;
+				_mainScreen = nextStage;
+				_ = System.Threading.Tasks.Task.Run(
+					() =>
+					{
+						_mainScreen.LoadContent(GameParameters, ref _settings);
+						_isLoading = false;
+					}
+				);
+			}
+		}
 		base.Update(gameTime);
 	}
 }

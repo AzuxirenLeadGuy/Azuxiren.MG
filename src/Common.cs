@@ -64,10 +64,10 @@ namespace Azuxiren.MG
 				X = ((dest.Width - strWidth) / 2) + dest.X,
 				Y = ((dest.Height - strHeight) / 2) + dest.Y
 			};
-			float rotation = 0.0f;
+			const float rotation = 0.0f;
 			Vector2 spriteOrigin = new(0, 0);
-			float spriteLayer = 0.0f; // all the way in the front
-			SpriteEffects spriteEffects = SpriteEffects.None;
+			const float spriteLayer = 0.0f; // all the way in the front
+			const SpriteEffects spriteEffects = SpriteEffects.None;
 			Color cc = c ?? Color.White;// Draw the string to the sprite batch!
 			sb.DrawString(font, message, position, cc, rotation, spriteOrigin, scale, spriteEffects, spriteLayer);
 		}
@@ -115,7 +115,7 @@ namespace Azuxiren.MG
 			SetCenter(ref a, b);
 			return a.Location;
 		}
-		/// <summary>Initalizes the Vector2 and Float value of poition and 
+		/// <summary>Initalizes the Vector2 and Float value of poition and
 		/// scale to fit the text in the rectangle</summary>
 		/// <param name="dest">The rectangle to fit the string</param>
 		/// <param name="font">The Spritefont object</param>
@@ -149,7 +149,7 @@ namespace Azuxiren.MG
 		public static void Draw(this SpriteBatch batch, TextBox stringObject, float rotation, Vector2 origin)
 			=> stringObject.Draw(batch, rotation, origin);
 		/// <summary>
-		/// 
+		/// Draws the TextBox object
 		/// </summary>
 		/// <param name="batch"></param>
 		/// <param name="stringObject"></param>
@@ -165,7 +165,7 @@ namespace Azuxiren.MG
 		/// <param name="velocity">The velocity vector object that struck the boundary</param>
 		/// <param name="bounds">The rectangle boundary of the object that struck the boundary</param>
 		/// <param name="inside">if true, the object is supposed to stay inside the boundary, else outside</param>
-		/// <param name="bounceForce">If the object is to be bounced with an additional force. 
+		/// <param name="bounceForce">If the object is to be bounced with an additional force.
 		/// If the object is supposed to stop, keep this as 0. If no additional force is </param>
 		/// <returns>Returns the side of the <c>bounds</c> rectangle which has bounced</returns>
 		public static RectangleSide Bounce(this Rectangle boundary,
@@ -239,7 +239,7 @@ namespace Azuxiren.MG
 		/// <param name="position">The position vector object that struck the boundary</param>
 		/// <param name="bounds">The rectangle boundary of the object that struck the boundary</param>
 		/// <param name="inside">if true, the object is supposed to stay inside the boundary, else outside</param>
-		/// <param name="bounceForce">If the object is to be bounced with an additional force. 
+		/// <param name="bounceForce">If the object is to be bounced with an additional force.
 		/// If the object is supposed to stop, keep this as 0. If no additional force is </param>
 		/// <returns>Returns the side of the <c>bounds</c> rectangle which has bounced</returns>
 		public static RectangleSide Bounce(this Rectangle boundary,
@@ -256,8 +256,8 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// Generates a Texture Image from the grid of Colors
 		/// </summary>
-		/// <param name="grid">The grid of colors to generate image from</param>
 		/// <param name="game">The game object whose GraphicsDevice must be used</param>
+		/// <param name="grid">The grid of colors to generate image from</param>
 		/// <returns>The converted texture image</returns>
 		public static Texture2D FromColorGrid(this Game game, Color[,] grid)
 		{
@@ -274,7 +274,7 @@ namespace Azuxiren.MG
 			tex.SetData(dest);
 			return tex;
 		}
-		/// <summary>Iterates over all points lying in the lines between the 
+		/// <summary>Iterates over all points lying in the lines between the
 		/// two points in argument, using Bresenham line drawing algorithm</summary>
 		/// <param name="x0">x coordinate of the first point</param>
 		/// <param name="y0">y coordinate of the first point</param>
@@ -303,7 +303,7 @@ namespace Azuxiren.MG
 			}
 			yield break;
 		}
-		/// <summary>Iterates over all points lying in the lines between the 
+		/// <summary>Iterates over all points lying in the lines between the
 		/// two points in argument, using Bresenham line drawing algorithm</summary>
 		/// <param name="p0">The first input point</param>
 		/// <param name="p1">The second input point</param>
@@ -317,37 +317,42 @@ namespace Azuxiren.MG
 		/// <returns>Enumeration of all points on the circle</returns>
 		public static IEnumerable<Point> GetPointsOnCircle(int x0, int y0, int radius)
 		{
-			if (radius <= 1)
-				throw new ArgumentException("Radius should be greater than 1", nameof(radius));
-			int x = 0, y = radius, d = 3 - (2 * radius), i;
-			Point[] ps = new Point[8];
-			SetPoints();
-			for (i = 0; i < 8; i++)
-				yield return ps[i];
-			while (y >= x)
+			return radius <= 1 ? throw new ArgumentException("Radius should be greater than 1", nameof(radius)) : GetPointsOnCircle2();
+			IEnumerable<Point> GetPointsOnCircle2()
 			{
-				x++;
-				if (d > 0)
-				{
-					y--;
-					d = d + 4 * (x - y) + 10;
-				}
-				else
-					d = d + (4 * x) + 6;
+				int x = 0, y = radius, d = 3 - (2 * radius), i;
+				Point[] ps = new Point[8];
 				SetPoints();
 				for (i = 0; i < 8; i++)
 					yield return ps[i];
-			}
-			void SetPoints()
-			{
-				ps[0] = new(x0 + x, y0 + y);
-				ps[1] = new(x0 + x, y0 - y);
-				ps[2] = new(x0 - x, y0 + y);
-				ps[3] = new(x0 - x, y0 - y);
-				ps[4] = new(x0 + y, y0 + x);
-				ps[5] = new(x0 + y, y0 - x);
-				ps[6] = new(x0 - y, y0 + x);
-				ps[7] = new(x0 - y, y0 - x);
+				while (y >= x)
+				{
+					x++;
+					if (d > 0)
+					{
+						y--;
+						d = d + (4 * (x - y)) + 10;
+					}
+					else
+					{
+						d = d + (4 * x) + 6;
+					}
+
+					SetPoints();
+					for (i = 0; i < 8; i++)
+						yield return ps[i];
+				}
+				void SetPoints()
+				{
+					ps[0] = new(x0 + x, y0 + y);
+					ps[1] = new(x0 + x, y0 - y);
+					ps[2] = new(x0 - x, y0 + y);
+					ps[3] = new(x0 - x, y0 - y);
+					ps[4] = new(x0 + y, y0 + x);
+					ps[5] = new(x0 + y, y0 - x);
+					ps[6] = new(x0 - y, y0 + x);
+					ps[7] = new(x0 - y, y0 - x);
+				}
 			}
 		}
 		/// <summary>Iterates over all points of a circle at a given centre and radius</summary>
@@ -385,7 +390,7 @@ namespace Azuxiren.MG
 		}
 		/// <summary>
 		/// Checks if this circle contains the other circle. <br/><br/>
-		/// This is not a commutative operation, 
+		/// This is not a commutative operation,
 		/// i.e x.Contains(y) is not always equal to y.Contains(x) <br/>
 		/// for any two circles x, y
 		/// </summary>

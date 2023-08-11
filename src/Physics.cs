@@ -13,7 +13,7 @@ namespace Azuxiren.MG
 		/// <summary>Velocity vector,Positional vector (in that order) of the current object</summary>
 		(Vector3 V, Vector3 X) Current { get; set; }
 	}
-	public partial class Global
+	public static partial class Global
 	{
 		/// <summary>
 		/// Updates an object for the given acceleration and friction
@@ -22,7 +22,7 @@ namespace Azuxiren.MG
 		/// <param name="position">Position of the object</param>
 		/// <param name="acc">Acceleration acting on the object</param>
 		/// <param name="friction">Friction of the surface</param>
-		public static void MovePhyObject(ref Vector2 velocity, ref Vector2 position, in Vector2 acc, in float friction = 0)
+		public static void MovePhyObject(ref Vector2 velocity, ref Vector2 position, Vector2 acc, in float friction = 0)
 		{
 			velocity += acc - (velocity * friction);
 			position += velocity;
@@ -33,7 +33,7 @@ namespace Azuxiren.MG
 		/// <param name="velocity">Velocity of the object</param>
 		/// <param name="position">Position of the object</param>
 		/// <param name="friction">Friction of the surface</param>
-		public static void MovePhyObject(ref Vector2 velocity, ref Vector2 position, in float friction = 0) 
+		public static void MovePhyObject(ref Vector2 velocity, ref Vector2 position, in float friction = 0)
 			=> MovePhyObject(ref velocity, ref position, Vector2.Zero, friction);
 
 		/// <summary>
@@ -45,13 +45,13 @@ namespace Azuxiren.MG
 		public static (Vector2 Velocity, Vector2 Position) MovePhyObject(
 				this (Vector2 Velocity, Vector2 Position) current, Vector2 acc, float friction = 0)
 		{
-			MovePhyObject(ref current.Velocity, ref current.Position, in acc, in friction);
+			MovePhyObject(ref current.Velocity, ref current.Position, acc, in friction);
 			return current;
 		}
 		/// <summary>
 		/// Updates an object when no acceleration is acting upon it
 		/// </summary>
-		/// <param name="current">The (Vector2,Vector2) Tuple object with 
+		/// <param name="current">The (Vector2,Vector2) Tuple object with
 		/// elements Velocity and Displacement respectivly</param>
 		/// <param name="friction">The friction acting upon it</param>
 		public static (Vector2 Velocity, Vector2 Position) Update(
@@ -79,7 +79,7 @@ namespace Azuxiren.MG
 		/// <param name="position">Position of the object</param>
 		/// <param name="acc">Acceleration acting on the object</param>
 		/// <param name="friction">Friction of the surface</param>
-		public static void MovePhyObject(ref Vector3 velocity, ref Vector3 position, in Vector3 acc, in float friction = 0)
+		public static void MovePhyObject(ref Vector3 velocity, ref Vector3 position, Vector3 acc, in float friction = 0)
 		{
 			velocity += acc - (velocity * friction);
 			position += velocity;
@@ -90,12 +90,12 @@ namespace Azuxiren.MG
 		/// <param name="velocity">Velocity of the object</param>
 		/// <param name="position">Position of the object</param>
 		/// <param name="friction">Friction of the surface</param>
-		public static void MovePhyObject(ref Vector3 velocity, ref Vector3 position, in float friction = 0) 
+		public static void MovePhyObject(ref Vector3 velocity, ref Vector3 position, in float friction = 0)
 			=> MovePhyObject(ref velocity, ref position, Vector3.Zero, friction);
 		/// <summary>
 		/// Updates an object when acted upon with the given acceleration and friction
 		/// </summary>
-		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements
 		/// Velocity and Displacement respectivly</param>
 		/// <param name="acc">The acceleration acting upon it</param>
 		/// <param name="friction">The friction on the object</param>
@@ -108,7 +108,7 @@ namespace Azuxiren.MG
 		/// <summary>
 		/// Updates an object when no acceleration acts on it
 		/// </summary>
-		/// <param name="current">The (Vector3,Vector3) Tuple object with elements 
+		/// <param name="current">The (Vector3,Vector3) Tuple object with elements
 		/// Velocity and Displacement respectivly </param>
 		/// <param name="friction">The friction on the body</param>
 		public static (Vector3 Velocity, Vector3 Position) MovePhyObject(

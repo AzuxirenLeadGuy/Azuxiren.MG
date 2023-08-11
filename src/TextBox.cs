@@ -54,7 +54,7 @@ namespace Azuxiren.MG
 			FitText();
 		}
 		/// <summary>
-		/// This is the Destination rectangle where the text is to be drawn 
+		/// This is the Destination rectangle where the text is to be drawn
 		/// </summary>
 		/// <value></value>
 		public Rectangle Bounds
@@ -163,7 +163,7 @@ namespace Azuxiren.MG
 		/// <param name="color">Color to use for drawing</param>
 		public readonly void Draw(SpriteBatch batch, Color color)
 		{
-			batch.DrawString(_font, _text, _pos, color, 0, Vector2.Zero, _scale, SpriteEffects.None, LayerDepth);			
+			batch.DrawString(_font, _text, _pos, color, 0, Vector2.Zero, _scale, SpriteEffects.None, LayerDepth);
 		}
 	}
 }
