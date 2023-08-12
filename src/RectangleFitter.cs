@@ -12,7 +12,7 @@ namespace Azuxiren.MG
 		/// <param name="toFit">The number of small rectangles to fit</param>
 		/// <param name="offset">The cleaerance(in px) between each rectangle</param>
 		/// <param name="vertical">If true, the rectangles are fitted vertically. Otherwise they are fitted horizontally</param>
-		/// <returns></returns>
+		/// <returns>An array of rectangles that fit the area</returns>
 		public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte toFit, uint offset = 0, bool vertical = false)
 		{
 			if (toFit == 0) throw new ArgumentException("Invalid box count");
@@ -47,7 +47,7 @@ namespace Azuxiren.MG
 		/// <param name="xOffset">The offset distance between each rectangle in a single row</param>
 		/// <param name="rectsInCollumn">The number of rectangles in a single collumn</param>
 		/// <param name="yOffset">THe offset distance between eacj rectangle in a single column</param>
-		/// <returns></returns>
+		/// <returns>A grid of rectangles that fit the area</returns>
 		public static Rectangle[,] FitRectangle(this Rectangle largeRectangle, byte rectsInRow, uint xOffset, byte rectsInCollumn, uint yOffset)
 		{
 			if (rectsInCollumn * rectsInRow == 0) throw new ArgumentException("Invalid box count");
@@ -73,7 +73,7 @@ namespace Azuxiren.MG
 		/// <param name="ratios">The ratio of width/height of each rectangle</param>
 		/// <param name="offset">The distance between each rectangle</param>
 		/// <param name="vertical">If true, the large rectangle is divided vertically, otherwise horizontally</param>
-		/// <returns></returns>
+		/// <returns>An array of rectangles that fit the area</returns>
 		public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte[] ratios, uint offset, bool vertical = false)
 		{
 			var len = ratios.Length;

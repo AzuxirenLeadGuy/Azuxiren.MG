@@ -9,7 +9,7 @@ namespace Azuxiren.MG;
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public abstract class AzuxirenMonogameClass<Parameters, Settings> : Game
 where Parameters : class
-where Settings: new()
+where Settings : new()
 {
 	/// <summary>The constant Parameters of the game</summary>
 	public readonly Parameters GameParameters;
@@ -93,7 +93,7 @@ where Settings: new()
 		else _mainScreen.Draw(gt, GameParameters, _settings);
 		base.Draw(gt);
 	}
-    /// <inheritdoc/>
+	/// <inheritdoc/>
 	protected override void Update(GameTime gameTime)
 	{
 		if (_isLoading)
@@ -106,10 +106,7 @@ where Settings: new()
 		}
 		else if (_mainScreen.Update(gameTime, GameParameters, ref _settings, out var nextStage))
 		{
-			if (nextStage == null)
-			{
-				Exit();
-			}
+			if (nextStage == null) { Exit(); }
 			else
 			{
 				_isLoading = true;
