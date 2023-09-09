@@ -9,7 +9,6 @@ namespace Azuxiren.MG;
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public abstract class AzuxirenMonogameClass<Parameters, Settings> : Game
 where Parameters : class
-where Settings : new()
 {
 	/// <summary>The constant Parameters of the game</summary>
 	public readonly Parameters GameParameters;
@@ -37,7 +36,7 @@ where Settings : new()
 		IGameStage<Parameters, Settings> loadScreen)
 	{
 		GameParameters = parameters;
-		_settings = new();
+		_settings = default!;
 		GraphicsDM = new(this);
 		_isLoading = false;
 		_loadScreen = loadScreen;
