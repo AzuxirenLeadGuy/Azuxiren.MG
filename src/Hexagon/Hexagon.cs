@@ -1,6 +1,10 @@
-using Microsoft.Xna.Framework;
-
 using System;
+using System.Collections.Generic;
+
+using Azuxiren.MG.Drawing;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Hex;
 /// <summary> Represents a Regular Hexagon</summary>
 public struct Hexagon : IEquatable<Hexagon>
@@ -11,20 +15,17 @@ public struct Hexagon : IEquatable<Hexagon>
 	public int SideLength;
 	private float _angle;
 	/// <summary>The angle with which the hexagon is rotated about its center</summary>
-	public float Angle { readonly get => _angle; set => _angle = FloatMod(value, Pi); }
+	public float Angle { readonly get => _angle; set => _angle = Mod(value, Pi); }
 	/// <summary>Constant values for computation</summary>
-	public const float Pi = MathF.PI, Root3 = 1.7320508075688f, Root3By2 = 0.8660254037844f;
-	private static float FloatMod(float givenAngle, float mod)
+	public const float Pi = MathF.PI;
+	/// <summary>Constant values for computation</summary>
+	public const float Root3 = 1.7320508075688f;
+	/// <summary>Constant values for computation</summary>
+	public const float Root3By2 = 0.8660254037844f;
+	private static float Mod(float givenAngle, float mod)
 	{
-		if (givenAngle > mod)
-		{
-			do { givenAngle -= mod; } while (givenAngle > mod);
-		}
-		else
-		{
-			while (givenAngle < 0) givenAngle += mod;
-		}
-		return givenAngle;
+		if (givenAngle < 0) givenAngle = -givenAngle;
+		return givenAngle > mod ? givenAngle % mod : givenAngle;
 	}
 	/// <summary>
 	/// Returns a rectangular array of Color instances
@@ -40,12 +41,16 @@ public struct Hexagon : IEquatable<Hexagon>
 			height++;// Keeping height even
 		Color[,] grid = new Color[width, height];
 		int topleftX = sideLength / 2, i, j;
-		foreach (Point p in Global.GetPointsOnLine(topleftX, 0, 0, (height + 1) / 2))
+		IEnumerable<Point> points = DrawingExtensions.GetPointsOnLine(
+			new(topleftX, 0),
+			new(0, (height + 1) / 2)
+		);
+		foreach (Point point in points)
 		{
-			for (i = p.X, j = width - p.X - 1; i <= j; i++)
+			for (i = point.X, j = width - point.X - 1; i <= j; i++)
 			{
-				grid[i, p.Y] = color;
-				grid[i, height - p.Y - 1] = color;
+				grid[i, point.Y] = color;
+				grid[i, height - point.Y - 1] = color;
 			}
 		}
 		return grid;
@@ -64,7 +69,7 @@ public struct Hexagon : IEquatable<Hexagon>
 			height++;// Keeping height even
 		Color[,] grid = new Color[width, height];
 		int topleftX = sideLength / 2, thick = 1 + (sideLength / 32), i, j, k, y;
-		foreach (Point p in Global.GetPointsOnLine(topleftX, 0, 0, (height + 1) / 2))
+		foreach (Point p in DrawingExtensions.GetPointsOnLine(new(topleftX, 0), new(0, (height + 1) / 2)))
 		{
 			for (i = p.X, j = width - p.X - 1, k = 0; k < thick; i++, j--, k++)
 			{
@@ -86,6 +91,22 @@ public struct Hexagon : IEquatable<Hexagon>
 		}
 		return grid;
 	}
+	/// <summary>
+	/// The smallest rectangle that contains this hexagon. <br/>
+	/// Note: The rectangle is returned without taking the rotaion into account.
+	/// /// </summary>
+	/// <returns>The outer boundary of the hexagon</returns>
+	public readonly Rectangle OuterBound()
+	{
+		int h = (int)MathF.Round(Hexagon.Root3 * SideLength);
+		return new(Center.X - SideLength, Center.Y - (h / 2), SideLength * 2, h);
+	}
+	/// <summary>The circle that circumscribes this hexagon</summary>
+	/// <returns>Circle circumscribing this hexagon</returns>
+	public IntCircle OuterCircle() => new() { Center = Center, Radius = SideLength };
+	/// <summary>The largest circle bounded by this hexagon</summary>
+	/// <returns>The largest circle bounded by this hexagon</returns>
+	public IntCircle InnerCircle() => new() { Center = Center, Radius = (int)MathF.Round(SideLength * (Root3 / 2)) };
 	/// <summary>Checks if two hexagon instances are equivalent to each other</summary>
 	/// <param name="other">The other hexagon instance to compare with</param>
 	/// <returns>true if both instances are equivalent; false otherwise</returns>

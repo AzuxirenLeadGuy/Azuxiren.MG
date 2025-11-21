@@ -44,7 +44,7 @@ public readonly struct HexGrid<T> : IReadOnlyDictionary<GridPoint, T>
 	public HexGrid(T defaultvalue, byte r = 1)
 	{
 		Radius = r;
-		_data = new();
+		_data = [];
 		foreach (var pt in new GridPoint(0, 0).GetSpiralRing(r))
 			_data.Add(pt, defaultvalue);
 	}
