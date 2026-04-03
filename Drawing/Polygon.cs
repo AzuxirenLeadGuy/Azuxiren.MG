@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Azuxiren.MG.Drawing;
 
@@ -24,10 +23,10 @@ public struct IntPolygon
 	public readonly byte SideCount;
 
 	/// <summary>Initializes a polygon</summary>
-	/// <param name="sideCount"></param>
-	/// <param name="center"></param>
-	/// <param name="radius"></param>
-	/// <param name="angle"></param>
+	/// <param name="sideCount">The number of sides in the polygon</param>
+	/// <param name="center">The center point of the polygon</param>
+	/// <param name="radius">The distance from the center to any of the equidistant vertex</param>
+	/// <param name="angle">The angle between the zeroth vertex, center and the X-axis</param>
 	public IntPolygon(byte sideCount, Point center, uint radius, float angle = 0)
 	{
 		if (sideCount < 3) throw new ArgumentException(
@@ -53,7 +52,7 @@ public struct IntPolygon
 	public readonly IntCircle Incircle => new()
 	{
 		Center = Center,
-		Radius = (int)float.Round(Radius * float.CosPi(1F/SideCount)),
+		Radius = (int)float.Round(Radius * float.CosPi(1F / SideCount)),
 	};
 
 	/// <summary>A rectangle that covers the polygon</summary>

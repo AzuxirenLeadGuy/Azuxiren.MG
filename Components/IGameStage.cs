@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Azuxiren.MG.Components;
 
@@ -12,8 +14,10 @@ public interface IGameStage<Settings>
 	/// Loads the required content. This is a required
 	/// phase for transitioning between game stages.
 	/// </summary>
+	/// <param name="device">The graphics setting of the game for initialization</param>
+	/// <param name="content">Content manager to load assets for game</param>
 	/// <param name="settings">The shared settings for the game</param>
-	void LoadContent(ref Settings settings);
+	void LoadContent(in GraphicsDevice device, in ContentManager content, ref Settings settings);
 
 	/// <summary>
 	/// The logic for drawing the components within the game.

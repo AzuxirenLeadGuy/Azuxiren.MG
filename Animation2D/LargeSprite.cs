@@ -56,7 +56,7 @@ public struct LargeSprite
 	/// <param name="next">A custom updater for frames in between. For normal propagation, set as null</param>
 	public LargeSprite(Texture2D[] frames, Rectangle dest, bool copy, byte speednum = 1, byte speedden = 1, int[]? next = null)
 	{
-		FrameImages = copy ? frames.ToArray() : frames;
+		FrameImages = copy ? [.. frames] : frames;
 		Dest = dest;
 		Num = speednum;
 		Den = speedden;
@@ -65,12 +65,12 @@ public struct LargeSprite
 		if (next == null)
 		{
 			int len = FrameImages.Length;
-			Next = Enumerable.Range(1, len).ToArray();
+			Next = [.. Enumerable.Range(1, len)];
 			Next[len - 1] = 0;
 		}
 		else
 		{
-			Next = copy ? next.ToArray() : next;
+			Next = copy ? [.. next] : next;
 		}
 
 		if (Next.Length != FrameImages.Length)
@@ -148,5 +148,13 @@ public struct LargeSprite
 	/// <param name="origin">The origin of rotation</param>
 	/// <param name="effects">Added effects</param>
 	/// <param name="depth">The depth in the layer for this sprite</param>
-	public readonly void Draw(SpriteBatch spriteBatch, Rectangle dest, Color tint, float angle, Vector2 origin, SpriteEffects effects = SpriteEffects.None, float depth = 0) => spriteBatch.Draw(FrameImages[CurrentFrame], dest, null, tint, angle, origin, effects, depth);
+	public readonly void Draw(
+		SpriteBatch spriteBatch,
+		Rectangle dest,
+		Color tint,
+		float angle,
+		Vector2 origin,
+		SpriteEffects effects = SpriteEffects.None,
+		float depth = 0
+	) => spriteBatch.Draw(FrameImages[CurrentFrame], dest, null, tint, angle, origin, effects, depth);
 }

@@ -52,7 +52,7 @@ public static class DrawingExtensions
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The angle in radians between the two vectors</returns>
-	public static float AngleBetween(this Vector2 lhs, Vector2 rhs) 
+	public static float AngleBetween(this Vector2 lhs, Vector2 rhs)
 		=> float.Atan2(
 			lhs.CrossProduct2d(rhs),
 			Vector2.Dot(lhs, rhs)
@@ -197,12 +197,20 @@ public static class DrawingExtensions
 	public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte[] ratios, uint offset, bool vertical = false)
 	{
 		var len = ratios.Length;
-		if (len == 0) throw new ArgumentException("There should be at least one value in the list of ratios", nameof(ratios));
+		if (len == 0)
+			throw new ArgumentException(
+				"There should be at least one value in the list of ratios",
+				nameof(ratios)
+			);
 		else if (len == 1) return [largeRectangle];
 		int sum = 0, i, x = largeRectangle.X, y = largeRectangle.Y, width, height;
 		foreach (var ratio in ratios)
 		{
-			if (ratio == 0) throw new ArgumentException("Invalid value of ratio as 0", paramName: nameof(ratio));
+			if (ratio == 0)
+				throw new ArgumentException(
+					"Invalid value of ratio as 0",
+					paramName: nameof(ratios)
+				);
 			sum += ratio;
 		}
 		if (vertical)

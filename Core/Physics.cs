@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-namespace Azuxiren.MG;
+namespace Azuxiren.MG.Core;
 /// <summary>Contains common physics movement</summary>
 public static class Physics
 {

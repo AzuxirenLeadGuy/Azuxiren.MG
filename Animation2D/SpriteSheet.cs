@@ -7,14 +7,19 @@ public struct SpriteSheet
 {
 	///<summary>SpriteSheet Image</summary>
 	internal Texture2D Sheet;
+
 	///<summary>Source Rectangle Maps the image on the source Spritesheet</summary>
 	internal Rectangle Source;
+
 	///<summary>Keeps track of Frames on the SpriteSheet</summary>
 	internal int[] FrameX, FrameY, Next;
+
 	///<summary>The Count of Frames</summary>
 	public readonly int Frames;
+
 	///<summary>The Current Frame</summary>
 	private int _currentFrame;
+
 	///<summary>The Constructor that *MUST* be used</summary>
 	///<param name="sh">Sheet Image Texture</param>
 	///<param name="fw">Frame-width</param>
@@ -52,6 +57,7 @@ public struct SpriteSheet
 		Next[Frames - 1] = 0;
 		_currentFrame = 0;
 	}
+
 	/// <summary>
 	/// Copy the properties of another spritesheet, sharing the same reference of Texture2D Spritesheet image
 	/// </summary>
@@ -66,9 +72,11 @@ public struct SpriteSheet
 		Source = source.Source;
 		_currentFrame = 0;
 	}
+
 	///<summary>Sets the Current Animation frame at f</summary>
 	/// <param name="f">The frame value to set</param>
 	public void SetFrame(int f) => _currentFrame = f;
+
 	/// <summary>
 	/// Draws the SpriteSheet
 	/// </summary>
@@ -76,6 +84,7 @@ public struct SpriteSheet
 	/// <param name="dest">The Rectangle to draw the sheet frame at. (You are better off using the Dest variable instide the Spritesheet class</param>
 	/// <param name="tint">The Color to tint the drawing with</param>
 	public readonly void Draw(SpriteBatch sb, Rectangle dest, Color? tint) => sb.Draw(Sheet, dest, Source, tint ?? Color.White);
+
 	///<summary><para>The Update Function of SpriteSheet</para>
 	/// <para>Not Calling Update "Pauses" the Animation.</para></summary>
 	public void Update()

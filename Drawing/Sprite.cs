@@ -63,7 +63,7 @@ public struct Sprite
 	}
 	/// <summary>Gets the Rectangle of the bounds of the sprite </summary>
 	/// <returns>Rectangle with values rounded to the nearest integer</returns>
-	public readonly Rectangle GetDest() 
+	public readonly Rectangle GetDest()
 		=> new(
 			Vector2.Round(Location - Anchor).ToPoint(),
 			Vector2.Round(Scale).ToPoint()

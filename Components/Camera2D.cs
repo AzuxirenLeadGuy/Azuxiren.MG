@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Azuxiren.MG;
+namespace Azuxiren.MG.Components;
 /// <summary>A simple 2D camera implementation with zooming and rotation</summary>
 public struct Camera2D
 {

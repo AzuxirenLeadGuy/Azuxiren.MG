@@ -1,7 +1,5 @@
 using System;
 
-using Azuxiren.MG.Drawing;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -56,8 +54,8 @@ public class AzuxirenMonogameClass<Settings> : Game
 	{
 		_targetDrawer = new(this.GraphicsDevice, 640, 480);
 		_settings = _delayedLoader(this);
-		_mainScreen.LoadContent(ref _settings);
-		_loadScreen.LoadContent(ref _settings);
+		_mainScreen.LoadContent(GraphicsDevice, this.Content, ref _settings);
+		_loadScreen.LoadContent(GraphicsDevice, this.Content, ref _settings);
 		base.LoadContent();
 	}
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
@@ -118,7 +116,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 					_ = System.Threading.Tasks.Task.Run(
 						() =>
 						{
-							_mainScreen.LoadContent(ref _settings);
+							_mainScreen.LoadContent(this.GraphicsDevice, this.Content, ref _settings);
 							_isLoading = false;
 						}
 					);

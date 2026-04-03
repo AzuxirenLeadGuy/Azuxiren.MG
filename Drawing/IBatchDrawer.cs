@@ -27,6 +27,7 @@ public interface IBatchDrawer
 		SpriteEffects effects = SpriteEffects.None,
 		float layerDepth = 0
 	);
+
 	/// <summary> Submit a sprite for drawing in the current batch.</summary>
 	/// <param name="texture">A texture.</param>
 	/// <param name="destination">The drawing location on screen.</param>
@@ -69,38 +70,5 @@ public interface IBatchDrawer
 		Vector2? scale = null,
 		SpriteEffects effects = SpriteEffects.None,
 		float layerDepth = 0
-	);
-	/// <summary>
-	/// Submit a text string of sprites for drawing in the current batch.
-	/// </summary>
-	/// <param name="spriteFont">A font.</param>
-	/// <param name="text">The text which will be drawn.</param>
-	/// <param name="position">The drawing location on screen.</param>
-	/// <param name="color">A color mask.</param>
-	/// <param name="rotation">A rotation of this string.</param>
-	/// <param name="origin">Center of the rotation. 0,0 by default.</param>
-	/// <param name="scale">A scaling of this string.</param>
-	/// <param name="effects">Modificators for drawing. Can be combined.</param>
-	/// <param name="layerDepth">A depth of the layer of this string.</param>
-	public void DrawString(
-		SpriteFont spriteFont,
-		string text,
-		Vector2 position,
-		Color color,
-		float rotation = 0,
-		Vector2? origin = null,
-		float scale = 1,
-		SpriteEffects effects = SpriteEffects.None,
-		float layerDepth = 0
-	) => DrawString(
-		spriteFont,
-		text,
-		position,
-		color,
-		rotation,
-		origin,
-		new Vector2(scale),
-		effects,
-		layerDepth
 	);
 }
