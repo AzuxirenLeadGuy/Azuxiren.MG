@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,9 @@ namespace Azuxiren.MG.Components;
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
 public class AzuxirenMonogameClass<Settings> : Game
 {
+	/// <summary>The custom unit that initializes the game stages</summary>
+	protected readonly GameStageFactory<Settings> _factory;
+
 	/// <summary>
 	/// The shared setting of the game. This object is shared between the 
 	/// multipls GameStages in the lifetime of this object
@@ -22,40 +26,40 @@ public class AzuxirenMonogameClass<Settings> : Game
 	public readonly GraphicsDeviceManager GraphicsDM;
 
 	/// <summary>Indicates whether a screen is being loaded or not</summary>
-	protected volatile bool _isLoading;
+	protected bool _isLoading;
 
 	/// <summary>The game stages involved this game</summary>
 	protected IGameStage<Settings> _loadScreen, _mainScreen;
 
-	/// <summary>A function pointer to load the internal settings after the game is loaded</summary>
-	protected readonly Func<AzuxirenMonogameClass<Settings>, Settings> _delayedLoader;
+	/// <summary>Stores the size of the render target</summary>
+	protected Point _renderTargetSize;
+
+	/// <summary>Stores the size of the render target</summary>
+	protected Task<IGameStage<Settings>?> _taskLoader;
 
 	/// <summary> Initializes the game object</summary>
-	/// <param name="start">The screen to begin the game with</param>
-	/// <param name="load">The screen for loading, to be shown during transitions</param>
-	/// <param name="loader">The function for loading the Setting instance once the game is initialized</param>
-	protected AzuxirenMonogameClass(
-		IGameStage<Settings> start,
-		IGameStage<Settings> load,
-		Func<AzuxirenMonogameClass<Settings>, Settings> loader
-	)
+	/// <param name="targetSize">The resolution of the game render target</param>
+	/// <param name="settings">The initial value of the shared settings instance</param>
+	/// <param name="factory">The unit that creates/initializes scenes dynamically</param>
+	protected AzuxirenMonogameClass(Point targetSize, Settings settings, GameStageFactory<Settings> factory)
 	{
 		GraphicsDM = new(this);
-		_settings = default!;
-		_targetDrawer = default!;
+		_settings = settings;
 		_isLoading = false;
-		_loadScreen = load;
-		_mainScreen = start;
-		_delayedLoader = loader;
+		_factory = factory;
+		_renderTargetSize = targetSize;
+		_loadScreen = null!;
+		_mainScreen = null!;
+		_targetDrawer = default!;
+		_taskLoader = Task.FromResult<IGameStage<Settings>?>(null);
 	}
 
 	/// <summary>Loads the Content for both the screens </summary>
 	protected override void LoadContent()
 	{
-		_targetDrawer = new(this.GraphicsDevice, 640, 480);
-		_settings = _delayedLoader(this);
-		_mainScreen.LoadContent(GraphicsDevice, this.Content, ref _settings);
-		_loadScreen.LoadContent(GraphicsDevice, this.Content, ref _settings);
+		_targetDrawer = new(this.GraphicsDevice, _renderTargetSize.X, _renderTargetSize.Y);
+		_mainScreen = _factory.StartStage(Content, _settings);
+		_loadScreen = _factory.LoadStage(Content, _settings);
 		base.LoadContent();
 	}
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
@@ -100,31 +104,34 @@ public class AzuxirenMonogameClass<Settings> : Game
 
 	/// <summary>Updates the game for one frame</summary>
 	/// <param name="gt">Denotes an instant in time</param>
-	protected override void Update(GameTime gt)
+	protected override async void Update(GameTime gt)
 	{
-		if (_isLoading) { _loadScreen.Update(gt, ref _settings); }
+		if (_isLoading)
+		{
+			_loadScreen.Update(gt, ref _settings);
+			if (_taskLoader.IsCompleted)
+			{
+				_mainScreen = await _taskLoader ?? throw new InvalidOperationException(
+					"The result of task factory is null"
+				);
+				_isLoading = false;
+			}
+		}
 		else
 		{
-			GameUpdateResult<Settings> result = _mainScreen.Update(gt, ref _settings);
+			var result = _mainScreen.Update(gt, ref _settings);
 			switch (result.Type)
 			{
-				case GameUpdateResult<Settings>.ResultType.Transition:
-					if (result.NextStage == null)
-						throw new Exception("Recieved null reference for transition IGameStage");
+				case GameUpdateResult.ResultType.Transition:
 					_isLoading = true;
-					_mainScreen = result.NextStage;
-					_ = System.Threading.Tasks.Task.Run(
-						() =>
-						{
-							_mainScreen.LoadContent(this.GraphicsDevice, this.Content, ref _settings);
-							_isLoading = false;
-						}
+					_taskLoader = System.Threading.Tasks.Task.Run(
+						() => _factory.Create(result.StageCode, this.Content, _settings)
 					);
 					break;
-				case GameUpdateResult<Settings>.ResultType.ExitRequest:
+				case GameUpdateResult.ResultType.ExitRequest:
 					Exit();
 					break;
-				case GameUpdateResult<Settings>.ResultType.NoAction:
+				case GameUpdateResult.ResultType.NoAction:
 				default:
 					break;
 			}

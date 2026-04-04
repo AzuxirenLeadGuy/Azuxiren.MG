@@ -39,7 +39,6 @@ public struct TextBox
 		_pos = default;
 		_scale = default;
 		FitText();
-		ResetRotationAnchor();
 	}
 	/// <summary>
 	/// This is the Destination rectangle where the text is to be drawn
@@ -107,9 +106,7 @@ public struct TextBox
 	private Vector2 _pos;
 	private float _scale;
 	private TextAlignment _alignment;
-	/// <summary>Sets Anchor of rotation to the center of the text</summary>
-	public void ResetRotationAnchor() => Anchor = _font.MeasureString(_text) * _scale / 2;
-	internal void FitText()
+	private void FitText()
 	{
 		Vector2 size = _font.MeasureString(_text);
 		// Taking the smaller scaling value will result in the text always fitting in the boundaires.
@@ -124,12 +121,13 @@ public struct TextBox
 			if (_alignment == TextAlignment.Right) _pos.X += diff;
 			else _pos.X += diff / 2;
 		}
+		Anchor = _font.MeasureString(_text) * _scale / 2;
 	}
 	/// <summary>Draws the string</summary>
 	/// <param name="batch">The spritebatch for the game</param>
 	/// <param name="effects">The SpriteEffects to use</param>
 	public readonly void Draw(
-		SpriteBatch batch,
+		IBatchDrawer batch,
 		SpriteEffects effects = SpriteEffects.None
 	) => batch.DrawString(
 		_font,
@@ -138,7 +136,7 @@ public struct TextBox
 		TextColor,
 		Angle,
 		Anchor,
-		_scale,
+		new(_scale),
 		effects,
 		LayerDepth
 	);

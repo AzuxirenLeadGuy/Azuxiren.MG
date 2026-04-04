@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using Azuxiren.MG.Core;
 using Azuxiren.MG.Drawing;
 
 using Microsoft.Xna.Framework;

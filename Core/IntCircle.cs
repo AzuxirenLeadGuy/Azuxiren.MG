@@ -1,7 +1,9 @@
 using System;
 
+using Azuxiren.MG.Drawing;
+
 using Microsoft.Xna.Framework;
-namespace Azuxiren.MG.Drawing;
+namespace Azuxiren.MG.Core;
 /// <summary>Represents a circle</summary>
 public struct IntCircle : IEquatable<IntCircle>
 {

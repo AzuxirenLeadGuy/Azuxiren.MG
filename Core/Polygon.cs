@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+using Azuxiren.MG.Drawing;
+
 using Microsoft.Xna.Framework;
 
-namespace Azuxiren.MG.Drawing;
+namespace Azuxiren.MG.Core;
 
 /// <summary>A general type to make regular polyon and generate it as textures</summary>
 public struct IntPolygon

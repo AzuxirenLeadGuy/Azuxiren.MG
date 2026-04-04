@@ -37,7 +37,7 @@ public abstract class BaseSwitch : BaseComponent<BaseSwitch.BaseSwitchState>
 	}
 
 	/// <summary>The input of the button being pressed</summary>
-	public abstract bool Press { get; set; }
+	public abstract bool Press { get; }
 
 	/// <inheritdoc/>
 	public override BaseSwitchState Update(GameTime gt)

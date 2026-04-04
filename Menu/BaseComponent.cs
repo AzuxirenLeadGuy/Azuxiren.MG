@@ -9,13 +9,13 @@ namespace Azuxiren.MG.Menu;
 public abstract class BaseComponent<StateType>
 {
 	/// <summary>The boundary of the component</summary>
-	public Rectangle Bounds { get; protected set; }
+	public virtual Rectangle Bounds { get; }
 
 	/// <summary>
 	/// A basic input to this component, showing if 
 	/// the component is enabled
 	/// </summary>
-	public abstract bool Enabled { get; set; }
+	public abstract bool Enabled { get; }
 
 	/// <summary>The state of the component stored as data</summary>
 	public abstract StateType State { get; protected set; }

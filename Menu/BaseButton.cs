@@ -25,7 +25,7 @@ public abstract class BaseButton : BaseComponent<BaseButton.BaseButtonState>
 	}
 	/// <summary>The input to the button, if it is pressed</summary>
 	/// <value></value>
-	public abstract bool Press { get; set; }
+	public abstract bool Press { get; }
 
 	/// <inheritdoc />
 	public override BaseButtonState Update(GameTime gt)
