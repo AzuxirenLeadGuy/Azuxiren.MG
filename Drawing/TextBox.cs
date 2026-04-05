@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Drawing;
 /// <summary>Maintains the drawing of text in the given Rectangle</summary>
-public struct TextBox
+public class TextBox
 {
 	/// <summary>The paramter for alignment of a text in a TextBox</summary>
 	public enum TextAlignment : byte
@@ -46,7 +46,7 @@ public struct TextBox
 	/// <value></value>
 	public Rectangle Bounds
 	{
-		readonly get => _bounds;
+		get => _bounds;
 		set
 		{
 			_bounds = value;
@@ -59,7 +59,7 @@ public struct TextBox
 	/// <value></value>
 	public string Text
 	{
-		readonly get => _text;
+		get => _text;
 		set
 		{
 			_text = value;
@@ -72,7 +72,7 @@ public struct TextBox
 	/// <value></value>
 	public SpriteFont Font
 	{
-		readonly get => _font;
+		get => _font;
 		set
 		{
 			_font = value;
@@ -85,7 +85,7 @@ public struct TextBox
 	/// <value></value>
 	public TextAlignment Alignment
 	{
-		readonly get => _alignment;
+		get => _alignment;
 		set
 		{
 			_alignment = value;
@@ -108,6 +108,7 @@ public struct TextBox
 	private TextAlignment _alignment;
 	private void FitText()
 	{
+		if(Bounds.Width == 0 || Bounds.Height == 0) return;
 		Vector2 size = _font.MeasureString(_text);
 		// Taking the smaller scaling value will result in the text always fitting in the boundaires.
 		_scale = float.Min(_bounds.Width / size.X, _bounds.Height / size.Y);
@@ -121,12 +122,12 @@ public struct TextBox
 			if (_alignment == TextAlignment.Right) _pos.X += diff;
 			else _pos.X += diff / 2;
 		}
-		Anchor = _font.MeasureString(_text) * _scale / 2;
+		// Anchor = _font.MeasureString(_text) * _scale / 2;
 	}
 	/// <summary>Draws the string</summary>
 	/// <param name="batch">The spritebatch for the game</param>
 	/// <param name="effects">The SpriteEffects to use</param>
-	public readonly void Draw(
+	public void Draw(
 		IBatchDrawer batch,
 		SpriteEffects effects = SpriteEffects.None
 	) => batch.DrawString(

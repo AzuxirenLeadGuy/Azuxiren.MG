@@ -78,8 +78,8 @@ public static class DrawingExtensions
 		(
 			new Point
 			(
-				(center.X - size.X) / 2,
-				(center.Y - size.Y) / 2
+				center.X - (size.X / 2),
+				center.Y - (size.Y / 2)
 			),
 			size
 		);
@@ -106,8 +106,8 @@ public static class DrawingExtensions
 			rect.Width / (float)size.X,
 			rect.Height / (float)size.Y
 		);
-		size.X = (int)(scale * size.X);
-		size.Y = (int)(scale * size.Y);
+		size.X = (int)MathF.Round(scale * size.X);
+		size.Y = (int)MathF.Round(scale * size.Y);
 		return SetCenter(rect.Center, size);
 	}
 

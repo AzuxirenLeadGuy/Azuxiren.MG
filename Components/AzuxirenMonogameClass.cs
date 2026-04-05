@@ -39,12 +39,12 @@ public class AzuxirenMonogameClass<Settings> : Game
 
 	/// <summary> Initializes the game object</summary>
 	/// <param name="targetSize">The resolution of the game render target</param>
-	/// <param name="settings">The initial value of the shared settings instance</param>
 	/// <param name="factory">The unit that creates/initializes scenes dynamically</param>
-	protected AzuxirenMonogameClass(Point targetSize, Settings settings, GameStageFactory<Settings> factory)
+	/// <param name="allow_window_resize">Allow the window to be resized</param>
+	public AzuxirenMonogameClass(Point targetSize, GameStageFactory<Settings> factory, bool allow_window_resize=false)
 	{
 		GraphicsDM = new(this);
-		_settings = settings;
+		_settings = default!;
 		_isLoading = false;
 		_factory = factory;
 		_renderTargetSize = targetSize;
@@ -52,15 +52,18 @@ public class AzuxirenMonogameClass<Settings> : Game
 		_mainScreen = null!;
 		_targetDrawer = default!;
 		_taskLoader = Task.FromResult<IGameStage<Settings>?>(null);
+		Window.AllowUserResizing = allow_window_resize;
+		IsMouseVisible = true;
 	}
 
 	/// <summary>Loads the Content for both the screens </summary>
 	protected override void LoadContent()
 	{
-		_targetDrawer = new(this.GraphicsDevice, _renderTargetSize.X, _renderTargetSize.Y);
-		_mainScreen = _factory.StartStage(Content, _settings);
-		_loadScreen = _factory.LoadStage(Content, _settings);
-		base.LoadContent();
+		_targetDrawer = new(GraphicsDevice, _renderTargetSize.X, _renderTargetSize.Y);
+		SetWindowed(_renderTargetSize.X, _renderTargetSize.Y);
+		_settings = _factory.InitializeSettings(this);
+		_mainScreen = _factory.StartStage(this, _settings);
+		_loadScreen = _factory.LoadStage(this, _settings);
 	}
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
 	public virtual void SetFullScreen()
@@ -78,17 +81,19 @@ public class AzuxirenMonogameClass<Settings> : Game
 		GraphicsDM.PreferredBackBufferHeight = h;
 		GraphicsDM.IsFullScreen = true;
 		GraphicsDM.ApplyChanges();
+		_targetDrawer.UpdateResolution();
 	}
 
 	/// <summary>This will set The Screen as windowed with the given width/height</summary>
 	/// <param name="w">The width of window</param>
 	/// <param name="h">The height of window</param>
-	public virtual void RevertFullScreen(int w, int h)
+	public virtual void SetWindowed(int w, int h)
 	{
 		GraphicsDM.PreferredBackBufferWidth = w;
 		GraphicsDM.PreferredBackBufferHeight = h;
 		GraphicsDM.IsFullScreen = false;
 		GraphicsDM.ApplyChanges();
+		_targetDrawer.UpdateResolution();
 	}
 
 	/// <summary>The Draw method implementation for CFMG</summary>
@@ -124,8 +129,8 @@ public class AzuxirenMonogameClass<Settings> : Game
 			{
 				case GameUpdateResult.ResultType.Transition:
 					_isLoading = true;
-					_taskLoader = System.Threading.Tasks.Task.Run(
-						() => _factory.Create(result.StageCode, this.Content, _settings)
+					_taskLoader = Task.Run(
+						() => _factory.Create(result.StageCode, this, _settings)
 					);
 					break;
 				case GameUpdateResult.ResultType.ExitRequest:

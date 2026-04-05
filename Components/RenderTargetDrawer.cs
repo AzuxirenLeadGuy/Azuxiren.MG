@@ -23,7 +23,7 @@ public class RenderTargetDrawer : IBatchDrawer
 	}
 
 	/// <summary>The clear color to use for the RenderTarget</summary>
-	public Color Clear = Color.Black;
+	public Color Clear = Color.White;
 
 	/// <summary>The clear color to use for the entire window, excluding RenderTarget</summary>
 	public Color OutofBounds = Color.Black;
@@ -41,7 +41,7 @@ public class RenderTargetDrawer : IBatchDrawer
 	private readonly SpriteBatch _spriteBatch;
 
 	/// <summary>The Destination Rectangle where the RenderTarget will be drawn to screen</summary>
-	internal Rectangle DestinationRect { get; private set; }
+	public Rectangle DestinationRect { get; private set; }
 
 	/// <summary>The size of the internal RenderTarget Screen</summary>
 	public Rectangle Bounds => _target2D.Bounds;
@@ -50,11 +50,14 @@ public class RenderTargetDrawer : IBatchDrawer
 	/// Updates the resolution of the destination screen, 
 	/// as detected in the GraphicsDevice reference
 	/// </summary>
-	void UpdateResolution() =>
+	internal void UpdateResolution()
+	{
+		var screen_size = _graphicsDevice.PresentationParameters.Bounds;
 		DestinationRect = DrawingExtensions.SetCenterScaled(
 			_target2D.Bounds.Size,
-			_graphicsDevice.PresentationParameters.Bounds
+			screen_size
 		);
+	}
 
 	/// <summary>Set the target for drawing</summary>
 	internal void BeginTargetDraw()
