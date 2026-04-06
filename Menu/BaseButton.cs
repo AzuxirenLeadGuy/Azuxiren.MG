@@ -30,7 +30,10 @@ public abstract class BaseButton : BaseComponent<BaseButton.BaseButtonState>
 	/// <inheritdoc />
 	public override BaseButtonState Update(GameTime gt)
 	{
-		if (Enabled == false) return BaseButtonState.Disabled;
+		if (Enabled == false) 
+		{
+			return State = BaseButtonState.Disabled;
+		}
 		var state = State switch
 		{
 			BaseButtonState.Released => Press ? BaseButtonState.JustPressed : BaseButtonState.Released,

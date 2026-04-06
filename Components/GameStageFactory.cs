@@ -9,29 +9,29 @@ public abstract class GameStageFactory<Settings>
 	/// <summary>Custom initialization of Settings instance for the game</summary>
 	/// <param name="game">The game instance</param>
 	/// <returns>Initialized instance of game settings</returns>
-	public abstract Settings InitializeSettings(in Game game);
+	public abstract Settings InitializeSettings(in AzuxirenMonogameClass<Settings> game);
 	/// <summary>Creates the start stage of the game</summary>
 	/// <param name="game">The game instance</param>
 	/// <param name="settings">The common shared settings for the game</param>
 	/// <returns>Returns the loaded start stage for the game</returns>
-	public abstract IGameStage<Settings> StartStage(in Game game, Settings settings);
+	public abstract IGameStage<Settings> StartStage(in AzuxirenMonogameClass<Settings> game, Settings settings);
 
 	/// <summary>Creates the loading stage of the game</summary>
 	/// <param name="game">The game instance</param>
 	/// <param name="settings">The common shared settings for the game</param>
 	/// <returns>Returns the stage to show during loading stages of game</returns>
-	public abstract IGameStage<Settings> LoadStage(in Game game, Settings settings);
+	public abstract IGameStage<Settings> LoadStage(in AzuxirenMonogameClass<Settings> game, Settings settings);
 
 	/// <summary>Creates the stage of the game as requested by the code</summary>
 	/// <param name="scene_code">The custom code/signal to request for stage creation</param>
 	/// <param name="game">The game instance</param>
 	/// <param name="settings">The common shared settings for the game</param>
 	/// <returns>Returns the loaded stage for the game as requested</returns>
-	public abstract IGameStage<Settings>? Create(in byte scene_code, in Game game, in Settings settings);
+	public abstract IGameStage<Settings>? Create(in byte scene_code, in AzuxirenMonogameClass<Settings> game, in Settings settings);
 
 	/// <summary>Reloads the content for the game</summary>
 	/// <param name="stage">The stage to reload</param>
 	/// <param name="game">The game instance</param>
 	/// <param name="settings">The common shared settings for the game</param>
-	public abstract void ReloadContent(ref IGameStage<Settings> stage, in Game game, Settings settings);
+	public abstract void ReloadContent(ref IGameStage<Settings> stage, in AzuxirenMonogameClass<Settings> game, Settings settings);
 }

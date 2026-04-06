@@ -22,15 +22,6 @@ public class RenderTargetDrawer : IBatchDrawer
 		_spriteBatch = new(_graphicsDevice);
 	}
 
-	/// <summary>The clear color to use for the RenderTarget</summary>
-	public Color Clear = Color.White;
-
-	/// <summary>The clear color to use for the entire window, excluding RenderTarget</summary>
-	public Color OutofBounds = Color.Black;
-
-	/// <summary>The color to tint the final RenderTarget2D destination</summary>
-	public Color TargetTint = Color.White;
-
 	/// <summary>The instance of RenderTarget2D</summary>
 	private readonly RenderTarget2D _target2D;
 
@@ -60,10 +51,10 @@ public class RenderTargetDrawer : IBatchDrawer
 	}
 
 	/// <summary>Set the target for drawing</summary>
-	internal void BeginTargetDraw()
+	internal void BeginTargetDraw(Color target_clear)
 	{
 		_graphicsDevice.SetRenderTarget(_target2D);
-		_graphicsDevice.Clear(Clear);
+		_graphicsDevice.Clear(target_clear);
 	}
 
 	/// <summary>Passes the drawing spritebatch reference for custom drawing</summary>
@@ -88,7 +79,7 @@ public class RenderTargetDrawer : IBatchDrawer
 	{
 		var default_viewport = _graphicsDevice.Viewport;
 		_graphicsDevice.Viewport = new(camera.Viewport);
-		this.DrawToTarget(
+		DrawToTarget(
 			drawFunc,
 			sortMode,
 			blendState,
@@ -140,12 +131,12 @@ public class RenderTargetDrawer : IBatchDrawer
 	/// and clears the target content. Should be called 
 	/// once per draw cycle of the game.
 	/// </summary>
-	internal void EndTargetDraw()
+	internal void EndTargetDraw(Color screen_clear, Color tint)
 	{
 		_graphicsDevice.SetRenderTarget(null);
-		_graphicsDevice.Clear(OutofBounds);
+		_graphicsDevice.Clear(screen_clear);
 		_spriteBatch.Begin();
-		_spriteBatch.Draw(_target2D, DestinationRect, TargetTint);
+		_spriteBatch.Draw(_target2D, DestinationRect, tint);
 		_spriteBatch.End();
 	}
 

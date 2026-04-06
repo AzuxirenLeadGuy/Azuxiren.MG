@@ -37,11 +37,22 @@ public class AzuxirenMonogameClass<Settings> : Game
 	/// <summary>Stores the size of the render target</summary>
 	protected Task<IGameStage<Settings>?> _taskLoader;
 
+	/// <summary>The color used to clear the final window during the render phase</summary>
+	public Color ScreenClearColor = Color.Black;
+
+	/// <summary>The color used to clear the RenderTarget during the intermediate drawing phase</summary>
+	public Color TargetClearColor = Color.White;
+
+	/// <summary>The color to tint/multiply the target to the screen</summary>
+	public Color TargetTintColor = Color.White;
+
 	/// <summary> Initializes the game object</summary>
 	/// <param name="targetSize">The resolution of the game render target</param>
 	/// <param name="factory">The unit that creates/initializes scenes dynamically</param>
-	/// <param name="allow_window_resize">Allow the window to be resized</param>
-	public AzuxirenMonogameClass(Point targetSize, GameStageFactory<Settings> factory, bool allow_window_resize=false)
+	public AzuxirenMonogameClass(
+		Point targetSize,
+		GameStageFactory<Settings> factory
+	)
 	{
 		GraphicsDM = new(this);
 		_settings = default!;
@@ -52,8 +63,9 @@ public class AzuxirenMonogameClass<Settings> : Game
 		_mainScreen = null!;
 		_targetDrawer = default!;
 		_taskLoader = Task.FromResult<IGameStage<Settings>?>(null);
-		Window.AllowUserResizing = allow_window_resize;
+		Window.AllowUserResizing = false;
 		IsMouseVisible = true;
+		Content.RootDirectory = "Content";
 	}
 
 	/// <summary>Loads the Content for both the screens </summary>
@@ -100,10 +112,10 @@ public class AzuxirenMonogameClass<Settings> : Game
 	/// <param name="gt">Denotes an instant in time</param>
 	protected override void Draw(GameTime gt)
 	{
-		_targetDrawer.BeginTargetDraw();
+		_targetDrawer.BeginTargetDraw(TargetClearColor);
 		if (_isLoading) _loadScreen.Draw(gt, _targetDrawer, _settings);
 		else _mainScreen.Draw(gt, _targetDrawer, _settings);
-		_targetDrawer.EndTargetDraw();
+		_targetDrawer.EndTargetDraw(ScreenClearColor, TargetTintColor);
 		base.Draw(gt);
 	}
 
@@ -124,7 +136,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 		}
 		else
 		{
-			var result = _mainScreen.Update(gt, ref _settings);
+			GameUpdateResult result = _mainScreen.Update(gt, ref _settings);
 			switch (result.Type)
 			{
 				case GameUpdateResult.ResultType.Transition:

@@ -1,5 +1,3 @@
-using Azuxiren.MG.Drawing;
-
 using Microsoft.Xna.Framework;
 
 namespace Azuxiren.MG.Components;
