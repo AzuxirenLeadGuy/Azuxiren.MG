@@ -108,7 +108,7 @@ public class TextBox
 	private TextAlignment _alignment;
 	private void FitText()
 	{
-		if(Bounds.Width == 0 || Bounds.Height == 0) return;
+		if (Bounds.Width == 0 || Bounds.Height == 0) return;
 		Vector2 size = _font.MeasureString(_text);
 		// Taking the smaller scaling value will result in the text always fitting in the boundaires.
 		_scale = float.Min(_bounds.Width / size.X, _bounds.Height / size.Y);
