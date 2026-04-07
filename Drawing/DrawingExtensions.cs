@@ -281,7 +281,7 @@ public static class DrawingExtensions
 		int y = y0;
 		for (int x = x0; x <= x1; x++)
 		{
-			yield return dxy ? (new(y, x)) : (new(x, y));
+			yield return dxy ? new(y, x) : new(x, y);
 			decision -= dy;
 			if (decision < 0)
 			{
