@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 
 namespace Azuxiren.MG.Core;
-/// <summary>Represents a base class for a component within a menu</summary>
+/// <summary>A stopwatch that uses GameTime instances to update itself</summary>
 public struct Timer
 {
 	/// <summary>The time(in milliseconds) that have passed</summary>

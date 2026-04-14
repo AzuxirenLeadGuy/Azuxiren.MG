@@ -8,7 +8,7 @@ namespace Azuxiren.MG.Components;
 
 /// <summary>Common Game class wrapper for games</summary>
 /// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
-public class AzuxirenMonogameClass<Settings> : Game
+public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 {
 	/// <summary>The custom unit that initializes the game stages</summary>
 	protected readonly GameStageFactory<Settings> _factory;
@@ -38,13 +38,18 @@ public class AzuxirenMonogameClass<Settings> : Game
 	protected Task<IGameStage<Settings>?> _taskLoader;
 
 	/// <summary>The color used to clear the final window during the render phase</summary>
-	public Color ScreenClearColor = Color.Black;
+	public Color ScreenClearColor { get; set; } = Color.Black;
 
 	/// <summary>The color used to clear the RenderTarget during the intermediate drawing phase</summary>
-	public Color TargetClearColor = Color.White;
+	public Color TargetClearColor { get; set; } = Color.White;
 
 	/// <summary>The color to tint/multiply the target to the screen</summary>
-	public Color TargetTintColor = Color.White;
+	public Color TargetTintColor { get; set; } = Color.White;
+
+	/// <summary>The size of the RenderTarget</summary>
+	public Point TargetSize => _targetDrawer.Bounds.Size;
+	/// <inheritdoc/>
+	public Rectangle WindowClientBounds => Window.ClientBounds;
 
 	/// <summary> Initializes the game object</summary>
 	/// <param name="targetSize">The resolution of the game render target</param>
@@ -55,15 +60,15 @@ public class AzuxirenMonogameClass<Settings> : Game
 	)
 	{
 		GraphicsDM = new(this);
+		_renderTargetSize = targetSize;
+		_factory = factory;
+		Window.AllowUserResizing = false;
 		_settings = default!;
 		_isLoading = false;
-		_factory = factory;
-		_renderTargetSize = targetSize;
 		_loadScreen = null!;
 		_mainScreen = null!;
 		_targetDrawer = default!;
 		_taskLoader = Task.FromResult<IGameStage<Settings>?>(null);
-		Window.AllowUserResizing = false;
 		IsMouseVisible = true;
 		Content.RootDirectory = "Content";
 	}
@@ -78,7 +83,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 		_loadScreen = _factory.LoadStage(this, _settings);
 	}
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
-	public virtual void SetFullScreen()
+	protected virtual void SetFullScreen()
 		=> SetFullScreen(
 			GraphicsDevice.DisplayMode.Width,
 			GraphicsDevice.DisplayMode.Height
@@ -87,7 +92,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 	/// <summary>This will Set the Screen as FullScreen with the given Width/Height</summary>
 	/// <param name="w">The Width to occupy</param>
 	/// <param name="h">The Height to cover</param>
-	public virtual void SetFullScreen(int w, int h)
+	protected virtual void SetFullScreen(int w, int h)
 	{
 		GraphicsDM.PreferredBackBufferWidth = w;
 		GraphicsDM.PreferredBackBufferHeight = h;
@@ -99,7 +104,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 	/// <summary>This will set The Screen as windowed with the given width/height</summary>
 	/// <param name="w">The width of window</param>
 	/// <param name="h">The height of window</param>
-	public virtual void SetWindowed(int w, int h)
+	protected virtual void SetWindowed(int w, int h)
 	{
 		GraphicsDM.PreferredBackBufferWidth = w;
 		GraphicsDM.PreferredBackBufferHeight = h;
@@ -125,7 +130,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 	{
 		if (_isLoading)
 		{
-			_loadScreen.Update(gt, ref _settings);
+			_loadScreen.Update(gt, this, ref _settings);
 			if (_taskLoader.IsCompleted)
 			{
 				_mainScreen = await _taskLoader ?? throw new InvalidOperationException(
@@ -136,7 +141,7 @@ public class AzuxirenMonogameClass<Settings> : Game
 		}
 		else
 		{
-			GameUpdateResult result = _mainScreen.Update(gt, ref _settings);
+			GameUpdateResult result = _mainScreen.Update(gt, this, ref _settings);
 			switch (result.Type)
 			{
 				case GameUpdateResult.ResultType.Transition:
@@ -147,6 +152,12 @@ public class AzuxirenMonogameClass<Settings> : Game
 					break;
 				case GameUpdateResult.ResultType.ExitRequest:
 					Exit();
+					break;
+				case GameUpdateResult.ResultType.SetTargetSize:
+					(ushort width, ushort height) = GameUpdateResult.UnpackData(result.StageCode);
+					_targetDrawer = new(GraphicsDevice, width, height);
+					_mainScreen.Resize(this, new(width, height), ref _settings);
+					_loadScreen.Resize(this, new(width, height), ref _settings);
 					break;
 				case GameUpdateResult.ResultType.NoAction:
 				default:

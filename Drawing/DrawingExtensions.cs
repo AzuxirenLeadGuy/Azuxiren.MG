@@ -160,7 +160,7 @@ public static class DrawingExtensions
 	/// <param name="rectsInRow">The number of rectangles desired in a single row</param>
 	/// <param name="xOffset">The offset distance between each rectangle in a single row</param>
 	/// <param name="rectsInCollumn">The number of rectangles in a single collumn</param>
-	/// <param name="yOffset">The offset distance between eacj rectangle in a single column</param>
+	/// <param name="yOffset">The offset distance between each rectangle in a single column</param>
 	/// <returns>A grid of rectangles that fit the area</returns>
 	public static Rectangle[,] FitRectangle(
 		this Rectangle largeRectangle,

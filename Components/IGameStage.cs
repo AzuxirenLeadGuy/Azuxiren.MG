@@ -9,6 +9,16 @@ namespace Azuxiren.MG.Components;
 public interface IGameStage<Settings>
 {
 	/// <summary>
+	/// Resizes the game content for the given size of the target. 
+	/// Called automatically by the game engine when the RenderTarget
+	/// size changes.
+	/// </summary>
+	/// <param name="game">The current game instance</param>
+	/// <param name="targetSize">The size of the RenderTarget</param>
+	/// <param name="settings">The shared settings for the game</param>
+	void Resize(in IMgRuntime game, in Point targetSize, ref Settings settings);
+
+	/// <summary>
 	/// The logic for drawing the components within the game.
 	/// It is not supposed to alter any existing setting
 	/// </summary>
@@ -23,7 +33,8 @@ public interface IGameStage<Settings>
 	/// Transitions to other GameStages must be handled here as well. <br/>
 	/// </summary>
 	/// <param name="gt">The GameTime object for this frame of the game</param>
+	/// <param name="game">The current game instance</param>
 	/// <param name="settings">The shared settings for the game</param>
 	/// <returns>Indication that screen needs to be updated, or game needs to be exited/closed.</returns>
-	GameUpdateResult Update(GameTime gt, ref Settings settings);
+	GameUpdateResult Update(GameTime gt, in IMgRuntime game, ref Settings settings);
 }

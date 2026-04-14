@@ -1,3 +1,5 @@
+using System;
+
 using Azuxiren.MG.Drawing;
 
 using Microsoft.Xna.Framework;
@@ -9,7 +11,7 @@ namespace Azuxiren.MG.Components;
 /// A drawing toolkit to render to a RenderTarget2D, 
 /// which can be further drawn to any screen size
 /// </summary>
-public class RenderTargetDrawer : IBatchDrawer
+public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 {
 	/// <summary>Creates an instance of a RenderTargetDrawer</summary>
 	/// <param name="gd">The GraphicsDevice reference</param>
@@ -67,7 +69,7 @@ public class RenderTargetDrawer : IBatchDrawer
 	/// <param name="rasterState">The raster state to use</param>
 	/// <param name="effect">The effect to use</param>
 	public void DrawToTarget(
-		System.Action<IBatchDrawer> drawFunc,
+		Action<IBatchDrawer> drawFunc,
 		Camera2D camera,
 		SpriteSortMode sortMode = SpriteSortMode.Deferred,
 		BlendState? blendState = null,
@@ -103,7 +105,7 @@ public class RenderTargetDrawer : IBatchDrawer
 	/// <param name="effect">The effect to use</param>
 	/// <param name="transform">The transformation matrix to use</param>
 	public void DrawToTarget(
-		System.Action<IBatchDrawer> drawFunc,
+		Action<IBatchDrawer> drawFunc,
 		SpriteSortMode sortMode = SpriteSortMode.Deferred,
 		BlendState? blendState = null,
 		SamplerState? samplerState = null,
@@ -206,4 +208,8 @@ public class RenderTargetDrawer : IBatchDrawer
 		effects,
 		layerDepth
 	);
+
+	/// <summary>Dispose the RenderTarget</summary>
+	public void Dispose() => _target2D.Dispose();
+
 }

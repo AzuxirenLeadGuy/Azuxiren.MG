@@ -10,9 +10,9 @@ public struct Sprite
 {
 	/// <summary>The texture for the sprite</summary>
 	public readonly Texture2D Texture;
-	/// <summary>The center for the rotation</summary>
+	/// <summary>The center for the rotation relative to Texture</summary>
 	public Vector2 Anchor;
-	/// <summary>The rotation angle in radians</summary>
+	/// <summary>The rotation angle in radians relative to the Anchor</summary>
 	public float Rotation;
 	/// <summary>The tint color</summary>
 	public Color Tint;

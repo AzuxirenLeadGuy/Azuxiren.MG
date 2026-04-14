@@ -53,7 +53,7 @@ public struct Camera2D
 		}
 	}
 	/// <summary>The calculated transformation matrix for the camera</summary>
-	public Matrix Transform { get; private set; }
+	internal Matrix Transform { get; private set; }
 	/// <summary>A 2DCamera constructor</summary>
 	/// <param name="viewport">The viewport to obtain the world coordinates from</param>
 	public Camera2D(Rectangle viewport)
