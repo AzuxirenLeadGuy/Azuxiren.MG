@@ -1,8 +1,11 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.Xna.Framework;
 
 namespace Azuxiren.MG.Components;
 /// <summary>A simple 2D camera implementation with zooming and rotation</summary>
-public struct Camera2D
+public struct Camera2D : IEquatable<Camera2D>
 {
 	private Vector2 _postition;
 	private float _zoom;
@@ -14,7 +17,7 @@ public struct Camera2D
 		readonly get => _postition;
 		set
 		{
-			if (_postition == value) return;
+			if (_postition == value) { return; }
 			_postition = value;
 			UpdateTransform();
 		}
@@ -25,7 +28,7 @@ public struct Camera2D
 		readonly get => _rotation;
 		set
 		{
-			if (_rotation == value) return;
+			if (_rotation == value) { return; }
 			_rotation = value;
 			UpdateTransform();
 		}
@@ -36,7 +39,7 @@ public struct Camera2D
 		readonly get => _zoom;
 		set
 		{
-			if (_zoom == value) return;
+			if (_zoom == value) { return; }
 			_zoom = value;
 			UpdateTransform();
 		}
@@ -47,7 +50,7 @@ public struct Camera2D
 		readonly get => _viewport;
 		set
 		{
-			if (_viewport == value) return;
+			if (_viewport == value) { return; }
 			_viewport = value;
 			UpdateTransform();
 		}
@@ -88,11 +91,26 @@ public struct Camera2D
 			zoom == _zoom &&
 			rotation == _rotation &&
 			viewport == _viewport
-		) return;
+		) { return; }
 		_postition = position;
 		_zoom = zoom;
 		_rotation = rotation;
 		_viewport = viewport;
 		UpdateTransform();
 	}
+	/// <inheritdoc/>
+	public readonly bool Equals(Camera2D other) =>
+		_postition.Equals(other._postition) &&
+		_rotation.Equals(other._rotation) &&
+		_zoom.Equals(other._zoom) &&
+		_viewport.Equals(other._viewport);
+
+	/// <inheritdoc/>
+	public override readonly bool Equals([NotNullWhen(true)] object? obj) => obj is Camera2D cam && Equals(cam);
+	/// <inheritdoc/>
+	public static bool operator ==(Camera2D lhs, Camera2D rhs) => lhs.Equals(rhs);
+	/// <inheritdoc/>
+	public static bool operator !=(Camera2D lhs, Camera2D rhs) => !lhs.Equals(rhs);
+	/// <inheritdoc/>
+	public override readonly int GetHashCode() => _viewport.X;
 }

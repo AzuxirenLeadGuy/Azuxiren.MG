@@ -118,8 +118,14 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 	protected override void Draw(GameTime gt)
 	{
 		_targetDrawer.BeginTargetDraw(TargetClearColor);
-		if (_isLoading) _loadScreen.Draw(gt, _targetDrawer, _settings);
-		else _mainScreen.Draw(gt, _targetDrawer, _settings);
+		if (_isLoading)
+		{
+			_loadScreen.Draw(gt, _targetDrawer, _settings);
+		}
+		else
+		{
+			_mainScreen.Draw(gt, _targetDrawer, _settings);
+		}
 		_targetDrawer.EndTargetDraw(ScreenClearColor, TargetTintColor);
 		base.Draw(gt);
 	}
@@ -130,7 +136,7 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 	{
 		if (_isLoading)
 		{
-			_loadScreen.Update(gt, this, ref _settings);
+			_ = _loadScreen.Update(gt, this, ref _settings);
 			if (_taskLoader.IsCompleted)
 			{
 				_mainScreen = await _taskLoader ?? throw new InvalidOperationException(
@@ -159,6 +165,10 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 					_mainScreen.Resize(this, new(width, height), ref _settings);
 					_loadScreen.Resize(this, new(width, height), ref _settings);
 					break;
+				case GameUpdateResult.ResultType.SetWindowed:
+				case GameUpdateResult.ResultType.SetBorderlessWindowed:
+				case GameUpdateResult.ResultType.SetFullScreen:
+				case GameUpdateResult.ResultType.SetBorderlessFullscreen:
 				case GameUpdateResult.ResultType.NoAction:
 				default:
 					break;

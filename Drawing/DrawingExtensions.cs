@@ -94,14 +94,20 @@ public static class DrawingExtensions
 	/// <returns>The prepared rectangle</returns>
 	public static Rectangle SetCenterScaled(Point size, Rectangle rect)
 	{
-		if (size.X <= 0 || size.Y <= 0) throw new ArgumentException(
+		if (size.X <= 0 || size.Y <= 0)
+		{
+			throw new ArgumentException(
 			"Obtained invalid dimensions of size",
 			paramName: nameof(size)
 		);
-		if (rect.Width <= 0 || rect.Height <= 0) throw new ArgumentException(
+		}
+		if (rect.Width <= 0 || rect.Height <= 0)
+		{
+			throw new ArgumentException(
 			"Obtained Rectangle of invalid dimensions",
 			paramName: nameof(rect)
 		);
+		}
 		float scale = float.Min(
 			rect.Width / (float)size.X,
 			rect.Height / (float)size.Y
@@ -125,8 +131,8 @@ public static class DrawingExtensions
 	/// <returns>An array of rectangles that fit the area</returns>
 	public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte toFit, uint offset = 0, bool vertical = false)
 	{
-		if (toFit == 0) throw new ArgumentException("Invalid box count");
-		else if (toFit == 1) return [largeRectangle];
+		if (toFit == 0) { throw new ArgumentException("Invalid box count"); }
+		else if (toFit == 1) { return [largeRectangle]; }
 		int width, height;
 		if (vertical)
 		{
@@ -139,16 +145,18 @@ public static class DrawingExtensions
 			width = (int)((largeRectangle.Width - ((toFit - 1) * offset)) / toFit);
 		}
 		if (height <= 0 || width <= 0)
+		{
 			throw new ArgumentException(
-			"Not possible to fit these many rectangles with the given LargeRectangle and offset"
-		);
+				"Not possible to fit these many rectangles with the given LargeRectangle and offset"
+			);
+		}
 		Rectangle[] rectangles = new Rectangle[toFit];
 		int x = largeRectangle.X, y = largeRectangle.Y;
 		for (byte i = 0; i < toFit; i++)
 		{
 			rectangles[i] = new Rectangle(x, y, width, height);
-			if (vertical) y += height + (int)offset;
-			else x += width + (int)offset;
+			if (vertical) { y += height + (int)offset; }
+			else { x += width + (int)offset; }
 		}
 		return rectangles;
 	}
@@ -170,10 +178,10 @@ public static class DrawingExtensions
 		uint yOffset
 	)
 	{
-		if (rectsInCollumn == 0 || rectsInRow == 0) throw new ArgumentException("Invalid box count");
+		if (rectsInCollumn == 0 || rectsInRow == 0) { throw new ArgumentException("Invalid box count"); }
 		int width = (int)((largeRectangle.Height - ((rectsInRow - 1) * xOffset)) / rectsInRow);
 		int height = (int)((largeRectangle.Width - ((rectsInCollumn - 1) * yOffset)) / rectsInCollumn);
-		var rects = new Rectangle[rectsInRow, rectsInCollumn];
+		Rectangle[,] rects = new Rectangle[rectsInRow, rectsInCollumn];
 		int x, y = largeRectangle.Y;
 		for (int i = 0; i < rectsInRow; i++)
 		{
@@ -198,21 +206,26 @@ public static class DrawingExtensions
 	/// <returns>An array of rectangles that fit the area</returns>
 	public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte[] ratios, uint offset, bool vertical = false)
 	{
-		var len = ratios.Length;
+		int len = ratios.Length;
 		if (len == 0)
+		{
 			throw new ArgumentException(
 				"There should be at least one value in the list of ratios",
 				nameof(ratios)
 			);
-		else if (len == 1) return [largeRectangle];
+		}
+		else if (len == 1) { return [largeRectangle]; }
 		int sum = 0, i, x = largeRectangle.X, y = largeRectangle.Y, width, height;
-		foreach (var ratio in ratios)
+		foreach (byte ratio in ratios)
 		{
 			if (ratio == 0)
+			{
 				throw new ArgumentException(
 					"Invalid value of ratio as 0",
 					paramName: nameof(ratios)
 				);
+			}
+
 			sum += ratio;
 		}
 		if (vertical)
@@ -225,7 +238,11 @@ public static class DrawingExtensions
 			height = largeRectangle.Height;
 			width = (int)(largeRectangle.Width - ((len - 1) * offset)) / sum;
 		}
-		if (width <= 0 || height <= 0) throw new ArgumentException("Invalid dimensions for the menu", nameof(largeRectangle));
+		if (width <= 0 || height <= 0)
+		{
+			throw new ArgumentException("Invalid dimensions for the menu", nameof(largeRectangle));
+		}
+
 		Rectangle[] rectangles = new Rectangle[len];
 		for (i = 0; i < len; i++)
 		{
@@ -272,8 +289,16 @@ public static class DrawingExtensions
 	{
 		int x0 = p0.X, x1 = p1.X, y0 = p0.Y, y1 = p1.Y;
 		bool dxy = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
-		if (dxy) (x0, y0, x1, y1) = (y0, x0, y1, x1);
-		if (x0 > x1) (x0, y0, x1, y1) = (x1, y1, x0, y0);
+		if (dxy)
+		{
+			(x0, y0, x1, y1) = (y0, x0, y1, x1);
+		}
+
+		if (x0 > x1)
+		{
+			(x0, y0, x1, y1) = (x1, y1, x0, y0);
+		}
+
 		int dx = x1 - x0;
 		int dy = Math.Abs(y1 - y0);
 		int decision = dx / 2;
@@ -311,11 +336,14 @@ public static class DrawingExtensions
 	{
 		int rows = grid.GetLength(0), cols = grid.GetLength(1);
 		DrawResult result = new();
-		foreach (var point in GetPointsOnLine(pt1, pt2))
+		foreach (Point point in GetPointsOnLine(pt1, pt2))
 		{
 			result.Attempted++;
 			if (point.X < 0 || point.X > rows || point.Y < 0 || point.Y >= cols)
+			{
 				continue;
+			}
+
 			grid[point.X, point.Y] = color;
 			result.Drawn++;
 		}
@@ -346,10 +374,14 @@ public static class DrawingExtensions
 	/// <returns>Enumeration of all points on the circle</returns>
 	public static IEnumerable<Point> GetPointsOnCircle(Point center, int radius)
 	{
-		if (radius <= 1) throw new ArgumentException(
-			"Radius should be greater than 1",
-			nameof(radius)
-		);
+		if (radius <= 1)
+		{
+			throw new ArgumentException(
+				"Radius should be greater than 1",
+				nameof(radius)
+			);
+		}
+
 		int x = 0, y = radius, d = 3 - (2 * radius);
 		do
 		{
@@ -381,11 +413,18 @@ public static class DrawingExtensions
 		do
 		{
 			Point[] pair = [.. point_collection.Take(2)];
-			if (pair.Length < 2 || pair[0].X != pair[1].X || pair[0].Y < pair[1].Y) break;
+			if (pair.Length < 2 || pair[0].X != pair[1].X || pair[0].Y < pair[1].Y)
+			{
+				break;
+			}
+
 			for (int id_i = pair[0].X, id_j = pair[0].Y; id_j >= pair[1].Y; id_j--)
 			{
 				result.Attempted++;
-				if (id_i < 0 || id_i >= rows || id_j < 0 || id_j >= cols) continue;
+				if (id_i < 0 || id_i >= rows || id_j < 0 || id_j >= cols)
+				{
+					continue;
+				}
 				grid[id_i, id_j] = color;
 				result.Drawn++;
 			}
@@ -408,7 +447,11 @@ public static class DrawingExtensions
 			foreach (Point p in GetPointsOnCircle(circle.Center, circle.Radius - i))
 			{
 				result.Attempted++;
-				if (p.X < 0 || p.X >= rows || p.Y < 0 || p.Y >= cols) continue;
+				if (p.X < 0 || p.X >= rows || p.Y < 0 || p.Y >= cols)
+				{
+					continue;
+				}
+
 				grid[p.X, p.Y] = color;
 				result.Drawn++;
 			}
@@ -423,10 +466,8 @@ public static class DrawingExtensions
 	{
 		const float twoPi = float.Pi * 2;
 		angle %= twoPi;
-		if (angle > float.Pi)
-			angle -= twoPi;
-		else if (angle <= -float.Pi)
-			angle += twoPi;
+		if (angle > float.Pi) { angle -= twoPi; }
+		else if (angle <= -float.Pi) { angle += twoPi; }
 		return angle;
 	}
 }
