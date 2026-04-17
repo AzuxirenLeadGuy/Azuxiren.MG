@@ -7,20 +7,20 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Components;
 
 /// <summary>Common Game class wrapper for games</summary>
-/// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
-public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
+/// <typeparam name="TSettings">Variable Setting Type shared between screens of the game</typeparam>
+public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 {
+	/// <summary>drawing utilities for the game</summary>
+	private RenderTargetDrawer _targetDrawer;
+
 	/// <summary>The custom unit that initializes the game stages</summary>
-	protected readonly GameStageFactory<Settings> _factory;
+	protected readonly IStageFactory<TSettings> _factory;
 
 	/// <summary>
 	/// The shared setting of the game. This object is shared between the 
 	/// multipls GameStages in the lifetime of this object
 	/// </summary>
-	protected Settings _settings;
-
-	/// <summary>drawing utilities for the game</summary>
-	protected RenderTargetDrawer _targetDrawer;
+	protected TSettings _settings;
 
 	/// <summary>The graphics device manager for this game</summary>
 	public readonly GraphicsDeviceManager GraphicsDM;
@@ -29,22 +29,22 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 	protected bool _isLoading;
 
 	/// <summary>The game stages involved this game</summary>
-	protected IGameStage<Settings> _loadScreen, _mainScreen;
+	protected IGameStage<TSettings> _loadScreen, _mainScreen;
 
 	/// <summary>Stores the size of the render target</summary>
 	protected Point _renderTargetSize;
 
 	/// <summary>Stores the size of the render target</summary>
-	protected Task<IGameStage<Settings>?> _taskLoader;
+	protected Task<IGameStage<TSettings>?> _taskLoader;
 
 	/// <summary>The color used to clear the final window during the render phase</summary>
-	public Color ScreenClearColor { get; set; } = Color.Black;
+	public Color ScreenClearColor { get; set; }
 
 	/// <summary>The color used to clear the RenderTarget during the intermediate drawing phase</summary>
-	public Color TargetClearColor { get; set; } = Color.White;
+	public Color TargetClearColor { get; set; }
 
 	/// <summary>The color to tint/multiply the target to the screen</summary>
-	public Color TargetTintColor { get; set; } = Color.White;
+	public Color TargetTintColor { get; set; }
 
 	/// <summary>The size of the RenderTarget</summary>
 	public Point TargetSize => _targetDrawer.Bounds.Size;
@@ -56,11 +56,18 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 	/// <param name="factory">The unit that creates/initializes scenes dynamically</param>
 	public AzuxirenMonogameClass(
 		Point targetSize,
-		GameStageFactory<Settings> factory
+		IStageFactory<TSettings> factory
 	)
 	{
-		GraphicsDM = new(this);
+		if (targetSize.X <= 0 || targetSize.Y <= 0)
+		{
+			throw new ArgumentException(
+				"Invalid target size. The targetSize must have postive area",
+				nameof(targetSize)
+			);
+		}
 		_renderTargetSize = targetSize;
+		GraphicsDM = new(this);
 		_factory = factory;
 		Window.AllowUserResizing = false;
 		_settings = default!;
@@ -68,9 +75,12 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 		_loadScreen = null!;
 		_mainScreen = null!;
 		_targetDrawer = default!;
-		_taskLoader = Task.FromResult<IGameStage<Settings>?>(null);
+		_taskLoader = Task.FromResult<IGameStage<TSettings>?>(null);
 		IsMouseVisible = true;
 		Content.RootDirectory = "Content";
+		ScreenClearColor = Color.White;
+		TargetTintColor = Color.White;
+		TargetClearColor = Color.White;
 	}
 
 	/// <summary>Loads the Content for both the screens </summary>
@@ -90,56 +100,50 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 		);
 
 	/// <summary>This will Set the Screen as FullScreen with the given Width/Height</summary>
-	/// <param name="w">The Width to occupy</param>
-	/// <param name="h">The Height to cover</param>
-	protected virtual void SetFullScreen(int w, int h)
+	/// <param name="width">The Width to occupy</param>
+	/// <param name="height">The Height to cover</param>
+	protected virtual void SetFullScreen(int width, int height)
 	{
-		GraphicsDM.PreferredBackBufferWidth = w;
-		GraphicsDM.PreferredBackBufferHeight = h;
+		GraphicsDM.PreferredBackBufferWidth = width;
+		GraphicsDM.PreferredBackBufferHeight = height;
 		GraphicsDM.IsFullScreen = true;
 		GraphicsDM.ApplyChanges();
 		_targetDrawer.UpdateResolution();
 	}
 
 	/// <summary>This will set The Screen as windowed with the given width/height</summary>
-	/// <param name="w">The width of window</param>
-	/// <param name="h">The height of window</param>
-	protected virtual void SetWindowed(int w, int h)
+	/// <param name="width">The width of window</param>
+	/// <param name="height">The height of window</param>
+	protected virtual void SetWindowed(int width, int height)
 	{
-		GraphicsDM.PreferredBackBufferWidth = w;
-		GraphicsDM.PreferredBackBufferHeight = h;
+		GraphicsDM.PreferredBackBufferWidth = width;
+		GraphicsDM.PreferredBackBufferHeight = height;
 		GraphicsDM.IsFullScreen = false;
 		GraphicsDM.ApplyChanges();
 		_targetDrawer.UpdateResolution();
 	}
 
 	/// <summary>The Draw method implementation for CFMG</summary>
-	/// <param name="gt">Denotes an instant in time</param>
-	protected override void Draw(GameTime gt)
+	/// <param name="gameTime">Denotes an instant in time</param>
+	protected override void Draw(GameTime gameTime)
 	{
 		_targetDrawer.BeginTargetDraw(TargetClearColor);
-		if (_isLoading)
-		{
-			_loadScreen.Draw(gt, _targetDrawer, _settings);
-		}
-		else
-		{
-			_mainScreen.Draw(gt, _targetDrawer, _settings);
-		}
+		IGameStage<TSettings> screen = _isLoading ? _loadScreen : _mainScreen;
+		screen.Draw(gameTime, _targetDrawer, _settings);
 		_targetDrawer.EndTargetDraw(ScreenClearColor, TargetTintColor);
-		base.Draw(gt);
+		base.Draw(gameTime);
 	}
 
 	/// <summary>Updates the game for one frame</summary>
-	/// <param name="gt">Denotes an instant in time</param>
-	protected override async void Update(GameTime gt)
+	/// <param name="gameTime">Denotes an instant in time</param>
+	protected override async void Update(GameTime gameTime)
 	{
 		if (_isLoading)
 		{
-			_ = _loadScreen.Update(gt, this, ref _settings);
+			_ = _loadScreen.Update(gameTime, this, ref _settings);
 			if (_taskLoader.IsCompleted)
 			{
-				_mainScreen = await _taskLoader ?? throw new InvalidOperationException(
+				_mainScreen = await _taskLoader.ConfigureAwait(false) ?? throw new InvalidOperationException(
 					"The result of task factory is null"
 				);
 				_isLoading = false;
@@ -147,13 +151,17 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 		}
 		else
 		{
-			GameUpdateResult result = _mainScreen.Update(gt, this, ref _settings);
+			GameUpdateResult result = _mainScreen.Update(gameTime, this, ref _settings);
 			switch (result.Type)
 			{
 				case GameUpdateResult.ResultType.Transition:
 					_isLoading = true;
 					_taskLoader = Task.Run(
-						() => _factory.Create(result.StageCode, this, _settings)
+						() =>
+						{
+							_mainScreen.Dispose();
+							return _factory.Create(result.StageCode, this, _settings);
+						}
 					);
 					break;
 				case GameUpdateResult.ResultType.ExitRequest:
@@ -165,15 +173,31 @@ public class AzuxirenMonogameClass<Settings> : Game, IMgRuntime
 					_mainScreen.Resize(this, new(width, height), ref _settings);
 					_loadScreen.Resize(this, new(width, height), ref _settings);
 					break;
-				case GameUpdateResult.ResultType.SetWindowed:
-				case GameUpdateResult.ResultType.SetBorderlessWindowed:
-				case GameUpdateResult.ResultType.SetFullScreen:
-				case GameUpdateResult.ResultType.SetBorderlessFullscreen:
-				case GameUpdateResult.ResultType.NoAction:
+				case GameUpdateResult.ResultType.SetWindowed: // TODO
+				case GameUpdateResult.ResultType.SetBorderlessWindowed:// TODO
+				case GameUpdateResult.ResultType.SetFullScreen:// TODO
+				case GameUpdateResult.ResultType.SetBorderlessFullscreen:// TODO
+				case GameUpdateResult.ResultType.NoAction:// TODO
 				default:
 					break;
 			}
 		}
-		base.Update(gt);
+		base.Update(gameTime);
+	}
+	/// <inheritdoc/>
+	protected override void Dispose(bool disposing)
+	{
+		if (_renderTargetSize.X > 0 || _renderTargetSize.Y > 0)
+		{
+			if (disposing)
+			{
+				_targetDrawer?.Dispose();
+				GraphicsDM.Dispose();
+				_loadScreen?.Dispose();
+				_mainScreen?.Dispose();
+			} // No Unmanaged resources here
+			_renderTargetSize = Point.Zero;
+		}
+		base.Dispose(disposing);
 	}
 }

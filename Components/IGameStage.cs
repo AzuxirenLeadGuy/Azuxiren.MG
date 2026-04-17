@@ -1,3 +1,7 @@
+using System;
+
+using Azuxiren.MG.Drawing;
+
 using Microsoft.Xna.Framework;
 
 namespace Azuxiren.MG.Components;
@@ -5,8 +9,8 @@ namespace Azuxiren.MG.Components;
 /// <summary>
 /// Represents a stage within the game
 /// </summary>
-/// <typeparam name="Settings">Variable Setting Type shared between screens of the game</typeparam>
-public interface IGameStage<Settings>
+/// <typeparam name="TSettings">Variable Setting Type shared between screens of the game</typeparam>
+public interface IGameStage<TSettings> : IDisposable
 {
 	/// <summary>
 	/// Resizes the game content for the given size of the target. 
@@ -16,7 +20,7 @@ public interface IGameStage<Settings>
 	/// <param name="game">The current game instance</param>
 	/// <param name="targetSize">The size of the RenderTarget</param>
 	/// <param name="settings">The shared settings for the game</param>
-	void Resize(in IMgRuntime game, in Point targetSize, ref Settings settings);
+	void Resize(in IMgRuntime game, in Point targetSize, ref TSettings settings);
 
 	/// <summary>
 	/// The logic for drawing the components within the game.
@@ -25,7 +29,7 @@ public interface IGameStage<Settings>
 	/// <param name="gt">The GameTime object for this frame of the game</param>
 	/// <param name="drawer">The instance for drawing actions</param>
 	/// <param name="settings">The shared settings for the game</param>
-	void Draw(GameTime gt, in RenderTargetDrawer drawer, in Settings settings);
+	void Draw(GameTime gt, in IDrawHandler drawer, in TSettings settings);
 
 	/// <summary>
 	/// The logic for updating the components within the game.
@@ -36,5 +40,5 @@ public interface IGameStage<Settings>
 	/// <param name="game">The current game instance</param>
 	/// <param name="settings">The shared settings for the game</param>
 	/// <returns>Indication that screen needs to be updated, or game needs to be exited/closed.</returns>
-	GameUpdateResult Update(GameTime gt, in IMgRuntime game, ref Settings settings);
+	GameUpdateResult Update(GameTime gt, in IMgRuntime game, ref TSettings settings);
 }

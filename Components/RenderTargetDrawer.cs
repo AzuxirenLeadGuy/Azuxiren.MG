@@ -11,13 +11,13 @@ namespace Azuxiren.MG.Components;
 /// A drawing toolkit to render to a RenderTarget2D, 
 /// which can be further drawn to any screen size
 /// </summary>
-public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
+internal sealed class RenderTargetDrawer : IBatchDrawer, IDisposable, IDrawHandler
 {
 	/// <summary>Creates an instance of a RenderTargetDrawer</summary>
 	/// <param name="gd">The GraphicsDevice reference</param>
 	/// <param name="width">The width of the internal RenderTarget</param>
 	/// <param name="height">The height of the internal RenderTarget</param>
-	internal RenderTargetDrawer(GraphicsDevice gd, int width, int height)
+	public RenderTargetDrawer(GraphicsDevice gd, int width, int height)
 	{
 		_graphicsDevice = gd;
 		_target2D = new(_graphicsDevice, width, height);
@@ -43,17 +43,14 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 	/// Updates the resolution of the destination screen, 
 	/// as detected in the GraphicsDevice reference
 	/// </summary>
-	internal void UpdateResolution()
-	{
-		var screen_size = _graphicsDevice.PresentationParameters.Bounds;
+	public void UpdateResolution() =>
 		DestinationRect = DrawingExtensions.SetCenterScaled(
 			_target2D.Bounds.Size,
-			screen_size
+			_graphicsDevice.PresentationParameters.Bounds
 		);
-	}
 
 	/// <summary>Set the target for drawing</summary>
-	internal void BeginTargetDraw(Color target_clear)
+	public void BeginTargetDraw(Color target_clear)
 	{
 		_graphicsDevice.SetRenderTarget(_target2D);
 		_graphicsDevice.Clear(target_clear);
@@ -79,7 +76,7 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 		Effect? effect = null
 	)
 	{
-		var default_viewport = _graphicsDevice.Viewport;
+		Viewport default_viewport = _graphicsDevice.Viewport;
 		_graphicsDevice.Viewport = new(camera.Viewport);
 		DrawToTarget(
 			drawFunc,
@@ -133,7 +130,7 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 	/// and clears the target content. Should be called 
 	/// once per draw cycle of the game.
 	/// </summary>
-	internal void EndTargetDraw(Color screen_clear, Color tint)
+	public void EndTargetDraw(Color screen_clear, Color tint)
 	{
 		_graphicsDevice.SetRenderTarget(null);
 		_graphicsDevice.Clear(screen_clear);
@@ -143,7 +140,7 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 	}
 
 	/// <inheritdoc/>
-	void IBatchDrawer.Draw(
+	public void Draw(
 		Texture2D texture,
 		Vector2 position,
 		Rectangle? sourceRectangle,
@@ -187,7 +184,7 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 	);
 
 	/// <inheritdoc/>
-	void IBatchDrawer.DrawString(
+	public void DrawString(
 		SpriteFont spriteFont,
 		string text,
 		Vector2 position,
@@ -210,6 +207,9 @@ public sealed class RenderTargetDrawer : IBatchDrawer, IDisposable
 	);
 
 	/// <summary>Dispose the RenderTarget</summary>
-	public void Dispose() => _target2D.Dispose();
-
+	public void Dispose()
+	{
+		_target2D.Dispose();
+		_spriteBatch.Dispose();
+	}
 }

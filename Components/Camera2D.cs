@@ -76,16 +76,16 @@ public struct Camera2D : IEquatable<Camera2D>
 	}
 	/// <summary>With the given values, update the transform matrix for the camera</summary>
 	public void SetValues(
-		Vector2? new_position = null,
-		float? new_zoom = null,
-		float? new_rotation = null,
-		Rectangle? new_viewport = null
+		Vector2? newPos = null,
+		float? newZoom = null,
+		float? newRot = null,
+		Rectangle? newView = null
 	)
 	{
-		Vector2 position = new_position ?? _postition;
-		float zoom = new_zoom ?? _zoom;
-		float rotation = new_rotation ?? _rotation;
-		Rectangle viewport = new_viewport ?? _viewport;
+		Vector2 position = newPos ?? _postition;
+		float zoom = newZoom ?? _zoom;
+		float rotation = newRot ?? _rotation;
+		Rectangle viewport = newView ?? _viewport;
 		if (
 			position == _postition &&
 			zoom == _zoom &&

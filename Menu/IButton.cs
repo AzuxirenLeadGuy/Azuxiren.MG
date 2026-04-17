@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Menu;
 
 /// <summary>Represents an absract button</summary>
-public abstract class BaseButton : BaseComponent<BaseButton.BaseButtonState>
+public interface IButton : IComponent<IButton.BaseButtonState>
 {
 	/// <summary>Represents the state a Base button can be in</summary>
-	public enum BaseButtonState
+	enum BaseButtonState
 	{
 		/// <summary>Button is not enabled</summary>
 		Disabled,
@@ -24,17 +24,16 @@ public abstract class BaseButton : BaseComponent<BaseButton.BaseButtonState>
 		JustReleased,
 	}
 	/// <summary>The input to the button, if it is pressed</summary>
-	/// <value></value>
-	public abstract bool Press { get; }
+	bool Press { get; }
 
 	/// <inheritdoc />
-	public override BaseButtonState Update(GameTime gt)
+	BaseButtonState Update(GameTime gt)
 	{
-		if (Enabled == false)
+		if (!Enabled)
 		{
 			return State = BaseButtonState.Disabled;
 		}
-		var state = State switch
+		BaseButtonState state = State switch
 		{
 			BaseButtonState.Released => Press ? BaseButtonState.JustPressed : BaseButtonState.Released,
 			BaseButtonState.JustPressed => Press ? BaseButtonState.Pressed : BaseButtonState.JustReleased,

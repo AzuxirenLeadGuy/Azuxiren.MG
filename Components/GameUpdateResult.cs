@@ -1,7 +1,7 @@
 namespace Azuxiren.MG.Components;
 
 /// <summary>Represents the result of a game update function</summary>
-public readonly struct GameUpdateResult
+public readonly record struct GameUpdateResult
 {
 	/// <summary>The type of actions following an update</summary>
 	internal enum ResultType

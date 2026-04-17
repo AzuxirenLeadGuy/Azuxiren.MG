@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Drawing;
 
 /// <summary>Represents a Texture2D and additional data for drawing</summary>
-public struct Sprite
+public record class Sprite : IDisposable
 {
 	/// <summary>The texture for the sprite</summary>
 	public readonly Texture2D Texture;
@@ -18,12 +19,16 @@ public struct Sprite
 	public Color Tint;
 	/// <summary>The zoom/scale for the drawing</summary>
 	public Vector2 Scale;
-	/// <summary>The drawing destination on screen</summary>
+	/// <summary>The Vector on screen for drawing</summary>
 	public Vector2 Location;
+
+	/// <summary>The size of the texture as a Vector2</summary>
+	protected Vector2 TextureSize => Texture.Bounds.Size.ToVector2();
+
 	/// <summary>Creates a Sprite object</summary>
 	/// <param name="tex">The texture to initialize the sprite with</param>
-	/// <param name="anchoredCenter">if true, the anchor point is set at the center of the texture</param>
-	public Sprite(Texture2D tex, bool anchoredCenter = true)
+	/// <param name="centeredAnchor">if true, the anchor point is set at the center of the texture</param>
+	public Sprite(Texture2D tex, bool centeredAnchor = true)
 	{
 		if (tex == null || tex.Bounds.Size == Point.Zero)
 		{
@@ -33,7 +38,7 @@ public struct Sprite
 			);
 		}
 		Texture = tex;
-		Anchor = anchoredCenter ? tex.Bounds.Size.ToVector2() / 2 : Vector2.Zero;
+		Anchor = centeredAnchor ? tex.Bounds.Size.ToVector2() / 2 : Vector2.Zero;
 		Location = Vector2.Zero;
 		Tint = Color.White;
 		Rotation = 0;
@@ -45,8 +50,8 @@ public struct Sprite
 	/// <returns>Returns the target vector for the sprite to be drawn at</returns>
 	public void SetDest(Rectangle dest, bool maintainRatio = true)
 	{
-		var cur_size = Texture.Bounds.Size;
-		var target_size = dest.Size;
+		Point cur_size = Texture.Bounds.Size;
+		Point target_size = dest.Size;
 		if (maintainRatio)
 		{
 			Scale.X = Scale.Y = float.Min(
@@ -63,38 +68,21 @@ public struct Sprite
 	}
 	/// <summary>Gets the Rectangle of the bounds of the sprite </summary>
 	/// <returns>Rectangle with values rounded to the nearest integer</returns>
-	public readonly Rectangle GetDest()
+	public Rectangle GetDest()
 		=> new(
 			Vector2.Round(Location - Anchor).ToPoint(),
 			Vector2.Round(Scale).ToPoint()
 		);
 
-	/// <summary>Draws the sprite with the Spritebatch instance</summary>
-	/// <param name="batch">The spritebatch instance to draw with</param>
-	/// <param name="effect">The effects to use</param>
-	/// <param name="depth">The depth to draw on</param>
-	public readonly void Draw(in SpriteBatch batch, SpriteEffects effect = SpriteEffects.None, float depth = 0)
-	{
-		batch.Draw(
-			Texture,
-			Location,
-			null,
-			Tint,
-			Rotation,
-			Anchor,
-			Scale,
-			effect,
-			depth
-		);
-	}
-
 	/// <summary>Draws the sprite with the BatchDrawer instance</summary>
 	/// <param name="batch">The spritebatch instance to draw with</param>
 	/// <param name="effect">The effects to use</param>
 	/// <param name="depth">The depth to draw on</param>
-	public readonly void Draw(in IBatchDrawer batch, SpriteEffects effect = SpriteEffects.None, float depth = 0)
-	{
-		batch.Draw(
+	public void Draw(
+		[NotNull] in IBatchDrawer batch,
+		SpriteEffects effect = SpriteEffects.None,
+		float depth = 0
+	) => batch.Draw(
 			Texture,
 			Location,
 			null,
@@ -105,6 +93,24 @@ public struct Sprite
 			effect,
 			depth
 		);
+
+	/// <inheritdoc/>
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
+	protected virtual void Dispose(bool manual)
+	{
+		if (Texture.IsDisposed) { return; }
+		if (manual) { Texture.Dispose(); }
+	}
+
+	/// <summary>Finalizer for Sprite</summary>
+	~Sprite()
+	{
+		Dispose(false);
+	}
 }

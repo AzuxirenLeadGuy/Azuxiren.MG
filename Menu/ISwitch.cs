@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework;
 namespace Azuxiren.MG.Menu;
 
 /// <summary>Represents a BaseSwitch component</summary>
-public abstract class BaseSwitch : BaseComponent<BaseSwitch.BaseSwitchState>
+public interface ISwitch : IComponent<ISwitch.BaseSwitchState>
 {
 	/// <summary>The state a switch can be in</summary>
-	public enum BaseSwitchState
+	enum BaseSwitchState
 	{
 		/// <summary>Switch is not enabled</summary>
 		Disabled,
@@ -37,13 +37,18 @@ public abstract class BaseSwitch : BaseComponent<BaseSwitch.BaseSwitchState>
 	}
 
 	/// <summary>The input of the button being pressed</summary>
-	public abstract bool Press { get; }
+	bool Press { get; }
 
-	/// <inheritdoc/>
-	public override BaseSwitchState Update(GameTime gt)
+	/// <summary>
+	/// Update the component state based on 
+	/// input for the component
+	/// </summary>
+	/// <param name="gt">Time delta from the previous frame</param>
+	/// <returns>Returns the currently evaluated state of the component</returns>
+	BaseSwitchState Update(GameTime gt)
 	{
-		if (Enabled == false) return BaseSwitchState.Disabled;
-		BaseSwitchState state = State switch
+		if (!Enabled) { return State = BaseSwitchState.Disabled; }
+		State = State switch
 		{
 			BaseSwitchState.ReleasedOff => Press ? BaseSwitchState.JustPressedOn : BaseSwitchState.ReleasedOff,
 			BaseSwitchState.JustPressedOn => Press ? BaseSwitchState.PressedOn : BaseSwitchState.JustReleasedOn,
@@ -55,12 +60,11 @@ public abstract class BaseSwitch : BaseComponent<BaseSwitch.BaseSwitchState>
 			BaseSwitchState.JustReleasedOff => Press ? BaseSwitchState.JustPressedOn : BaseSwitchState.ReleasedOff,
 			_ => Press ? BaseSwitchState.JustPressedOn : BaseSwitchState.ReleasedOff,
 		};
-		State = state;
-		return state;
+		return State;
 	}
 
 	/// <summary>Shows if the switch is off or on</summary>
-	public bool? SwitchedOn => State switch
+	bool? SwitchedOn() => State switch
 	{
 		BaseSwitchState.Disabled => null,
 		BaseSwitchState.JustPressedOn => true,

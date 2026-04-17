@@ -60,7 +60,7 @@ public interface IBatchDrawer
 	/// <param name="scale">A scaling of this string.</param>
 	/// <param name="effects">Modificators for drawing. Can be combined.</param>
 	/// <param name="layerDepth">A depth of the layer of this string.</param>
-	public void DrawString(
+	void DrawString(
 		SpriteFont spriteFont,
 		string text,
 		Vector2 position,

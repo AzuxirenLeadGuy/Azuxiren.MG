@@ -8,67 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Drawing;
 /// <summary> Global extensions for all drawing/graphics utilities</summary>
-public static class DrawingExtensions
+public static partial class DrawingExtensions
 {
-	/// <summary>Returns the squared distance from given two points</summary>
-	/// <param name="lhs">Argument for the distance function</param>
-	/// <param name="rhs">Argument for the distance function</param>
-	/// <returns>The squared distance between two points</returns>
-	public static int DistanceSquared(this Point lhs, Point rhs)
-	{
-		(lhs - rhs).Deconstruct(out int dx, out int dy);
-		return (dx * dx) + (dy * dy);
-	}
-
-	/// <summary>
-	/// Evalutes the dot product of two vectors, which
-	/// is also equivalent to |lhs|.|rhs|.cos (theta)
-	/// where theta is the angle between the vectors
-	/// </summary>
-	/// <param name="lhs">The left operand</param>
-	/// <param name="rhs">The right operand</param>
-	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static int Dot(this Point lhs, Point rhs) => (lhs.X * rhs.X) + (lhs.Y * rhs.Y);
-
-	/// <summary>
-	/// Returns the 2d cross product of vectors, 
-	/// also equivaluent to |lhs|.|rhs|.sin (theta)
-	/// where theta is the angle between the vectors
-	/// </summary>
-	/// <param name="lhs">The left operand</param>
-	/// <param name="rhs">The right operand</param>
-	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static int CrossProduct2d(this Point lhs, Point rhs) => (lhs.X * rhs.Y) - (lhs.Y * rhs.X);
-
-	/// <summary>
-	/// Returns the 2d cross product of vectors, 
-	/// also equivaluent to |lhs|.|rhs|.sin theta
-	/// where theta is the angle between the vectors
-	/// </summary>
-	/// <param name="lhs">The left operand</param>
-	/// <param name="rhs">The right operand</param>
-	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static float CrossProduct2d(this Vector2 lhs, Vector2 rhs) => (lhs.X * rhs.Y) - (lhs.Y * rhs.X);
-
-	/// <summary>Computes the angle between two vectors</summary>
-	/// <param name="lhs">The left operand</param>
-	/// <param name="rhs">The right operand</param>
-	/// <returns>The angle in radians between the two vectors</returns>
-	public static float AngleBetween(this Vector2 lhs, Vector2 rhs)
-		=> float.Atan2(
-			lhs.CrossProduct2d(rhs),
-			Vector2.Dot(lhs, rhs)
-		);
-
-	/// <summary>Computes the angle between two vectors</summary>
-	/// <param name="lhs">The left operand</param>
-	/// <param name="rhs">The right operand</param>
-	/// <returns>The angle in radians between the two vectors</returns>
-	public static float AngleBetween(this Point lhs, Point rhs)
-		=> float.Atan2(
-			lhs.CrossProduct2d(rhs),
-			lhs.Dot(rhs)
-		);
 
 	/// <summary>Creates a rectangle of a given size placed such that its center lies at the given point</summary>
 	/// <param name="center">Where the center of the rectangle should lie</param>
@@ -206,6 +147,7 @@ public static class DrawingExtensions
 	/// <returns>An array of rectangles that fit the area</returns>
 	public static Rectangle[] FitRectangle(this Rectangle largeRectangle, byte[] ratios, uint offset, bool vertical = false)
 	{
+		ArgumentNullException.ThrowIfNull(ratios);
 		int len = ratios.Length;
 		if (len == 0)
 		{
@@ -266,6 +208,7 @@ public static class DrawingExtensions
 	/// <returns>The converted texture image</returns>
 	public static Texture2D FromColorGrid(this Color[,] grid, in GraphicsDevice device)
 	{
+		ArgumentNullException.ThrowIfNull(grid);
 		int r = grid.GetLength(0), c = grid.GetLength(1);
 		Texture2D tex = new(device, r, c);
 		Color[] dest = new Color[grid.Length];
@@ -316,16 +259,6 @@ public static class DrawingExtensions
 		}
 		yield break;
 	}
-	/// <summary>Denotes the count of pixels attempted and drawn by drawing function</summary>
-	public struct DrawResult
-	{
-		/// <summary>The number of pixels attempted to be drawn</summary>
-		public uint Attempted;
-		/// <summary>The number of pixels that were drawn successfully</summary>
-		public uint Drawn;
-		/// <summary>The number of pixels that were outside the bounds and could not be drawn</summary>
-		public readonly uint Missed => Attempted - Drawn;
-	}
 	/// <summary>Draws a line drawing on the grid, between the given points</summary>
 	/// <param name="grid">The grid to draw on</param>
 	/// <param name="pt1">The start point</param>
@@ -334,6 +267,7 @@ public static class DrawingExtensions
 	/// <returns>DrawResult instance that shows how many points were drawn successfully</returns>
 	public static DrawResult DrawLine(this Color[,] grid, Point pt1, Point pt2, Color color)
 	{
+		ArgumentNullException.ThrowIfNull(grid);
 		int rows = grid.GetLength(0), cols = grid.GetLength(1);
 		DrawResult result = new();
 		foreach (Point point in GetPointsOnLine(pt1, pt2))
@@ -407,6 +341,7 @@ public static class DrawingExtensions
 	/// <returns>DrawResult instance that shows how many points were drawn successfully</returns>
 	public static DrawResult DrawCircleFilled(this Color[,] grid, IntCircle circle, Color color)
 	{
+		ArgumentNullException.ThrowIfNull(grid);
 		DrawResult result = new();
 		int rows = grid.GetLength(0), cols = grid.GetLength(1);
 		IEnumerable<Point> point_collection = GetPointsOnCircle(circle.Center, circle.Radius);
@@ -440,6 +375,7 @@ public static class DrawingExtensions
 	/// <returns>DrawResult instance that shows how many points were drawn successfully</returns>
 	public static DrawResult DrawCircleBorder(this Color[,] grid, IntCircle circle, Color color, byte thick = 1)
 	{
+		ArgumentNullException.ThrowIfNull(grid);
 		DrawResult result = new();
 		int rows = grid.GetLength(0), cols = grid.GetLength(1);
 		for (int i = 0; i < thick; i++)
@@ -457,17 +393,5 @@ public static class DrawingExtensions
 			}
 		}
 		return result;
-	}
-
-	/// <summary>Sets the angle in the bracket [-pi, pi]</summary>
-	/// <param name="angle">The angle to set</param>
-	/// <returns>The angle set between [-pi, pi]</returns>
-	public static float AngleMod(float angle)
-	{
-		const float twoPi = float.Pi * 2;
-		angle %= twoPi;
-		if (angle > float.Pi) { angle -= twoPi; }
-		else if (angle <= -float.Pi) { angle += twoPi; }
-		return angle;
 	}
 }
