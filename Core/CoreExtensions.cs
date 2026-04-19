@@ -41,8 +41,31 @@ public static class CoreExtensions
 	/// </summary>
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
-	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static int Dot(this Point lhs, Point rhs) => (lhs.X * rhs.X) + (lhs.Y * rhs.Y);
+	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.cos (theta)</returns>
+	public static long DotSafe(this Point lhs, Point rhs) => ((long)lhs.X * rhs.X) + ((long)lhs.Y * rhs.Y);
+
+	/// <summary>
+	/// Evalutes the dot product of two vectors, which
+	/// is also equivalent to |lhs|.|rhs|.cos (theta)
+	/// where theta is the angle between the vectors
+	/// </summary>
+	/// <param name="lhs">The left operand</param>
+	/// <param name="rhs">The right operand</param>
+	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.cos (theta)</returns>
+	public static double DotSafe(this Vector2 lhs, Vector2 rhs) => ((double)lhs.X * rhs.X) + ((double)lhs.Y * rhs.Y);
+
+	/// <summary>
+	/// Evalutes the dot product of two vectors, which
+	/// is also equivalent to |lhs|.|rhs|.cos (theta)
+	/// where theta is the angle between the vectors
+	/// </summary>
+	/// <param name="lhs">The left operand</param>
+	/// <param name="rhs">The right operand</param>
+	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.cos (theta)</returns>
+	public static double DotSafe(this Vector3 lhs, Vector3 rhs) =>
+		((double)lhs.X * rhs.X) +
+		((double)lhs.Y * rhs.Y) +
+		((double)lhs.Z * rhs.Z);
 
 	/// <summary>
 	/// Returns the 2d cross product of vectors, 
@@ -52,25 +75,25 @@ public static class CoreExtensions
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static int CrossProduct2d(this Point lhs, Point rhs) => (lhs.X * rhs.Y) - (lhs.Y * rhs.X);
+	public static long CrossProduct2d(this Point lhs, Point rhs) => ((long)lhs.X * rhs.Y) - ((long)lhs.Y * rhs.X);
 
 	/// <summary>
-	/// Returns the 2d cross product of vectors, 
+	/// Returns the 2d wedge product of vectors, 
 	/// also equivaluent to |lhs|.|rhs|.sin theta
 	/// where theta is the angle between the vectors
 	/// </summary>
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static float CrossProduct2d(this Vector2 lhs, Vector2 rhs) => (lhs.X * rhs.Y) - (lhs.Y * rhs.X);
+	public static double WedgeProduct2d(this Vector2 lhs, Vector2 rhs) => ((double)lhs.X * rhs.Y) - ((double)lhs.Y * rhs.X);
 
 	/// <summary>Computes the angle between two vectors</summary>
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The angle in radians between the two vectors</returns>
-	public static float AngleBetween(this Vector2 lhs, Vector2 rhs)
-		=> float.Atan2(
-			lhs.CrossProduct2d(rhs),
+	public static double AngleBetween(this Vector2 lhs, Vector2 rhs)
+		=> double.Atan2(
+			lhs.WedgeProduct2d(rhs),
 			Vector2.Dot(lhs, rhs)
 		);
 
@@ -81,7 +104,7 @@ public static class CoreExtensions
 	public static float AngleBetween(this Point lhs, Point rhs)
 		=> float.Atan2(
 			lhs.CrossProduct2d(rhs),
-			lhs.Dot(rhs)
+			lhs.DotSafe(rhs)
 		);
 
 
@@ -323,6 +346,14 @@ public static class CoreExtensions
 			cur_angle += tAngle;
 		}
 	}
+
+	/// <summary>Tests if the given points are collinear</summary>
+	/// <param name="pointA">The point to test</param>
+	/// <param name="pointB">The point to test</param>
+	/// <param name="pointC">The point to test</param>
+	/// <returns>true if the points are collinear, otherwise false</returns>
+	public static bool Collinear(Vector2 pointA, Vector2 pointB, Vector2 pointC) =>
+		(pointB - pointA).WedgeProduct2d(pointC - pointB) == 0;
 
 	/// <summary>Return the update milliseconds count</summary>
 	/// <param name="time">The current time elasped as a GameTime instance</param>

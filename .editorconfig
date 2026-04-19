@@ -10,6 +10,7 @@ indent_size = 2
 
 # C# files
 [*.cs]
+dotnet_analyzer_diagnostic.category-Style.severity = warning
 
 #### Core EditorConfig Options ####
 
@@ -23,6 +24,8 @@ insert_final_newline = false
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
+csharp_style_namespace_declarations = file_scoped
+dotnet_diagnostic.IDE0072.severity = none
 
 # Organize usings
 dotnet_separate_import_directive_groups = true
@@ -84,12 +87,12 @@ csharp_style_var_when_type_is_apparent = false:silent
 
 # Expression-bodied members
 csharp_style_expression_bodied_accessors = true:silent
-csharp_style_expression_bodied_constructors = false:silent
+csharp_style_expression_bodied_constructors = true:silent
 csharp_style_expression_bodied_indexers = true:silent
 csharp_style_expression_bodied_lambdas = true:suggestion
 csharp_style_expression_bodied_local_functions = false:silent
-csharp_style_expression_bodied_methods = false:silent
-csharp_style_expression_bodied_operators = false:silent
+csharp_style_expression_bodied_methods = true:silent
+csharp_style_expression_bodied_operators = true:silent
 csharp_style_expression_bodied_properties = true:silent
 
 # Pattern matching preferences
@@ -362,3 +365,5 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+# [*.{cs,vb}]
+dotnet_diagnostic.CA1051.severity = none
