@@ -10,11 +10,13 @@ public record struct Circle
 	/// <summary>Center of the circle</summary>
 	public Vector2 Center;
 
+	private float _radius;
+
 	/// <summary>Radius of the circle</summary>
-	public readonly float Radius
+	public float Radius
 	{
-		get;
-		init => field = value >= 0 ?
+		readonly get => _radius;
+		set => _radius = value >= 0 ?
 			value :
 			throw new ArgumentException(
 				"Radius cannot be negative",

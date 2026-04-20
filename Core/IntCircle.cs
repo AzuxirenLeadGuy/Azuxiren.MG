@@ -8,11 +8,12 @@ public record struct IntCircle
 	/// <summary>Center of this circle</summary>
 	public Point Center;
 
+	private int _radius;
 	/// <summary>Radius of this circle</summary>
-	public readonly required int Radius
+	public int Radius
 	{
-		get;
-		init => field = value >= 0 ?
+		readonly get => _radius;
+		set => _radius = value >= 0 ?
 			value :
 			throw new ArgumentException(
 				"Radius cannot be negative",
