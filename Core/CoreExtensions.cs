@@ -42,17 +42,21 @@ public static class CoreExtensions
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.cos (theta)</returns>
-	public static long DotSafe(this Point lhs, Point rhs) => ((long)lhs.X * rhs.X) + ((long)lhs.Y * rhs.Y);
+	public static long DotSafe(this Point lhs, Point rhs) =>
+		((long)lhs.X * rhs.X) +
+		((long)lhs.Y * rhs.Y);
 
 	/// <summary>
-	/// Evalutes the dot product of two vectors, which
-	/// is also equivalent to |lhs|.|rhs|.cos (theta)
+	/// Evalutes the dot product of two vectors, without overflowing
+	/// , which is also equivalent to |lhs|.|rhs|.cos (theta)
 	/// where theta is the angle between the vectors
 	/// </summary>
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of dot product, also equivalent to |lhs|.|rhs|.cos (theta)</returns>
-	public static double DotSafe(this Vector2 lhs, Vector2 rhs) => ((double)lhs.X * rhs.X) + ((double)lhs.Y * rhs.Y);
+	public static double DotSafe(this Vector2 lhs, Vector2 rhs) =>
+		((double)lhs.X * rhs.X) +
+		((double)lhs.Y * rhs.Y);
 
 	/// <summary>
 	/// Evalutes the dot product of two vectors, which
@@ -75,7 +79,9 @@ public static class CoreExtensions
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static long CrossProduct2d(this Point lhs, Point rhs) => ((long)lhs.X * rhs.Y) - ((long)lhs.Y * rhs.X);
+	public static long WedgeProduct2d(this Point lhs, Point rhs) =>
+		((long)lhs.X * rhs.Y) -
+		((long)lhs.Y * rhs.X);
 
 	/// <summary>
 	/// Returns the 2d wedge product of vectors, 
@@ -103,7 +109,7 @@ public static class CoreExtensions
 	/// <returns>The angle in radians between the two vectors</returns>
 	public static float AngleBetween(this Point lhs, Point rhs)
 		=> float.Atan2(
-			lhs.CrossProduct2d(rhs),
+			lhs.WedgeProduct2d(rhs),
 			lhs.DotSafe(rhs)
 		);
 
@@ -353,6 +359,14 @@ public static class CoreExtensions
 	/// <param name="pointC">The point to test</param>
 	/// <returns>true if the points are collinear, otherwise false</returns>
 	public static bool Collinear(Vector2 pointA, Vector2 pointB, Vector2 pointC) =>
+		(pointB - pointA).WedgeProduct2d(pointC - pointB) == 0;
+
+	/// <summary>Tests if the given points are collinear</summary>
+	/// <param name="pointA">The point to test</param>
+	/// <param name="pointB">The point to test</param>
+	/// <param name="pointC">The point to test</param>
+	/// <returns>true if the points are collinear, otherwise false</returns>
+	public static bool Collinear(Point pointA, Point pointB, Point pointC) =>
 		(pointB - pointA).WedgeProduct2d(pointC - pointB) == 0;
 
 	/// <summary>Return the update milliseconds count</summary>
