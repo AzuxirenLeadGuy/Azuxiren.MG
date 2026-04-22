@@ -162,27 +162,17 @@ public static class CoreExtensions
 	/// <summary>
 	/// Checks if this circle contains the other circle. <br/><br/>
 	/// This is not a commutative operation,
-	/// i.e x.Contains(y) is not always equal to y.Contains(x) <br/>
+	/// i.e x.Contain(y) is not always equal to y.Contain(x) <br/>
 	/// for any two circles x, y
 	/// </summary>
 	/// <param name="circle">The bigger circle</param>
 	/// <param name="other">The other circle to check if it is inside</param>
 	/// <returns>true if `other` circle is contained within `this` circle; false otherwise</returns>
-	public static bool Contains(this IntCircle circle, IntCircle other)
+	public static bool Contain(this IntCircle circle, IntCircle other)
 	{
 		ulong rad_diff = (ulong)(circle.Radius - other.Radius);
 		return circle.Radius >= other.Radius && // Cannot have bigger circle inside smaller circle
 			circle.Center.DistanceSquared(other.Center) <= (rad_diff * rad_diff);
-	}
-
-	/// <summary>Checks if a given point lies inside an IntCircle</summary>
-	/// <param name="circle">The circle to query</param>
-	/// <param name="point">The point to query</param>
-	/// <returns>true if `point` is contained within the circle; false otherwise</returns>
-	public static bool Contains(this IntCircle circle, Point point)
-	{
-		ulong radius = (ulong)circle.Radius;
-		return circle.Center.DistanceSquared(point) <= radius * radius;
 	}
 
 	/// <summary>Checks if a given polygon represented as a sequence of points lies inside an IntCircle</summary>
@@ -210,6 +200,24 @@ public static class CoreExtensions
 	{
 		// Find the distance of polygon endpoint closest from the center
 		ulong squared_dist = polygonEndpoints.Min(
+			point => point.DistanceSquared(circle.Center)
+		), rad = (ulong)circle.Radius;
+		return squared_dist <= (rad * rad);
+	}
+
+	/// <summary>
+	/// Checks if a given polygon represented as a sequence of 
+	/// points overlaps with the interior of an IntCircle. Note:
+	/// a polygon completely inside a circle is noted as having
+	/// an overlap.
+	/// </summary>
+	/// <param name="circle">The circle to query</param>
+	/// <param name="polygonEndpoints">The ordered sequence of endpoints of the polygon</param>
+	/// <returns></returns>
+	public static bool Intersects(this Circle circle, IEnumerable<Vector2> polygonEndpoints)
+	{
+		// Find the distance of polygon endpoint closest from the center
+		double squared_dist = polygonEndpoints.Min(
 			point => point.DistanceSquared(circle.Center)
 		), rad = (ulong)circle.Radius;
 		return squared_dist <= (rad * rad);
@@ -257,21 +265,12 @@ public static class CoreExtensions
 			cur_angle += tAngle;
 		}
 	}
-	/// <summary>Checks if a given point is inside the circle</summary>
-	/// <param name="circle">The circle to check</param>
-	/// <param name="point">The queried point</param>
-	/// <returns>True if the point lies in the interior of the circle, else false</returns>
-	public static bool Contains(this Circle circle, Vector2 point)
-	{
-		double radius = circle.Radius;
-		return circle.Center.DistanceSquared(point) <= (radius * radius);
-	}
 
 	/// <summary>Checks if a given circle is completely contained within the circle or not</summary>
 	/// <param name="circle">The circle to check if it is completely contained</param>
 	/// <param name="other">The circle to check if it is completely contained</param>
 	/// <returns>True if the Circle lies inside the circle; False otherwise</returns>
-	public static bool Contains(this Circle circle, Circle other)
+	public static bool Contain(this Circle circle, Circle other)
 	{
 		double rad_diff = circle.Radius - other.Radius;
 		return rad_diff >= 0 && // Cannot have larger circle inside smaller circle
