@@ -91,7 +91,9 @@ public static class CoreExtensions
 	/// <param name="lhs">The left operand</param>
 	/// <param name="rhs">The right operand</param>
 	/// <returns>The value of cross product, also equivalent to |lhs|.|rhs|.sin (theta)</returns>
-	public static double WedgeProduct2d(this Vector2 lhs, Vector2 rhs) => ((double)lhs.X * rhs.Y) - ((double)lhs.Y * rhs.X);
+	public static double WedgeProduct2d(this Vector2 lhs, Vector2 rhs) =>
+		((double)lhs.X * rhs.Y) -
+		((double)lhs.Y * rhs.X);
 
 	/// <summary>Computes the angle between two vectors</summary>
 	/// <param name="lhs">The left operand</param>
@@ -162,7 +164,7 @@ public static class CoreExtensions
 	/// <summary>
 	/// Checks if this circle contains the other circle. <br/><br/>
 	/// This is not a commutative operation,
-	/// i.e x.Contain(y) is not always equal to y.Contain(x) <br/>
+	/// i.e x.Contain(y) is not equal to y.Contain(x) <br/>
 	/// for any two circles x, y
 	/// </summary>
 	/// <param name="circle">The bigger circle</param>
@@ -181,6 +183,7 @@ public static class CoreExtensions
 	/// <returns>true if all points are inside the circle, otherwise false</returns>
 	public static bool Contains(this IntCircle circle, IEnumerable<Point> polygonEndpoints)
 	{
+		if (!polygonEndpoints.Any()) { return false; }
 		ulong max_sq_dist = polygonEndpoints.Max( // Find the polygon endpoint farthest from the center
 			point => point.DistanceSquared(circle.Center)
 		), rad = (ulong)circle.Radius;
@@ -198,6 +201,7 @@ public static class CoreExtensions
 	/// <returns></returns>
 	public static bool Intersects(this IntCircle circle, IEnumerable<Point> polygonEndpoints)
 	{
+		if (!polygonEndpoints.Any()) { return false; }
 		// Find the distance of polygon endpoint closest from the center
 		ulong squared_dist = polygonEndpoints.Min(
 			point => point.DistanceSquared(circle.Center)
