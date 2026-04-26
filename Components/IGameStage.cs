@@ -18,9 +18,8 @@ public interface IGameStage<TSettings> : IDisposable
 	/// size changes.
 	/// </summary>
 	/// <param name="game">The current game instance</param>
-	/// <param name="targetSize">The size of the RenderTarget</param>
 	/// <param name="settings">The shared settings for the game</param>
-	void Resize(in IMgRuntime game, in Point targetSize, ref TSettings settings);
+	void Resize(in IMgRuntime game, ref TSettings settings);
 
 	/// <summary>
 	/// The logic for drawing the components within the game.
@@ -40,5 +39,5 @@ public interface IGameStage<TSettings> : IDisposable
 	/// <param name="game">The current game instance</param>
 	/// <param name="settings">The shared settings for the game</param>
 	/// <returns>Indication that screen needs to be updated, or game needs to be exited/closed.</returns>
-	GameUpdateResult Update(GameTime gt, in IMgRuntime game, ref TSettings settings);
+	GameUpdate Update(GameTime gt, in IMgRuntime game, ref TSettings settings);
 }

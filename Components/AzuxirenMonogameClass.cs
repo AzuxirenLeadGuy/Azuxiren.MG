@@ -11,10 +11,7 @@ namespace Azuxiren.MG.Components;
 public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 {
 	/// <summary>drawing utilities for the game</summary>
-	private RenderTargetDrawer _targetDrawer;
-
-	/// <summary>The custom unit that initializes the game stages</summary>
-	protected readonly IStageFactory<TSettings> _factory;
+	private readonly RenderTargetDrawer _targetDrawer;
 
 	/// <summary>
 	/// The shared setting of the game. This object is shared between the 
@@ -32,10 +29,7 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 	protected IGameStage<TSettings> _loadScreen, _mainScreen;
 
 	/// <summary>Stores the size of the render target</summary>
-	protected Point _renderTargetSize;
-
-	/// <summary>Stores the size of the render target</summary>
-	protected Task<IGameStage<TSettings>?> _taskLoader;
+	protected Task<IGameStage<TSettings>> _taskLoader;
 
 	/// <summary>The color used to clear the final window during the render phase</summary>
 	public Color ScreenClearColor { get; set; }
@@ -53,11 +47,15 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 
 	/// <summary> Initializes the game object</summary>
 	/// <param name="targetSize">The resolution of the game render target</param>
-	/// <param name="factory">The unit that creates/initializes scenes dynamically</param>
+	/// <param name="settingsFunc">The function to initialize the shared instance</param>
+	/// <param name="startSceneFunc">The function to initialize the start scene of the game</param>
+	/// <param name="loadSceneFunc">The function to initialize the loading scene of the game</param>
 	public AzuxirenMonogameClass(
 		Point targetSize,
-		IStageFactory<TSettings> factory
-	)
+		Func<IMgRuntime, TSettings> settingsFunc,
+		GameUpdate.TransitionFun<TSettings> startSceneFunc,
+		GameUpdate.TransitionFun<TSettings> loadSceneFunc
+	) : base()
 	{
 		if (targetSize.X <= 0 || targetSize.Y <= 0)
 		{
@@ -66,32 +64,23 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 				nameof(targetSize)
 			);
 		}
-		_renderTargetSize = targetSize;
 		GraphicsDM = new(this);
-		_factory = factory;
 		Window.AllowUserResizing = false;
-		_settings = default!;
 		_isLoading = false;
-		_loadScreen = null!;
-		_mainScreen = null!;
-		_targetDrawer = default!;
-		_taskLoader = Task.FromResult<IGameStage<TSettings>?>(null);
+		_taskLoader = Task.FromResult<IGameStage<TSettings>>(null!);
 		IsMouseVisible = true;
 		Content.RootDirectory = "Content";
 		ScreenClearColor = Color.White;
 		TargetTintColor = Color.White;
 		TargetClearColor = Color.White;
+		Initialize();
+		_targetDrawer = new(GraphicsDevice, targetSize.X, targetSize.Y);
+		SetWindowed(targetSize.X, targetSize.Y);
+		_settings = settingsFunc(this);
+		_mainScreen = startSceneFunc(this, _settings);
+		_loadScreen = loadSceneFunc(this, _settings);
 	}
 
-	/// <summary>Loads the Content for both the screens </summary>
-	protected override void LoadContent()
-	{
-		_targetDrawer = new(GraphicsDevice, _renderTargetSize.X, _renderTargetSize.Y);
-		SetWindowed(_renderTargetSize.X, _renderTargetSize.Y);
-		_settings = _factory.InitializeSettings(this);
-		_mainScreen = _factory.StartStage(this, _settings);
-		_loadScreen = _factory.LoadStage(this, _settings);
-	}
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
 	protected virtual void SetFullScreen()
 		=> SetFullScreen(
@@ -143,41 +132,43 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 			_ = _loadScreen.Update(gameTime, this, ref _settings);
 			if (_taskLoader.IsCompleted)
 			{
-				_mainScreen = await _taskLoader.ConfigureAwait(false) ?? throw new InvalidOperationException(
-					"The result of task factory is null"
-				);
+				_mainScreen = await _taskLoader.ConfigureAwait(false) ??
+					throw new InvalidOperationException(
+						"The result of task factory is null"
+					);
 				_isLoading = false;
 			}
 		}
 		else
 		{
-			GameUpdateResult result = _mainScreen.Update(gameTime, this, ref _settings);
+			GameUpdate result = _mainScreen.Update(gameTime, this, ref _settings);
 			switch (result.Type)
 			{
-				case GameUpdateResult.ResultType.Transition:
+				case GameUpdate.ResultType.Transition:
 					_isLoading = true;
+					GameUpdate.TransitionFun<TSettings> fun = result.TransitionFunc as GameUpdate.TransitionFun<TSettings> ??
+						throw new InvalidOperationException("Tranistion function is null");
 					_taskLoader = Task.Run(
 						() =>
 						{
 							_mainScreen.Dispose();
-							return _factory.Create(result.StageCode, this, _settings);
+							return fun(this, _settings);
 						}
 					);
 					break;
-				case GameUpdateResult.ResultType.ExitRequest:
+				case GameUpdate.ResultType.ExitRequest:
 					Exit();
 					break;
-				case GameUpdateResult.ResultType.SetTargetSize:
-					(ushort width, ushort height) = GameUpdateResult.UnpackData(result.StageCode);
-					_targetDrawer = new(GraphicsDevice, width, height);
-					_mainScreen.Resize(this, new(width, height), ref _settings);
-					_loadScreen.Resize(this, new(width, height), ref _settings);
+				case GameUpdate.ResultType.SetTargetSize:
+					_targetDrawer.UpdateSize(result.Width, result.Height);
+					_mainScreen.Resize(this, ref _settings);
+					_loadScreen.Resize(this, ref _settings);
 					break;
-				case GameUpdateResult.ResultType.SetWindowed: // TODO
-				case GameUpdateResult.ResultType.SetBorderlessWindowed:// TODO
-				case GameUpdateResult.ResultType.SetFullScreen:// TODO
-				case GameUpdateResult.ResultType.SetBorderlessFullscreen:// TODO
-				case GameUpdateResult.ResultType.NoAction:// TODO
+				case GameUpdate.ResultType.SetWindowed: // TODO
+				case GameUpdate.ResultType.SetBorderlessWindowed:// TODO
+				case GameUpdate.ResultType.SetFullScreen:// TODO
+				case GameUpdate.ResultType.SetBorderlessFullscreen:// TODO
+				case GameUpdate.ResultType.NoAction:// TODO
 				default:
 					break;
 			}
@@ -187,16 +178,16 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 	/// <inheritdoc/>
 	protected override void Dispose(bool disposing)
 	{
-		if (_renderTargetSize.X > 0 || _renderTargetSize.Y > 0)
+		if (_taskLoader != null)
 		{
 			if (disposing)
 			{
-				_targetDrawer?.Dispose();
 				GraphicsDM.Dispose();
+				_targetDrawer?.Dispose();
 				_loadScreen?.Dispose();
 				_mainScreen?.Dispose();
 			} // No Unmanaged resources here
-			_renderTargetSize = Point.Zero;
+			_taskLoader = null!;
 		}
 		base.Dispose(disposing);
 	}

@@ -22,10 +22,11 @@ internal sealed class RenderTargetDrawer : IBatchDrawer, IDisposable, IDrawHandl
 		_graphicsDevice = gd;
 		_target2D = new(_graphicsDevice, width, height);
 		_spriteBatch = new(_graphicsDevice);
+		UpdateResolution();
 	}
 
 	/// <summary>The instance of RenderTarget2D</summary>
-	private readonly RenderTarget2D _target2D;
+	private RenderTarget2D _target2D;
 
 	/// <summary>The reference to the GraphicsDevice object</summary>
 	private readonly GraphicsDevice _graphicsDevice;
@@ -38,6 +39,12 @@ internal sealed class RenderTargetDrawer : IBatchDrawer, IDisposable, IDrawHandl
 
 	/// <summary>The size of the internal RenderTarget Screen</summary>
 	public Rectangle Bounds => _target2D.Bounds;
+
+	public void UpdateSize(ushort width, ushort height)
+	{
+		_target2D.Dispose();
+		_target2D = new(_graphicsDevice, width, height);
+	}
 
 	/// <summary>
 	/// Updates the resolution of the destination screen, 
