@@ -11,13 +11,19 @@ namespace Azuxiren.MG.Components;
 public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 {
 	/// <summary>drawing utilities for the game</summary>
-	private readonly RenderTargetDrawer _targetDrawer;
+	private RenderTargetDrawer _targetDrawer;
 
 	/// <summary>
 	/// The shared setting of the game. This object is shared between the 
 	/// multipls GameStages in the lifetime of this object
 	/// </summary>
 	protected TSettings _settings;
+
+	/// <summary>Delayed functional loader for _settings instance</summary>
+	protected readonly Func<IMgRuntime, TSettings> _settingsFunc;
+
+	/// <summary>Delayed functional loading for scenes instance</summary>
+	protected readonly GameUpdate.TransitionFun<TSettings> _main, _load;
 
 	/// <summary>The graphics device manager for this game</summary>
 	public readonly GraphicsDeviceManager GraphicsDM;
@@ -73,12 +79,32 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 		ScreenClearColor = Color.White;
 		TargetTintColor = Color.White;
 		TargetClearColor = Color.White;
-		Initialize();
-		_targetDrawer = new(GraphicsDevice, targetSize.X, targetSize.Y);
-		SetWindowed(targetSize.X, targetSize.Y);
-		_settings = settingsFunc(this);
-		_mainScreen = startSceneFunc(this, _settings);
-		_loadScreen = loadSceneFunc(this, _settings);
+		GraphicsDM.PreferredBackBufferWidth = targetSize.X;
+		GraphicsDM.PreferredBackBufferHeight = targetSize.Y;
+		_main = startSceneFunc;
+		_load = loadSceneFunc;
+		_settingsFunc = settingsFunc;
+		_targetDrawer = null!;
+		_mainScreen = null!;
+		_loadScreen = null!;
+		_settings = default!;
+	}
+
+	/// <inheritdoc/>
+	protected override void LoadContent()
+	{
+		_targetDrawer = new(
+			GraphicsDevice,
+			GraphicsDM.PreferredBackBufferWidth,
+			GraphicsDM.PreferredBackBufferHeight
+		);
+		SetWindowed(
+			GraphicsDM.PreferredBackBufferWidth,
+			GraphicsDM.PreferredBackBufferHeight
+		);
+		_settings = _settingsFunc(this);
+		_mainScreen = _main(this, _settings);
+		_loadScreen = _load(this, _settings);
 	}
 
 	/// <summary>This will set the screen as FullScreen with the default Screen Size</summary>
@@ -147,7 +173,7 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 				case GameUpdate.ResultType.Transition:
 					_isLoading = true;
 					GameUpdate.TransitionFun<TSettings> fun = result.TransitionFunc as GameUpdate.TransitionFun<TSettings> ??
-						throw new InvalidOperationException("Tranistion function is null");
+						throw new InvalidOperationException("Transition function is null");
 					_taskLoader = Task.Run(
 						() =>
 						{
@@ -164,11 +190,23 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 					_mainScreen.Resize(this, ref _settings);
 					_loadScreen.Resize(this, ref _settings);
 					break;
-				case GameUpdate.ResultType.SetWindowed: // TODO
-				case GameUpdate.ResultType.SetBorderlessWindowed:// TODO
-				case GameUpdate.ResultType.SetFullScreen:// TODO
-				case GameUpdate.ResultType.SetBorderlessFullscreen:// TODO
-				case GameUpdate.ResultType.NoAction:// TODO
+				case GameUpdate.ResultType.SetWindowed:
+					Window.IsBorderless = false;
+					SetWindowed(result.Width, result.Height);
+					break;
+				case GameUpdate.ResultType.SetBorderlessWindowed:
+					Window.IsBorderless = true;
+					SetWindowed(result.Width, result.Height);
+					break;
+				case GameUpdate.ResultType.SetFullScreen:
+					Window.IsBorderless = false;
+					SetFullScreen(result.Width, result.Height);
+					break;
+				case GameUpdate.ResultType.SetBorderlessFullscreen:
+					Window.IsBorderless = true;
+					SetFullScreen();
+					break;
+				case GameUpdate.ResultType.NoAction:
 				default:
 					break;
 			}

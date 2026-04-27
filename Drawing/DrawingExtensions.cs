@@ -10,6 +10,15 @@ namespace Azuxiren.MG.Drawing;
 /// <summary> Global extensions for all drawing/graphics utilities</summary>
 public static partial class DrawingExtensions
 {
+	/// <summary>Returns a texture comprising of a single pixel</summary>
+	/// <param name="device">The GraphicsDevice instance to create the texture</param>
+	/// <returns>The created texture</returns>
+	public static Texture2D Pixel(GraphicsDevice device)
+	{
+		Texture2D tex = new(device, 1, 1);
+		tex.SetData([Color.White]);
+		return tex;
+	}
 
 	/// <summary>Creates a rectangle of a given size placed such that its center lies at the given point</summary>
 	/// <param name="center">Where the center of the rectangle should lie</param>
@@ -56,6 +65,99 @@ public static partial class DrawingExtensions
 		size.X = (int)MathF.Round(scale * size.X);
 		size.Y = (int)MathF.Round(scale * size.Y);
 		return SetCenter(rect.Center, size);
+	}
+
+	/// <summary>Evaluates the destination position and scale</summary>
+	/// <param name="sourceSize">The size of the source boundary</param>
+	/// <param name="destLocation">The top-left point of the destination rectangle</param>
+	/// <param name="destSize">The size of the destination rectangle</param>
+	/// <param name="position">The evaluated point analogous to Anchor</param>
+	/// <param name="scale">The scaling required</param>
+	/// <param name="anchor">The anchor point relative to the source</param>
+	/// <param name="style">The alignment order for the positioning</param>
+	public static void SetPositionAndScale(
+		Vector2 sourceSize,
+		Vector2 destLocation,
+		Vector2 destSize,
+		out Vector2 position,
+		out Vector2 scale,
+		out Vector2 anchor,
+		AlignmentStyle style = AlignmentStyle.CenterXCenterY
+	)
+	{
+		if (sourceSize.X == 0 || sourceSize.Y == 0)
+		{
+			throw new ArgumentException(
+				"Given source size must have positive area",
+				nameof(sourceSize)
+			);
+		}
+		if (destSize.X == 0 || destSize.Y == 0)
+		{
+			throw new ArgumentException(
+				"Given destionation size must have positive area",
+				nameof(destSize)
+			);
+		}
+		anchor = sourceSize / 2;
+		position = destLocation + (destSize / 2);
+		if (style == AlignmentStyle.Stretch)
+		{
+			scale = new(
+				destSize.X / sourceSize.X,
+				destSize.Y / sourceSize.Y
+			);
+			return;
+		}
+		float scaleX = destSize.X / sourceSize.X;
+		float scaleY = destSize.Y / sourceSize.Y;
+		scale = new(float.Min(scaleX, scaleY));
+		if (scaleX > scaleY) // Only position in X-axis
+		{
+			float offset = destSize.X - (sourceSize.X * scale.X);
+			switch (style)
+			{
+				case AlignmentStyle.StartXStartY:
+				case AlignmentStyle.StartXCenterY:
+				case AlignmentStyle.StartXEndY:
+					position.X -= offset;
+					break;
+				case AlignmentStyle.EndXStartY:
+				case AlignmentStyle.EndXCenterY:
+				case AlignmentStyle.EndXEndY:
+					position.X += offset;
+					break;
+				case AlignmentStyle.CenterXStartY:
+				case AlignmentStyle.CenterXCenterY:
+				case AlignmentStyle.CenterXEndY:
+				case AlignmentStyle.Stretch:
+				default:
+					break;
+			}
+		}
+		else // Only position in Y-axis
+		{
+			float offset = destSize.Y - (sourceSize.Y * scale.Y);
+			switch (style)
+			{
+				case AlignmentStyle.StartXStartY:
+				case AlignmentStyle.CenterXStartY:
+				case AlignmentStyle.EndXStartY:
+					position.Y -= offset;
+					break;
+				case AlignmentStyle.StartXEndY:
+				case AlignmentStyle.CenterXEndY:
+				case AlignmentStyle.EndXEndY:
+					position.Y += offset;
+					break;
+				case AlignmentStyle.StartXCenterY:
+				case AlignmentStyle.CenterXCenterY:
+				case AlignmentStyle.EndXCenterY:
+				case AlignmentStyle.Stretch:
+				default:
+					break;
+			}
+		}
 	}
 
 	/// <summary>
