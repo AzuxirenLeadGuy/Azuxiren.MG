@@ -392,11 +392,9 @@ public static partial class DrawingExtensions
 	/// <returns>DrawResult instance that shows how many points were drawn successfully</returns>
 	public static DrawResult DrawPolygonBorder(this Color[,] grid, IntPolygon polygon, Color color)
 	{
-		List<Point> point_list = [.. polygon.EndpointsIntPolygon()];
-		Point prev = point_list[0];
-		point_list.Add(prev);
+		Point prev = polygon.EndpointsIntPolygon().Last();
 		DrawResult result = new();
-		foreach (Point cur in point_list[1..])
+		foreach (Point cur in polygon.EndpointsIntPolygon())
 		{
 			DrawResult part_res = grid.DrawLine(prev, cur, color);
 			result.Attempted += part_res.Attempted;
@@ -466,15 +464,13 @@ public static partial class DrawingExtensions
 		ArgumentNullException.ThrowIfNull(grid);
 		DrawResult result = new();
 		int rows = grid.GetLength(0), cols = grid.GetLength(1);
-		IEnumerable<Point> point_collection = GetPointsOnCircle(circle.Center, circle.Radius);
-		do
+		IEnumerable<Point> circle_pts = GetPointsOnCircle(circle.Center, circle.Radius);
+		foreach (Point[] pair in circle_pts.Chunk(2))
 		{
-			Point[] pair = [.. point_collection.Take(2)];
 			if (pair.Length < 2 || pair[0].X != pair[1].X || pair[0].Y < pair[1].Y)
 			{
 				break;
 			}
-
 			for (int id_i = pair[0].X, id_j = pair[0].Y; id_j >= pair[1].Y; id_j--)
 			{
 				result.Attempted++;
@@ -485,7 +481,7 @@ public static partial class DrawingExtensions
 				grid[id_i, id_j] = color;
 				result.Drawn++;
 			}
-		} while (true);
+		}
 		return result;
 	}
 
@@ -515,5 +511,28 @@ public static partial class DrawingExtensions
 			}
 		}
 		return result;
+	}
+
+	/// <summary> Generate a texture of circle with the given parameters </summary>
+	/// <param name="device">The GraphicsDevice instance</param>
+	/// <param name="radius">The radius of the circle</param>
+	/// <returns>Circle texture</returns>
+	public static Texture2D GenerateCircleTexture(GraphicsDevice device, ushort radius)
+	{
+		int width = (2 * radius) + 1;
+		Color[,] grid = new Color[width, width];
+		DrawResult draw_result = grid.DrawCircleFilled(
+			new()
+			{
+				Center = new(radius, radius),
+				Radius = radius
+			},
+			Color.White
+		);
+		return draw_result.Missed > 0
+			? throw new InvalidOperationException(
+				"Miscalculated grid dimensions w.r.t radius"
+			)
+			: grid.FromColorGrid(device);
 	}
 }
