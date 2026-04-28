@@ -183,7 +183,6 @@ public static class CoreExtensions
 	/// <returns>true if all points are inside the circle, otherwise false</returns>
 	public static bool Contains(this IntCircle circle, IEnumerable<Point> polygonEndpoints)
 	{
-		if (!polygonEndpoints.Any()) { return false; }
 		ulong max_sq_dist = polygonEndpoints.Max( // Find the polygon endpoint farthest from the center
 			point => point.DistanceSquared(circle.Center)
 		), rad = (ulong)circle.Radius;
@@ -201,7 +200,6 @@ public static class CoreExtensions
 	/// <returns></returns>
 	public static bool Intersects(this IntCircle circle, IEnumerable<Point> polygonEndpoints)
 	{
-		if (!polygonEndpoints.Any()) { return false; }
 		// Find the distance of polygon endpoint closest from the center
 		ulong squared_dist = polygonEndpoints.Min(
 			point => point.DistanceSquared(circle.Center)
@@ -230,7 +228,7 @@ public static class CoreExtensions
 	/// <summary>A circle that passes through all endpoints of the polygon</summary>
 	/// <param name="intPolygon">The polygon to query</param>
 	/// <returns>Circle instance</returns>
-	public static IntCircle Circumcircle(this IntPolygon intPolygon) => new()
+	public static IntCircle CircumcircleIntPolygon(this IntPolygon intPolygon) => new()
 	{
 		Center = intPolygon.Center,
 		Radius = intPolygon.Radius,
@@ -239,7 +237,7 @@ public static class CoreExtensions
 	/// <summary>The largest circle that is contained within the polygon</summary>
 	/// <param name="intPolygon">The polygon to query</param>
 	/// <returns>Circle instance</returns>
-	public static IntCircle Incircle(this IntPolygon intPolygon) => new()
+	public static IntCircle IncircleIntPolygon(this IntPolygon intPolygon) => new()
 	{
 		Center = intPolygon.Center,
 		Radius = (int)float.Round(
@@ -252,7 +250,7 @@ public static class CoreExtensions
 	/// <summary>Return the integer points of all the endpoints of the vector</summary>
 	/// <param name="intPolygon">The polygon to get endpoints of</param>
 	/// <returns>Enumeration of all interger-rounded points of the polygon</returns>
-	public static IEnumerable<Point> Endpoints(this IntPolygon intPolygon)
+	public static IEnumerable<Point> EndpointsIntPolygon(this IntPolygon intPolygon)
 	{
 		float tAngle = 2 * float.Pi / intPolygon.SideCount;
 		float cur_angle = intPolygon.Angle;
@@ -307,10 +305,10 @@ public static class CoreExtensions
 	public static bool Intersect(this Circle circle, IEnumerable<Vector2> polygonPoints)
 	{
 		// Find the distance of polygon endpoint closest from the center
-		double max_sq_dist = polygonPoints.Min(
+		double min_sq_dist = polygonPoints.Min(
 			point => circle.Center.DistanceSquared(point)
 		), rad = circle.Radius;
-		return max_sq_dist <= (rad * rad);
+		return min_sq_dist <= (rad * rad);
 	}
 
 	/// <summary>
@@ -327,21 +325,21 @@ public static class CoreExtensions
 	}
 
 	/// <summary>The smallest circle passing through all vertices of the polygon</summary>
-	public static Circle CircumCircle(this Polygon polygon) => new()
+	public static Circle CircumCirclePolygon(this Polygon polygon) => new()
 	{
 		Center = polygon.Center,
 		Radius = polygon.Radius,
 	};
 
 	/// <summary>The largest circle tangent to all sides of the polygon</summary>
-	public static Circle InCircle(this Polygon polygon) => new()
+	public static Circle InCirclePolygon(this Polygon polygon) => new()
 	{
 		Center = polygon.Center,
 		Radius = polygon.Radius * float.CosPi(1f / polygon.SideCount),
 	};
 
 	/// <summary>Enumeration of endpoints of the polygon</summary>
-	public static IEnumerable<Vector2> EndPoints(this Polygon polygon)
+	public static IEnumerable<Vector2> EndPointsPolygon(this Polygon polygon)
 	{
 		float tAngle = 2 * float.Pi / polygon.SideCount, cur_angle = polygon.Angle;
 		Vector2 startVec = new(0, polygon.Radius);
@@ -372,17 +370,55 @@ public static class CoreExtensions
 	public static bool Collinear(Point pointA, Point pointB, Point pointC) =>
 		(pointB - pointA).WedgeProduct2d(pointC - pointB) == 0;
 
-	/// <summary>Return the update milliseconds count</summary>
-	/// <param name="time">The current time elasped as a GameTime instance</param>
-	/// <param name="curState">The current acumulated time as uint</param>
-	/// <returns>The updated time in milliseconds</returns>
-	public static uint UpdateMs([NotNull] this GameTime time, uint curState) =>
-		curState + (uint)time.ElapsedGameTime.Milliseconds;
+	/// <summary>Check if a given point lies inside a triangle</summary>
+	/// <param name="tri">The triangle to test</param>
+	/// <param name="points">The points to test if they are within the triangle</param>
+	/// <param name="modeAll">
+	/// The mode of test. If modeAll=true, then any point lies outside the triangle results in false,
+	/// If modeAll=false, then any point lying inside the triangle results in true
+	/// </param>
+	/// <returns>True if the point lies inside the triangle, else false</returns>
+	public static bool Contains(this IntTriangle2d tri, IEnumerable<Point> points, in bool modeAll = true)
+	{
+		// TODO: Test this dynamically: https://math.stackexchange.com/a/1884485
+
+		// For a triangle given by Points A, B, C, any Point X = PA + QB + CR, with
+		// Barycentric parameters P, Q, R, where P + Q + R = 1, and 0 < P,Q,R < 1
+		// To solve the values of P, Q and R for a point X, put P = 1 - Q - R,
+		// and solve matrix[B - A, C - A](nx2) . matrix[Q, R](2x1) = matrix[X - A](nX1)
+
+		// For 2D, n=2, and solving the equation requires inverting a 2x2 matrix
+		ArgumentNullException.ThrowIfNull(points);
+		Point del_ba = tri.VertexB - tri.VertexA;
+		Point del_ca = tri.VertexC - tri.VertexA;
+		long deter = del_ba.WedgeProduct2d(del_ca);
+		if (deter == 0) { throw new ArgumentException("Triangle is not valid!", nameof(tri)); }
+		bool neg_deter = deter < 0;
+		bool PosCheck(long value) { return value >= 0 && value <= deter; }
+		bool NegCheck(long value) { return value <= 0 && value >= deter; }
+		Func<long, bool> checkFn = deter >= 0 ? PosCheck : NegCheck;
+		foreach (Point point in points)
+		{
+			Point del_pa = point - tri.VertexA;
+			long beta_num = del_pa.WedgeProduct2d(del_ba);
+			long gama_num = del_ca.WedgeProduct2d(del_pa);
+			bool contain = checkFn(beta_num) && checkFn(gama_num);
+			if (modeAll != contain) { return contain; }
+		}
+		return modeAll;
+	}
 
 	/// <summary>Return the update milliseconds count</summary>
 	/// <param name="time">The current time elasped as a GameTime instance</param>
 	/// <param name="curState">The current acumulated time as uint</param>
 	/// <returns>The updated time in milliseconds</returns>
-	public static double UpdateMs([NotNull] this GameTime time, double curState) =>
-		curState + time.ElapsedGameTime.TotalMilliseconds;
+	public static uint UpdateMs([NotNull] this GameTime time, ref uint curState) =>
+		curState += (uint)time.ElapsedGameTime.Milliseconds;
+
+	/// <summary>Return the update milliseconds count</summary>
+	/// <param name="time">The current time elasped as a GameTime instance</param>
+	/// <param name="curState">The current acumulated time as uint</param>
+	/// <returns>The updated time in milliseconds</returns>
+	public static double UpdateMs([NotNull] this GameTime time, ref double curState) =>
+		curState += time.ElapsedGameTime.TotalMilliseconds;
 }

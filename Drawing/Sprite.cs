@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Azuxiren.MG.Drawing;
 
 /// <summary>Represents a Texture2D and additional data for drawing</summary>
-public record class Sprite : IDisposable
+public class Sprite : IDisposable
 {
 	/// <summary>The texture for the sprite</summary>
 	public readonly Texture2D Texture;
@@ -59,7 +59,7 @@ public record class Sprite : IDisposable
 	/// <param name="dest">The rectangle to fit the texture for</param>
 	/// <param name="style">The fitting style of the position</param>
 	/// <returns>Returns the target vector for the sprite to be drawn at</returns>
-	public void SetDest(
+	public virtual void SetDest(
 		Rectangle dest,
 		AlignmentStyle style = AlignmentStyle.CenterXCenterY
 	)
@@ -77,7 +77,7 @@ public record class Sprite : IDisposable
 	}
 	/// <summary>Gets the Rectangle of the bounds of the sprite </summary>
 	/// <returns>Rectangle with values rounded to the nearest integer</returns>
-	public Rectangle GetDest() => new(
+	public virtual Rectangle GetDest() => new(
 		Vector2.Round(Location - Anchor).ToPoint(),
 		Vector2.Round(Texture.Bounds.Size.ToVector2() * Scale).ToPoint()
 	);
@@ -86,7 +86,7 @@ public record class Sprite : IDisposable
 	/// <param name="batch">The spritebatch instance to draw with</param>
 	/// <param name="effect">The effects to use</param>
 	/// <param name="depth">The depth to draw on</param>
-	public void Draw(
+	public virtual void Draw(
 		[NotNull] in IBatchDrawer batch,
 		SpriteEffects effect = SpriteEffects.None,
 		float depth = 0

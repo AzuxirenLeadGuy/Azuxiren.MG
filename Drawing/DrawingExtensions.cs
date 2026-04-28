@@ -385,6 +385,26 @@ public static partial class DrawingExtensions
 		}
 		return result;
 	}
+	/// <summary>Draws a polygon border with the given properties</summary>
+	/// <param name="grid">The grid on which to draw on</param>
+	/// <param name="polygon">The polygon to draw</param>
+	/// <param name="color">The color of the border</param>
+	/// <returns>DrawResult instance that shows how many points were drawn successfully</returns>
+	public static DrawResult DrawPolygonBorder(this Color[,] grid, IntPolygon polygon, Color color)
+	{
+		List<Point> point_list = [.. polygon.EndpointsIntPolygon()];
+		Point prev = point_list[0];
+		point_list.Add(prev);
+		DrawResult result = new();
+		foreach (Point cur in point_list[1..])
+		{
+			DrawResult part_res = grid.DrawLine(prev, cur, color);
+			result.Attempted += part_res.Attempted;
+			result.Drawn += part_res.Drawn;
+			prev = cur;
+		}
+		return result;
+	}
 	/// <summary>
 	/// Uses the bresenham circle drawing algorithm to iterate
 	/// over all points of a circle at a given centre and radius.
