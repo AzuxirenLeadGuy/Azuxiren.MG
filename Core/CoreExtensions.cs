@@ -408,6 +408,44 @@ public static class CoreExtensions
 		return modeAll;
 	}
 
+	/// <summary>Check if a given point lies inside a triangle</summary>
+	/// <param name="tri">The triangle to test</param>
+	/// <param name="points">The points to test if they are within the triangle</param>
+	/// <param name="modeAll">
+	/// The mode of test. If modeAll=true, then any point lies outside the triangle results in false,
+	/// If modeAll=false, then any point lying inside the triangle results in true
+	/// </param>
+	/// <returns>True if the point lies inside the triangle, else false</returns>
+	public static bool Contains(this Triangle2d tri, IEnumerable<Vector2> points, in bool modeAll = true)
+	{
+		// TODO: Test this dynamically: https://math.stackexchange.com/a/1884485
+
+		// For a triangle given by Points A, B, C, any Point X = PA + QB + CR, with
+		// Barycentric parameters P, Q, R, where P + Q + R = 1, and 0 < P,Q,R < 1
+		// To solve the values of P, Q and R for a point X, put P = 1 - Q - R,
+		// and solve matrix[B - A, C - A](nx2) . matrix[Q, R](2x1) = matrix[X - A](nX1)
+
+		// For 2D, n=2, and solving the equation requires inverting a 2x2 matrix
+		ArgumentNullException.ThrowIfNull(points);
+		Vector2 del_ba = tri.VertexB - tri.VertexA;
+		Vector2 del_ca = tri.VertexC - tri.VertexA;
+		double deter = del_ba.WedgeProduct2d(del_ca);
+		if (deter == 0) { throw new ArgumentException("Triangle is not valid!", nameof(tri)); }
+		bool neg_deter = deter < 0;
+		bool PosCheck(double value) { return value >= 0 && value <= deter; }
+		bool NegCheck(double value) { return value <= 0 && value >= deter; }
+		Func<double, bool> checkFn = deter >= 0 ? PosCheck : NegCheck;
+		foreach (Vector2 point in points)
+		{
+			Vector2 del_pa = point - tri.VertexA;
+			double beta_num = del_pa.WedgeProduct2d(del_ba);
+			double gama_num = del_ca.WedgeProduct2d(del_pa);
+			bool contain = checkFn(beta_num) && checkFn(gama_num);
+			if (modeAll != contain) { return contain; }
+		}
+		return modeAll;
+	}
+
 	/// <summary>Return the update milliseconds count</summary>
 	/// <param name="time">The current time elasped as a GameTime instance</param>
 	/// <param name="curState">The current acumulated time as uint</param>

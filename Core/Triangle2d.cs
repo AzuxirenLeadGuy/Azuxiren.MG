@@ -5,19 +5,19 @@ namespace Azuxiren.MG.Core;
 /// <summary>Represents a 2D Triangle</summary>
 public record struct Triangle2d
 {
-	private Point _endA, _endB, _endC;
+	private Vector2 _endA, _endB, _endC;
 
 	/// <summary>An endpoint of the triangle</summary>
-	public readonly Point VertexA => _endA;
+	public readonly Vector2 VertexA => _endA;
 
 	/// <summary>An endpoint of the triangle</summary>
-	public readonly Point VertexB => _endB;
+	public readonly Vector2 VertexB => _endB;
 
 	/// <summary>An endpoint of the triangle</summary>
-	public readonly Point VertexC => _endC;
+	public readonly Vector2 VertexC => _endC;
 
 	/// <summary>An endpoint of the triangle</summary>
-	public required (Point, Point, Point) Endpoints
+	public required (Vector2, Vector2, Vector2) Endpoints
 	{
 		readonly get => (_endA, _endB, _endC);
 		set => (_endA, _endB, _endC) = CoreExtensions.Collinear(
