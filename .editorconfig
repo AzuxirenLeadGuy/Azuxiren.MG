@@ -27,6 +27,7 @@ insert_final_newline = false
 [*.{cs,vb}]
 csharp_style_namespace_declarations = file_scoped
 dotnet_diagnostic.IDE0072.severity = none
+dotnet_diagnostic.CA1814.severity = none
 
 # Organize usings
 dotnet_separate_import_directive_groups = true
