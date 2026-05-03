@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 
+using Azuxiren.MG.Drawing;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -60,7 +62,7 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 		Point targetSize,
 		Func<IMgRuntime, TSettings> settingsFunc,
 		GameUpdate.TransitionFun<TSettings> startSceneFunc,
-		GameUpdate.TransitionFun<TSettings> loadSceneFunc
+		GameUpdate.TransitionFun<TSettings>? loadSceneFunc = null
 	) : base()
 	{
 		if (targetSize.X <= 0 || targetSize.Y <= 0)
@@ -82,7 +84,8 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 		GraphicsDM.PreferredBackBufferWidth = targetSize.X;
 		GraphicsDM.PreferredBackBufferHeight = targetSize.Y;
 		_main = startSceneFunc;
-		_load = loadSceneFunc;
+		_load = loadSceneFunc ??
+			(static (runtime, shared) => new DummyStage());
 		_settingsFunc = settingsFunc;
 		_targetDrawer = null!;
 		_mainScreen = null!;
@@ -228,5 +231,31 @@ public class AzuxirenMonogameClass<TSettings> : Game, IMgRuntime
 			_taskLoader = null!;
 		}
 		base.Dispose(disposing);
+	}
+
+	///<summary>A dummy stage as a default option for LoadingStage instance</summary>
+	protected readonly record struct DummyStage : IGameStage<TSettings>
+	{
+		/// <inheritdoc/>
+		public void Dispose() => GC.SuppressFinalize(this);
+
+		/// <inheritdoc/>
+		public void Draw(
+			GameTime gt,
+			in IDrawHandler drawer,
+			in TSettings settings)
+		{ }
+
+		/// <inheritdoc/>
+		public void Resize(
+			in IMgRuntime game,
+			ref TSettings settings)
+		{ }
+
+		/// <inheritdoc/>
+		public GameUpdate Update(
+			GameTime gt,
+			in IMgRuntime game,
+			ref TSettings settings) => GameUpdate.NoAction;
 	}
 }
