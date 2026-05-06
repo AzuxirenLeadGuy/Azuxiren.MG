@@ -27,6 +27,9 @@ public class Sprite : IDisposable
 	/// <summary>The Vector on screen for drawing</summary>
 	public Vector2 Location;
 
+	/// <summary>The region of source</summary>
+	public Rectangle SourceRegion;
+
 	/// <summary>The size of the texture as a Vector2</summary>
 	protected Vector2 TextureSize => Texture.Bounds.Size.ToVector2();
 
@@ -35,6 +38,27 @@ public class Sprite : IDisposable
 
 	/// <summary>The (top-left) position of the destination rectangle</summary>
 	public Vector2 DestLocation => Location - (Scale * Anchor);
+
+	/// <summary>Gets the </summary>
+	/// <value></value>
+	public DrawingArgs2D DrawingArgs
+	{
+		get => new(SourceRegion)
+		{
+			Anchor = Anchor,
+			Angle = Angle,
+			Location = Location,
+			Scale = Scale
+		};
+		set
+		{
+			Anchor = value.Anchor;
+			Angle = value.Angle;
+			Location = value.Location;
+			Scale = value.Scale;
+			SourceRegion = value.SourceRegion;
+		}
+	}
 
 	/// <summary>Creates a Sprite object</summary>
 	/// <param name="tex">The texture to initialize the sprite with</param>
@@ -93,7 +117,7 @@ public class Sprite : IDisposable
 	) => batch.Draw(
 			Texture,
 			Location,
-			null,
+			SourceRegion,
 			Tint,
 			Scale,
 			Anchor,
