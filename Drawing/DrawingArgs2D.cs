@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,7 +28,7 @@ public record struct DrawingArgs2D(Rectangle SourceRegion)
 	/// <param name="effects">Additional effects to use</param>
 	/// <param name="layerDepth">The depth to work with</param>
 	public readonly void Draw(
-		IBatchDrawer drawer,
+		[NotNull] IBatchDrawer drawer,
 		Texture2D texture,
 		Color? color = null,
 		SpriteEffects effects = SpriteEffects.None,
